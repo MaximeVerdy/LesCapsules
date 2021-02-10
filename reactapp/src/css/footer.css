@@ -1,0 +1,19 @@
+  /* style du bas de page*/
+  
+  .footer {
+    display:flex;
+    position: absolute;          
+    bottom: 0;
+    right: 10px
+  }
+
+/* sur les écrans étroit le style est redéfini*/
+  @media (max-width: 960px) {
+    .footer {
+        display:flex;
+        position: absolute;          
+        bottom: 0%;
+        left: 50%;
+        transform: translate(-52px);
+    }
+}

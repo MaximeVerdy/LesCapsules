@@ -1,0 +1,95 @@
+/* le syle de la page de login */
+
+.loginLayout {
+    display: flex;
+    min-height:100vh;
+    background-color: rgba(0,0,0,0);
+    /* background-image: url('../images/runner_background.jpg');
+    background-position: left;
+    background-size: cover;
+    background-position-y: top; */
+
+}
+
+.loginRow {
+    justify-content: center;
+    text-align: right;
+    margin-top: 35px;
+}
+
+.loginColImg {
+    display: flex;
+    width: 700px;
+    justify-content:center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.loginColSlog {
+    display: flex;
+    width: 700px;
+    justify-content:center;
+    align-items: center;
+    text-align: center;
+    /* font-family: 'barber'; */
+}
+
+.loginColForm {
+    display: block;
+    width: 350px;
+    height: 350px;
+    justify-content:center;
+    align-items: center;
+    /* background-color: rgba(255, 255, 255, .8); */
+    background-image: url('../images/background-metal.jpg');
+    background-position: right;
+    padding: 10px;
+    margin: 1px;
+    /* border: solid 3px rgb(107, 101, 44, 0.05); */
+    border-left: solid 4px rgb(235, 230, 187, 0.8);
+    border-top: solid 4px rgb(235, 230, 187, 0.8);
+    border-right: solid 4px rgb(107, 101, 44, 0.1);
+    border-bottom: solid 4px rgb(107, 101, 44, 0.2);
+    border-radius: 6px;
+}
+
+.title {
+    justify-content: center;
+    text-align: center;
+    margin-top: 20px;
+    padding-bottom: 30px;
+}
+
+.button {
+    justify-content:center;
+    align-items:center;
+    height: 40px;
+    margin-top: 20px;
+}
+
+.erreurs {
+    color:red;
+    position: absolute;
+    text-align: center;
+    width:100%;
+}
+
+  /* sur les écrans étroit le style est redéfini*/
+
+@media (max-width: 702px) {
+    .loginRow {
+        margin-top: 15px
+    }
+    .loginColImg {
+        width: 350px
+    }
+    .loginColSlog {
+        width: 350px
+    }
+}
+
+@media (max-width: 574px) {
+    .loginColForm {
+        height: 380px
+    }
+}

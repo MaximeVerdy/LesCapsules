@@ -1,0 +1,23 @@
+.loading {
+  background-color: #FFE773;
+}
+
+.loader {
+     width: 200px;  
+     position: absolute;
+     top: 49%;
+     left: 50%;
+     transform: translate(-50%, -50%);
+     animation: rotation 1s infinite linear ;
+}
+
+@keyframes rotation {
+     from {
+       transform:
+       translate(-50%, -50%) rotate(0deg);
+     }
+     to {
+       transform:
+       translate(-50%, -50%) rotate(359deg);
+     }
+   }

@@ -1,0 +1,43 @@
+/* fixation de la barre de navigation en haut */
+.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1; 
+  }
+
+.text {
+    /* align-items: center;
+    justify-content: center;
+    font-family: 'barber';
+    font-size: 2em; */
+    font-weight: 500;
+
+
+}
+
+.menu {
+    background-image: url('../images/background-metal.jpg');
+    background-repeat: repeat;
+    border-bottom: solid 2px rgb(107, 101, 44, 0.2);
+
+}
+
+  /* sur un écran étroit le texte disparait pour ne laisser que les icônes */
+@media (max-width: 1010px) {
+    .hiddenTextMenu {
+        display: none;
+    }
+}
+
+@media (max-width: 720px) {
+    .hiddenLogoMenu {
+        display: none;
+    }
+}
+
+@media (min-width: 721px) {
+    .showIfSmall {
+        display: none;
+    }
+}

@@ -1,0 +1,176 @@
+/* le syle de la page d'ajout d'activité, d'historique et de statistiques */
+
+.researchLayout {
+    display: flex;
+    background-color: white;
+    min-height: 100vh;
+    /* background-image: url('../images/runner_background.jpg');
+    background-position: left;
+    background-size: cover;
+    background-position-y: top; */
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.capsuleRow {
+    display: flex;
+    /* flex-direction: column; */
+    justify-content: center;
+    text-align: right;
+    margin-top: 4%;
+}
+
+.capsuleRowSearch {
+    margin-top: 1%;
+}
+
+.researchRow {
+    justify-content: center;
+    text-align: left;
+    margin-top: 4%;
+}
+
+.RowParam {
+    display: flex;
+    justify-content: center;
+    margin-top: 1px;
+}
+
+.ColForm {
+    display: block;
+    width: 420px;
+    justify-content: center;
+    align-items: center;
+    /* background-color: rgb(242, 242, 242); */
+    background-image: url('../images/background-metal.jpg');
+    background-repeat: repeat;
+    background-position: right;
+    border-left: solid 4px rgba(231, 229, 205, 0.8);
+    border-top: solid 4px rgba(231, 229, 205, 0.8);
+    border-right: solid 4px rgba(107, 101, 44, 0.1);
+    border-bottom: solid 4px rgba(107, 101, 44, 0.2);
+    border-radius: 6px;
+    padding: 10px;
+    margin: 1px;
+}
+
+.ColFormCapNew {
+    height: 490px;
+}
+
+.buttonNewCap {
+    position: absolute;
+    bottom: 0px;
+    width: 95%;
+    justify-content: center;
+}
+
+.mapContainer {
+    display: flex;
+    flex-direction: column;
+    width: 355px;
+    background-color: white;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    background-color: rgba(255, 255, 255, 0.6)
+}
+
+.eachCapsule {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.imgCapsule {
+    padding-right: 8px;
+}
+
+.trashBt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    background-color: rgba(255, 255, 255, 0.6)
+}
+
+.searchBt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: white;
+    margin-top: 1px;
+    margin-bottom: 1px;
+    background-color: rgba(0,0,0, 0)
+}
+
+.endDiv {
+    height: 50px;
+}
+
+.ColStats {
+    display: flex;
+    width: 800px;
+    height: 500px;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(242, 242, 242);
+    padding: 10px;
+    margin: 1px;
+}
+
+.ColWrapperParam {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    background-color: rgb(0, 0, 0, 0);
+    width: 100%;
+    align-items: center;
+}
+
+.ColParam {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: rgb(28, 190, 174); */
+    padding-right: 2px;
+    padding-left: 2px;
+    height: 30px;
+}
+
+.title {
+    justify-content: center;
+    text-align: center;
+    margin-top: 15px;
+    padding-bottom: 25px;
+}
+
+.button {
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    margin-top: 20px;
+}
+
+.erreurs {
+    color: red;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+/* sur les écrans étroit le style est redéfini*/
+
+@media (max-width: 802px) {
+    .ColStats {
+        width: 500px;
+        height: 400px;
+    }
+
+}
