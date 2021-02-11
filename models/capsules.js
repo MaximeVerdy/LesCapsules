@@ -11,6 +11,6 @@ const capsuleSchema = mongoose.Schema({
     token: String,
 })
 
-var capsuleModel = mongoose.model('my-capsules', capsuleSchema)
+var capsuleModel = mongoose.model('capsules', capsuleSchema)
 
 module.exports = capsuleModel;

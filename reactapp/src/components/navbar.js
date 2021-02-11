@@ -63,7 +63,7 @@ export default function Topnavbar() {
         </Menu.Item>
 
         <Menu.Item key="favorites">
-          <Link to="/historique">
+          <Link to="/favorites">
             <div style={{color:'black' }}>
               <FontAwesomeIcon icon={faHeart} size="lg"/>
               <span className="text hiddenTextMenu"> Favoris</span>

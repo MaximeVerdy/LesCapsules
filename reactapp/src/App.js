@@ -14,7 +14,7 @@ import Disconnected from './components/disconnected.js';
 import NotLogged from './components/notlogged.js';
 import Addcapsule from './components/addcapsule.js';
 import Research from './components/research.js';
-import Aaaupload from './components/aaaupload.js';
+import Favorites from './components/favorites.js';
 
 //style
 import './css/mainwrapper.css';
@@ -44,7 +44,7 @@ function App() {
             <Route component={Disconnected} path="/disconnected" exact />
             <Route component={NotLogged} path="/notlogged" exact />
             <Route component={Addcapsule} path="/addcapsule" exact />
-            <Route component={Aaaupload} path="/aaaupload" exact />
+            <Route component={Favorites} path="/favorites" exact />
 
           </Switch>
         </div>

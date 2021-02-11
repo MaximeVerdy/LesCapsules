@@ -2,6 +2,8 @@
 var express = require('express');
 var router = express.Router();
 
+var mongoose = require('../models/connection');
+
 // modèles mongoose
 var userModel = require('../models/users')
 var capsuleModel = require('../models/capsules')
@@ -29,7 +31,6 @@ router.post('/sign-up', async function (req, res, next) {
   const data = await userModel.findOne({
     email: req.body.emailFromFront
   })
-
   // conditions pour enregistrer en BDD un nouvel utilisateur
   if (data != null) {
     existingAccount = true
@@ -67,6 +68,7 @@ router.post('/sign-up', async function (req, res, next) {
       password: SHA256(req.body.passwordFromFront + salt).toString(encBase64),
       token: uid2(32),
       salt: salt,
+      favorites: 'none yet'
     })
     saveUser = await newUser.save()
 
@@ -83,7 +85,9 @@ router.post('/sign-up', async function (req, res, next) {
   }
 
   // données envoyée en front
-  res.json({ result, saveUser, error, token })
+  res.json({ result, error, token })
+  //avant avec saveUser. c'est peu-être dangereux ??? ------------------------- à supprimer ??
+  // res.json({ result, saveUser, error, token })
 
 });
 
@@ -145,23 +149,22 @@ router.post('/save-capsule', async function (req, res, next) {
   var saveCapsule = null
 
   // enregistrement en BDD
-  if (error.length == 0) {
-    var newCapsule = new capsuleModel({
-      // token: req.body.tokenFromFront,
-      brand: req.body.brandFromFront,
-      year: req.body.yearFromFront,
-      country: req.body.countryFromFront,
-      token: "TokenTest01",
-      capsuleRef: uid2(32),
-      photo: req.body.photoFromFront.replace(/\s/g, '+'),
-    })
-    // console.log(newCapsule);
-    saveCapsule = await newCapsule.save()
+  var newCapsule = new capsuleModel({
+    // token: req.body.tokenFromFront,
+    brand: req.body.brandFromFront,
+    year: req.body.yearFromFront,
+    country: req.body.countryFromFront,
+    token: "TokenTest01",
+    capsuleRef: uid2(32),
+    photo: req.body.photoFromFront.replace(/\s/g, '+'),
+  })
+  // console.log(newCapsule);
+  saveCapsule = await newCapsule.save()
 
-    if (saveCapsule) {
-      result = true
-    }
+  if (saveCapsule) {
+    result = true
   }
+
 
   // message d'erreur d'enregistrement
   if (result == false) {
@@ -181,13 +184,16 @@ router.get('/research', async function (req, res, next) {
 
   var error = []
   var capsules = []
-  var year = ''
-  var brand = ''
-  var country = ''
+  var brand = req.query.brand
+  var year = req.query.year
+  var country = req.query.country
+  var token = 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5'
+  var favorites = []
 
-  brand = req.query.brand
-  year = req.query.year
-  country = req.query.country
+  var user = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
+  if (user) {
+    favorites = user.favorites
+  }
 
   // lors du chargement du composant Research
   if (brand == '' && country == 'aucun' && year == '') {
@@ -216,7 +222,7 @@ router.get('/research', async function (req, res, next) {
   }
 
   // données envoyées en front
-  res.json({ capsules, error })
+  res.json({ capsules, favorites, error })
 
   // console.log('console -----------', capsules);
 })
@@ -291,6 +297,148 @@ router.delete('/my-collection', async function (req, res, next) {
   res.json({ result, error })
 
 })
+
+
+// ---------------------------------------------- //
+// écriture d'une capsule favorite en BDD         //
+// ---------------------------------------------- //
+
+router.post('/add-favorite', async function (req, res, next) {
+
+  var error = []
+  var result = false
+  var capsuleRef = ''
+  var foundFavorite = false
+  var favorites = []
+
+  capsuleRef = req.body.capsuleRef
+
+  mongoose.set('useFindAndModify', false);
+
+  var existingUser = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
+
+  if (existingUser.favorites.find(capsule => capsule == capsuleRef)) {
+    foundFavorite = true
+  }
+
+  if (foundFavorite == false) {
+    var user = await userModel.findOneAndUpdate(
+      { token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' },
+      { '$push': { 'favorites': capsuleRef } }
+    )
+  }
+  
+  var userUpdated = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
+  favorites = userUpdated.favorites
+
+
+  if (foundFavorite == true) {
+    error.push('Déjà enregistré en tant que favori')
+  }
+
+  if (user) {
+    result = true
+  }
+
+  // message d'erreur d'enregistrement
+  if (result == false && error.length == 0) {
+    error.push('Une erreur est advenue. Enregistrement impossible')
+  }
+
+  // données envoyées en front
+  res.json({ result, favorites, error })
+})
+
+
+// ---------------------------------------------- //
+// suppression d'une capsule favorite en BDD       //
+// ---------------------------------------------- //
+
+router.put('/supp-favorite', async function (req, res, next) {
+
+  var error = []
+  var result = false
+  var capsuleRef = ''
+  var foundFavorite = false
+
+  capsuleRef = req.body.capsuleRef
+
+  mongoose.set('useFindAndModify', false);
+
+  var existingUser = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
+
+  if (existingUser.favorites.find(capsule => capsule == capsuleRef)) {
+    foundFavorite = true
+  }
+
+  var favorites = existingUser.favorites
+
+
+  var index = favorites.indexOf(capsuleRef);
+  if (index > -1) {
+    favorites.splice(index, 1);
+  }
+
+  if (foundFavorite == true) {
+    var user = await userModel.findOneAndUpdate(
+      { token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' },
+      { 'favorites': favorites }
+    )
+  } else {
+    error.push('N\'est déjà pas en favori')
+  }
+
+  if (user) {
+    result = true
+  }
+
+  // message d'erreur d'enregistrement
+  if (result == false && error.length == 0) {
+    error.push('Une erreur est advenue. Suppression impossible')
+  }
+
+  // données envoyées en front
+  res.json({ result, favorites, error })
+
+})
+
+// ---------------------------------------------- //
+// accès à tous les favoris d'un utilisateur      //
+// ---------------------------------------------- //
+
+router.get('/all-my-favorites', async function (req, res, next) {
+
+  var error = []
+  var result = false
+  var capsules = {}
+  var favorites = []
+
+  capsuleRef = req.body.capsuleRef
+
+  var existingUser = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
+
+  if (existingUser) {
+    favorites = existingUser.favorites
+    capsules = await capsuleModel.find({ capsuleRef : {$in: favorites } })
+    // for (i=0; i<favorites.length; i++) {
+    // }
+  }
+
+  if (existingUser) {
+    result = true
+  }
+
+  // message d'erreur d'enregistrement
+  if (result == false) {
+    error.push('Une erreur est advenue. Favoris non trouvés')
+  }
+
+  // données envoyées en front
+  res.json({ result, capsules, error })
+
+})
+
+
 
 module.exports = router;
 

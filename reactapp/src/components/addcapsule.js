@@ -130,7 +130,6 @@ function Addcapsule(props) {
       // si l'échange avec la BDD n'a fonctionné, récupérer le tableau d'erreurs venu du back
       if (body.result) {
         setSaved(true)
-        console.log('saved in DB ?', body.result)
       } else {
         setErrorsSaving(body.error)
       }

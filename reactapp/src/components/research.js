@@ -49,50 +49,88 @@ function Research(props) {
         setCountry(value);
     }
 
-    const [researchOK, setResearchOK] = useState(false)
-
     // état du token, récupéré du Redux Store
     const [token, setToken] = useState(props.token)
     const [capsulesList, setCapsulesList] = useState([])
     const [listErrors, setErrors] = useState([])
 
+    const [saved, setSaved] = useState(false)
+    const [deleted, setDeleted] = useState(false)
 
-    // échange de données avec le back pour la récuration des données à chaque changement de l'état deleted
+    const [heartColor, setheartColor] = useState()
+
+    const [favorites, setfavorites] = useState([])
+
+    // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
         const findcapsules = async () => {
             const data = await fetch(`/research?brand=${brand}&year=${year}&country=${country}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
             setErrors(body.error)
-            console.log('data loach--------------', data);
+            setfavorites(body.favorites)
+            
         }
         findcapsules()
 
     }, [])
 
 
-
-    // échange de données avec le back pour l'écriture en BDD
+    // échange de données avec le back pour chaque recherche
     var handleSubmitSearch = async () => {
+        // quand l'année est effacée du champ de recherche, year devient null, on fait donc passer '' pour year dans la requête plutôt que null
         if (year === null) {
             const data = await fetch(`/research?brand=${brand}&year=${''}&country=${country}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
             setErrors(body.error)
-            console.log('data submit--------------', data);
         } else {
             const data = await fetch(`/research?brand=${brand}&year=${year}&country=${country}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
             setErrors(body.error)
-            console.log('data submit--------------', data);
         }
-
-
-        // if (body.capsules) {
-        //     setResearchOK(true)
-        // }
     }
+
+    // ajout d'une capsule favorite en base de données
+    var handleAddFavorite = async (capsuleRef) => {
+        const data = await fetch('/add-favorite', {
+            method: 'POST', // pour écrire des données en BDD
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `token=${token}&capsuleRef=${capsuleRef}`
+        })
+
+        // convertion des données reçues en objet JS (parsage)
+        const body = await data.json()
+        // réponse positive du back
+        if (body.result) {
+            setSaved(true)
+            setfavorites(body.favorites)
+            // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
+        } else {
+            setErrors(body.error)
+        }
+    }
+
+        // suppression d'une capsule favorite en base de données
+        var handleSuppFavorite = async (capsuleRef) => {
+            const data = await fetch('/supp-favorite', {
+                method: 'PUT', // pour supprimer des données en BDD
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `token=${token}&capsuleRef=${capsuleRef}`
+            })
+    
+            // convertion des données reçues en objet JS (parsage)
+            const body = await data.json()
+            // réponse positive du back
+            if (body.result) {
+                setDeleted(true)
+                setfavorites(body.favorites)
+                // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
+            } else {
+                setErrors(body.error)
+            }
+        }
 
     // message en cas d'absence de données enregistrée pour l'instant
     var noCapsule
@@ -454,7 +492,8 @@ function Research(props) {
 
 
                         <div className="searchBt">
-                            <FontAwesomeIcon icon={faSearch} size="lg" color="#565656"
+
+                            <FontAwesomeIcon icon={faSearch} size="lg" color={heartColor}
                                 // au clic, lancer la recherche de capsules en BDD
                                 onClick={() => handleSubmitSearch()}
                             />
@@ -510,10 +549,18 @@ function Research(props) {
                             </div>
 
                             <div className="trashBt">
-                                <FontAwesomeIcon icon={faHeart} size="lg" color="grey"
-                                // au clic, suppression de la capsule en BDD
-                                // onClick={() => deleteCapsule(capsule.capsuleRef)}
+                                { favorites.includes(capsule.capsuleRef) && 
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='red'
+                                        // au clic, ajout aux favoris 
+                                        onClick={() => handleSuppFavorite(capsule.capsuleRef)}
+                                        />
+                                    }
+                                { !favorites.includes(capsule.capsuleRef) &&
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'
+                                    // au clic, suppression des favoris 
+                                    onClick={() => handleAddFavorite(capsule.capsuleRef)}
                                 />
+                                }
                             </div>
 
                         </div>

@@ -7,6 +7,7 @@ const userSchema = mongoose.Schema({
     password: String,
     token: String,
     salt: String, 
+    favorites: Array,
 })
 
 var userModel = mongoose.model('users', userSchema)
