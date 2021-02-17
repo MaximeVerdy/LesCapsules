@@ -142,7 +142,7 @@ function Favorites(props) {
                         <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
 
 
-                            <div className="mapContainer">
+                            <div className="displayContainer">
 
                                 <div className="eachCapsule">
 

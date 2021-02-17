@@ -7,6 +7,7 @@ var mongoose = require('../models/connection');
 // modèles mongoose
 var userModel = require('../models/users')
 var capsuleModel = require('../models/capsules')
+var discussionModel = require('../models/discussions')
 
 // modules de chiffrement
 var uid2 = require('uid2')
@@ -68,7 +69,8 @@ router.post('/sign-up', async function (req, res, next) {
       password: SHA256(req.body.passwordFromFront + salt).toString(encBase64),
       token: uid2(32),
       salt: salt,
-      favorites: 'none yet'
+      favorites: 'none yet',
+      newMessage: false
     })
     saveUser = await newUser.save()
 
@@ -85,7 +87,7 @@ router.post('/sign-up', async function (req, res, next) {
   }
 
   // données envoyée en front
-  res.json({ result, error, token })
+  res.json({ result, error, token, newMessage })
   //avant avec saveUser. c'est peu-être dangereux ??? ------------------------- à supprimer ??
   // res.json({ result, saveUser, error, token })
 
@@ -123,6 +125,7 @@ router.post('/sign-in', async function (req, res, next) {
       if (passwordEncrypt == user.password) {
         result = true
         token = user.token
+        newMessage = user.newMessage
       } else {
         result = false
         error.push('Mot de passe incorrect')
@@ -134,7 +137,7 @@ router.post('/sign-in', async function (req, res, next) {
   }
 
   // données envoyée en front
-  res.json({ result, user, error, token })
+  res.json({ result, user, error, token, newMessage })
 
 });
 
@@ -154,7 +157,7 @@ router.post('/save-capsule', async function (req, res, next) {
     brand: req.body.brandFromFront,
     year: req.body.yearFromFront,
     country: req.body.countryFromFront,
-    token: "TokenTest01",
+    token: "TokenTest01", // ---------------------------- A CHANGER
     capsuleRef: uid2(32),
     photo: req.body.photoFromFront.replace(/\s/g, '+'),
   })
@@ -241,7 +244,7 @@ router.get('/my-collection', async function (req, res, next) {
   var user = await userModel.findOne({ token: req.query.token })
   if (user != null) {
     // recherche des données en BDD
-    capsules = await caspuleModel.find({ token: req.query.token })
+    capsules = await capsuleModel.find({ token: req.query.token })
   }
 
   // rangement par ordre chronologique invervé
@@ -253,7 +256,7 @@ router.get('/my-collection', async function (req, res, next) {
 
   // --------------- temporaire temporaire temporaire temporaire temporaire temporaire temporaire
   // --------------- temporaire temporaire temporaire temporaire temporaire temporaire temporaire
-  capsules = await capsuleModel.find()
+  // capsules = await capsuleModel.find()
 
   // données envoyées en front
   res.json({ capsules, error })
@@ -327,7 +330,7 @@ router.post('/add-favorite', async function (req, res, next) {
       { '$push': { 'favorites': capsuleRef } }
     )
   }
-  
+
   var userUpdated = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
   favorites = userUpdated.favorites
 
@@ -372,7 +375,6 @@ router.put('/supp-favorite', async function (req, res, next) {
   }
 
   var favorites = existingUser.favorites
-
 
   var index = favorites.indexOf(capsuleRef);
   if (index > -1) {
@@ -419,7 +421,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
 
   if (existingUser) {
     favorites = existingUser.favorites
-    capsules = await capsuleModel.find({ capsuleRef : {$in: favorites } })
+    capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } })
     // for (i=0; i<favorites.length; i++) {
     // }
   }
@@ -435,6 +437,197 @@ router.get('/all-my-favorites', async function (req, res, next) {
 
   // données envoyées en front
   res.json({ result, capsules, error })
+
+})
+
+
+
+// ---------------------------------------------- //
+//    ajout d'une nouvelle discussion en BDD      //
+// ---------------------------------------------- //
+
+router.post('/first-message', async function (req, res, next) {
+
+  var error = []
+  var saved = false
+  var updated = false
+  var userIsOwner = false
+  var isDiscussionExisting = false
+  var capsuleRef = req.body.capsuleRef
+  var token = req.body.token
+  var actualDate = new Date()
+
+  var existingUser = await userModel.findOne({ token: token })
+
+  if (existingUser) {
+
+    var capsule = await capsuleModel.findOne({ capsuleRef: capsuleRef })
+
+    var capsuleOwner = capsule.token
+
+    if (capsuleOwner == token) {
+      userIsOwner = true
+    } else {
+
+      var users = [capsuleOwner, token]
+
+      var existingDiscussion = await discussionModel.findOne({
+        capsuleRef: capsuleRef,
+        users: users
+      })
+
+      if (existingDiscussion) {
+        isDiscussionExisting = true
+        mongoose.set('useFindAndModify', false);
+        var discussionUpdated = await discussionModel.findOneAndUpdate(
+          { discussionRef: existingDiscussion.discussionRef },
+          { 'lastMessageDate': actualDate }
+        )
+
+        if (discussionUpdated) {
+          updated = true
+        } else {
+          error.push('discussion non updatée')
+        }
+
+      } else {
+        var newDiscussion = await new discussionModel({
+          discussionRef: uid2(32),
+          capsuleRef: capsuleRef,
+          lastMessageDate: actualDate,
+          users: users,
+          messages: [],
+        })
+        var savedDiscussion = await newDiscussion.save()
+      }
+
+      if (savedDiscussion) {
+        saved = true
+      }
+    }
+
+  } else {
+    error.push('Cet utilisateur n\'existe pas')
+  }
+
+  // message d'erreur d'enregistrement
+  if (saved == false && error.length == 0) {
+    error.push('Impossible d\'écrire à vous même')
+  }
+
+  // données envoyées en front
+  res.json({ saved, error, userIsOwner, isDiscussionExisting, updated })
+
+})
+
+
+
+// ---------------------------------------------- //
+//     accès aux discussions d'un utilisateur     //
+// ---------------------------------------------- //
+
+router.get('/discussions', async function (req, res, next) {
+  var result = false
+  var isDiscussionsExist = false
+  var error = []
+  var discussionsExtended = []
+  token = req.query.token
+
+  var existingUser = await userModel.findOne({ token: token })
+
+  if (existingUser) {
+    var discussions = await discussionModel.find({ users: { $in: token } })
+    if (discussions) {
+      isDiscussionsExist = true
+      for (i = 0; i < discussions.length; i++) {
+        var capsule = await capsuleModel.findOne({ capsuleRef: discussions[i].capsuleRef })
+
+        discussionsExtended.push({
+          discussionRef: discussions[i].discussionRef,
+          capsuleRef: discussions[i].capsuleRef,
+          lastMessageDate: discussions[i].lastMessageDate,
+          users: discussions[i].users,
+          messages: discussions[i].messages,
+          capsuleData: capsule
+        })
+
+        var sortedDiscussions = discussionsExtended.sort((a, b) => b.lastMessageDate - a.lastMessageDate)
+        result = true
+      }
+    } else {
+      error.push('Discussions non trouvées')
+    }
+  } else {
+    error.push('Cet utilisateur n\'existe pas')
+  }
+
+  // données envoyées en front
+  res.json({result, error, sortedDiscussions })
+
+})
+
+
+// ---------------------------------------------- //
+//       ajout d'un nouveau message en BDD        //
+// ---------------------------------------------- //
+
+router.post('/new-message', async function (req, res, next) {
+
+  var error = []
+  var saved = false
+  var updated = false
+  // var userIsOwner = false
+  // var isDiscussionExisting = false
+  var discussionRef = req.body.discussionRef
+  var token = req.body.token
+  var message = req.body.newMessage
+  var actualDate = new Date()
+  var formatedMessage = { token, message }
+
+  // console.log("formatedMessage", formatedMessage);
+
+  var existingUser = await userModel.findOne({ token: token })
+  // console.log("existingUser",existingUser);
+
+  if (existingUser) {
+    mongoose.set('useFindAndModify', false);
+    var discussionUpdated = await discussionModel.findOneAndUpdate(
+      { discussionRef: discussionRef },
+      {
+        '$push': { 'messages': formatedMessage },
+        'lastMessageDate': actualDate
+      }
+    )
+
+    if (discussionUpdated) {
+      updated = true
+      var participants = discussionUpdated.users
+      var authorOfMessage = participants.indexOf(token);
+      if (authorOfMessage > -1) {
+        participants.splice(authorOfMessage, 1);
+      }
+      otherParticipant = participants[0]
+
+      var userHavingAMessage = await userModel.findOneAndUpdate(
+        { token: otherParticipant,
+          'newMessage': true
+        }
+      )
+      if (!userHavingAMessage) {
+        error.push('Pas de notification envoyée')
+      }
+
+      // console.log('participants----', participants);
+    } else {
+      error.push('discussion non updatée')
+    }
+
+  } else {
+    error.push('Cet utilisateur n\'existe pas')
+  }
+
+  // données envoyées en front
+  res.json({ error, updated })
 
 })
 

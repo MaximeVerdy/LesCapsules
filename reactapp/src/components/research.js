@@ -12,6 +12,7 @@ import {
     InputNumber,
     Input,
     Button,
+    Modal,
 } from 'antd';
 
 //composants
@@ -26,6 +27,7 @@ import '../css/other.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 function Research(props) {
 
@@ -61,6 +63,8 @@ function Research(props) {
 
     const [favorites, setfavorites] = useState([])
 
+    const [redirection, setredirection] = useState(false)
+
     // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
         const findcapsules = async () => {
@@ -69,7 +73,7 @@ function Research(props) {
             setCapsulesList(body.capsules)
             setErrors(body.error)
             setfavorites(body.favorites)
-            
+
         }
         findcapsules()
 
@@ -112,25 +116,53 @@ function Research(props) {
         }
     }
 
-        // suppression d'une capsule favorite en base de données
-        var handleSuppFavorite = async (capsuleRef) => {
-            const data = await fetch('/supp-favorite', {
-                method: 'PUT', // pour supprimer des données en BDD
+    
+        // ajout d'une capsule favorite en base de données
+        var handleSendMessage = async (capsuleRef) => {
+            const data = await fetch('/first-message', {
+                method: 'POST', // pour écrire des données en BDD
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `token=${token}&capsuleRef=${capsuleRef}`
             })
     
             // convertion des données reçues en objet JS (parsage)
             const body = await data.json()
+            console.log("body.updated --------", body.updated);
             // réponse positive du back
-            if (body.result) {
-                setDeleted(true)
-                setfavorites(body.favorites)
+            if (body.updated) {
+                setredirection(true)
                 // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
             } else {
-                setErrors(body.error)
+                Modal.warning({
+                    content: 'Vous ne pouvez pas écrire à vous même'
+                  });
+                // setErrors(body.error)
             }
         }
+
+    if (redirection === true) {
+        return <Redirect to='/messages' />
+    }
+
+    // suppression d'une capsule favorite en base de données
+    var handleSuppFavorite = async (capsuleRef) => {
+        const data = await fetch('/supp-favorite', {
+            method: 'PUT', // pour supprimer des données en BDD
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `token=${token}&capsuleRef=${capsuleRef}`
+        })
+
+        // convertion des données reçues en objet JS (parsage)
+        const body = await data.json()
+        // réponse positive du back
+        if (body.result) {
+            setDeleted(true)
+            setfavorites(body.favorites)
+            // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
+        } else {
+            setErrors(body.error)
+        }
+    }
 
     // message en cas d'absence de données enregistrée pour l'instant
     var noCapsule
@@ -530,7 +562,7 @@ function Research(props) {
                         <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
 
 
-                            <div className="mapContainer">
+                            <div className="displayContainer">
 
                                 <div className="eachCapsule">
 
@@ -549,18 +581,27 @@ function Research(props) {
                             </div>
 
                             <div className="trashBt">
-                                { favorites.includes(capsule.capsuleRef) && 
+                                {favorites.includes(capsule.capsuleRef) &&
                                     <FontAwesomeIcon icon={faHeart} size="lg" color='red'
                                         // au clic, ajout aux favoris 
                                         onClick={() => handleSuppFavorite(capsule.capsuleRef)}
-                                        />
-                                    }
-                                { !favorites.includes(capsule.capsuleRef) &&
-                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'
-                                    // au clic, suppression des favoris 
-                                    onClick={() => handleAddFavorite(capsule.capsuleRef)}
-                                />
+                                    />
                                 }
+                                {!favorites.includes(capsule.capsuleRef) &&
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'
+                                        // au clic, suppression des favoris 
+                                        onClick={() => handleAddFavorite(capsule.capsuleRef)}
+                                    />
+                                }
+
+                                <div className = "spaceFavMsg">
+                                </div>
+
+                                {}
+                                <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                    // au clic, envoi d'un message
+                                    onClick={() => handleSendMessage(capsule.capsuleRef)}
+                                />
                             </div>
 
                         </div>

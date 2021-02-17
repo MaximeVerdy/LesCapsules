@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
 import {Provider} from 'react-redux'
 import {createStore, combineReducers} from 'redux'
 import token from './reducers/token'
+import newMessage from './reducers/newMessage'
 
 // import des composants
 import Login from './components/login.js';
@@ -15,12 +16,13 @@ import NotLogged from './components/notlogged.js';
 import Addcapsule from './components/addcapsule.js';
 import Research from './components/research.js';
 import Favorites from './components/favorites.js';
+import Messages from './components/messages.js';
 
 //style
 import './css/mainwrapper.css';
 
 // création du store qui contiendra les états voulus dans les reducers
-const store = createStore(combineReducers({token}))
+const store = createStore(combineReducers({token, newMessage}))
 
 // contrôle des états dans Redux. Permet juste leur affichage dans la console
 // store.subscribe(() => console.log('CONSOLE LOG REDUX ----->', store.getState()))
@@ -45,6 +47,7 @@ function App() {
             <Route component={NotLogged} path="/notlogged" exact />
             <Route component={Addcapsule} path="/addcapsule" exact />
             <Route component={Favorites} path="/favorites" exact />
+            <Route component={Messages} path="/messages" exact />
 
           </Switch>
         </div>

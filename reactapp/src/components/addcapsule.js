@@ -110,7 +110,7 @@ function Addcapsule(props) {
 
   const [form] = Form.useForm();
 
-  const [fillingFequest, setFillingFequest] = useState('')
+  const [fillingRequest, setfillingRequest] = useState('')
 
 
 
@@ -134,7 +134,7 @@ function Addcapsule(props) {
         setErrorsSaving(body.error)
       }
     } else {
-      setFillingFequest(<p className="erreurs">Remplissez le formulaire</p>)
+      setfillingRequest(<p className="erreurs">Remplissez le formulaire</p>)
       setBrand('non renseigné')
     }
 
@@ -154,7 +154,7 @@ function Addcapsule(props) {
       setCountry('France')
       setSaved(false)
       setFileList([])
-      setFillingFequest([])
+      setfillingRequest([])
     }
   }, [saved])
 
@@ -536,7 +536,7 @@ function Addcapsule(props) {
               </Button>
 
               {tabErrorsSaving}
-              {fillingFequest}
+              {fillingRequest}
 
 
             </Form.Item>

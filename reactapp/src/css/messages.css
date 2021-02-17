@@ -1,0 +1,293 @@
+/* le syle de la page d'ajout d'activité, d'historique et de statistiques */
+
+.messageLayout {
+     display: flex;
+     background-color: white;
+     min-height: 100vh;
+     background-color: rgba(0, 0, 0, 0);
+}
+
+.messageRow {
+     display: flex;
+     /* flex-direction: column; */
+     justify-content: center;
+     /* text-align: right; */
+     margin-top: 4%;
+}
+
+.endDiv {
+     height: 50px;
+}
+
+.title {
+     justify-content: center;
+     text-align: center;
+     margin-top: 15px;
+     padding-bottom: 25px;
+}
+
+.erreurs {
+     color: red;
+     position: absolute;
+     text-align: center;
+     width: 100%;
+}
+
+/* sur les écrans étroit le style est redéfini*/
+
+.mainFrameChat {
+     display: flex;
+     flex-direction: column;
+     width: 900px;
+     /* ---------------------- tout */
+     height: 77vh;
+     justify-content: center;
+     align-items: center;
+     /* background-color: rgb(242, 242, 242); */
+     background-image: url('../images/background-metal.jpg');
+     background-repeat: repeat;
+     background-position: right;
+     border-left: solid 4px rgba(231, 229, 205, 0.8);
+     border-top: solid 4px rgba(231, 229, 205, 0.8);
+     border-right: solid 4px rgba(107, 101, 44, 0.1);
+     border-bottom: solid 4px rgba(107, 101, 44, 0.2);
+     border-radius: 6px;
+     padding: 10px;
+     margin: 1px;
+}
+
+.techPart {
+     display: flex;
+     flex-direction: row;
+     width: 100%;
+     height: 62vh;
+}
+
+.leftPanelChat {
+     /* width: 257px; */
+     width: 370px;
+     /* ----------------------largeur du panneau de gauche */
+     height: 100%;
+     overflow-y: scroll;
+     overflow-x: hidden;
+     background-color: rgba(221, 221, 221, 0.6);
+     border-top-left-radius: 3px;
+     border-bottom-left-radius: 3px;
+}
+
+.verticalSpaceChat {
+     width: 4px;
+     height: 100%;
+     background-color: rgb(0, 0, 0, 0);
+}
+
+.containerDiscussion {
+     display: flex;
+     flex-direction: column;
+     width: 250px;
+     /* ----------------------largeur du cellule */
+     background-color: white;
+     padding-top: 2px;
+     padding-bottom: 2px;
+     padding-right: 5px;
+     padding-left: 5px;
+     margin-top: 1px;
+     margin-bottom: 1px;
+     /* background-color: rgba(255, 255, 255, 0.6); */
+     background-color: rgb(170, 170, 170);
+     border-radius: 6px;
+}
+
+.containerDiscussionSelected {
+     display: flex;
+     flex-direction: column;
+     width: 250px;
+     background-color: white;
+     padding-top: 2px;
+     padding-bottom: 2px;
+     padding-right: 5px;
+     padding-left: 5px;
+     margin-top: 1px;
+     margin-bottom: 1px;
+     /* background-color: rgba(255, 255, 255, 0.6); */
+     background-color: rgb(117, 123, 134);
+     border-radius: 6px;
+}
+
+.eachDiscussion {
+     display: flex;
+     flex-direction: row;
+     align-items: center;
+     border-right: 2px;
+     border-left: 2px;
+     /* border-bottom: 3px solid; */
+}
+
+/* .imgCapsuleDiscussion {
+     padding: 1px;
+} */
+
+.presentationData {
+     display: flex;
+     flex-direction: column;
+     padding-left: 5px;
+}
+
+.presentationDataSecond {
+     display: flex;
+     flex-direction: row;
+     padding-top: 5px;
+}
+
+.rightWindowChat {
+     display: flex;
+     flex-direction: column;
+     width: 100%;
+     height: 100%;
+     align-content: flex-end;
+     /* border-left: solid 3px rgba(0,0,0,0); */
+}
+
+.chatBox {
+     position: relative;
+     overflow-y: scroll;
+     overflow-x: hidden;
+     transform: rotate(180deg);
+     width: 100%;
+     height: 100%;
+     padding-left: 6px;
+     padding-right: 6px;
+     background-color: rgba(255, 255, 255, 0.6);
+     border-top-right-radius: 3px;
+     direction: rtl;
+}
+
+.informativeMessages {
+     transform: rotate(180deg);
+     /* height: 100%;
+     align-items: center; */
+}
+
+.messagesWrapper {
+     display: -webkit-box;
+     display: -ms-flexbox;
+     display: flex;
+     -webkit-box-orient: vertical;
+     -webkit-box-direction: normal;
+     -ms-flex-direction: column-reverse;
+     flex-direction: column-reverse;
+     -webkit-box-pack: end;
+     -ms-flex-pack: end;
+     justify-content: flex-end;
+}
+
+.message {
+     width: -webkit-fit-content;
+     width: -moz-fit-content;
+     width: fit-content;
+     position: relative;
+     word-break: break-all;
+     transform: rotate(180deg);
+     direction: ltr;
+}
+
+.myMessageWrapper {
+     display: flex;
+     justify-content: flex-end;
+     /* width: 470px; */
+     width: 600px;
+     /* ----------------------largeur de la chatBox */
+     /* text-align: right; */
+}
+
+.hisMessageWrapper {
+     display: flex;
+     width: 100%;
+     /* justify-content: right; */
+}
+
+.myMessage {
+     right: 0px;
+     max-width: 80%;
+     text-align: right;
+     background-color: rgb(61, 78, 114);
+     color: white;
+     border-radius: 10px;
+     padding: 2px 10px 3px 10px;
+     border-right: 2px solid rgb(0, 0, 0, 0.2);
+     border-bottom: 2px solid rgb(0, 0, 0, 0.2);
+}
+
+.hisMessage {
+     text-align: left;
+     background-color: rgb(220, 227, 221);
+     border-radius: 10px;
+     padding: 2px 10px 3px 10px;
+     border-right: 2px solid rgb(0, 0, 0, 0.4);
+     border-bottom: 2px solid rgb(0, 0, 0, 0.4);
+}
+
+.horizontalSpaceChat {
+     width: 100%;
+     height: 3px;
+     background-color: rgb(0, 0, 0, 0);
+}
+
+.inputMessage {
+     display: block;
+     position: -webkit-sticky;
+     position: sticky;
+     right: 0px;
+     /* display: flex;
+     flex-direction: row; */
+     width: 100%;
+     /* height: 40px; */
+     align-items: right;
+     background-color: rgba(17, 190, 196, 0);
+}
+
+.formChat {
+     position: absolute;
+     position: sticky;
+     right: 20px;
+     align-items: right;
+}
+
+.layerButton {
+     position: absolute;
+     right: 0px;
+     width: 100px;
+     justify-content: right;
+}
+
+.trashBt {      /* ----------------------------- A SUPPRIMER ???? */
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     padding: 10px;
+     background-color: white;
+     margin-top: 1px;
+     margin-bottom: 1px;
+     background-color: rgba(255, 255, 255, 0.6)
+}
+
+@media (max-width: 1010px) {
+     .mainFrameChat {
+          width: 500px;
+     }
+     .leftPanelChat {
+          width: 62px;
+     }
+     .containerDiscussion {
+          width: 60px;
+     }
+     .containerDiscussionSelected {
+          width: 250px;
+     }
+     .presentationData {
+          display: none;
+     }
+     .myMessageWrapper {
+          width: 400px;
+     }
+}

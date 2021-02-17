@@ -24,7 +24,7 @@ function Mycollection(props) {
     const [token, setToken] = useState(props.token)
     const [capsulesList, setCapsulesList] = useState([])
     const [deleted, setDeleted] = useState(0)
-    const [listErrorsSaving, setErrorsSaving] = useState([])
+    const [listCaps, setCaps] = useState([])
 
 
     // échange de données avec le back pour la récuration des données à chaque changement de l'état deleted
@@ -33,7 +33,7 @@ function Mycollection(props) {
             const data = await fetch(`/my-collection?token=${token}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
-            setErrorsSaving(body.error)
+            setCaps(body.error)
         }
 
         
@@ -53,7 +53,7 @@ function Mycollection(props) {
 
     // message en cas d'absence de données enregistrée pour l'instant
     var noCapsule
-    if (capsulesList == 0 && listErrorsSaving.length == 0) {
+    if (capsulesList == 0 && listCaps.length == 0) {
         noCapsule = <h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}>Aucune capsule enregistrée</h4>
     }
 
@@ -62,7 +62,7 @@ function Mycollection(props) {
     const { Title } = Typography;
 
     // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-    var tabErrorsSaving = listErrorsSaving.map((error, i) => {
+    var tabErrorsCaps = listCaps.map((error, i) => {
         return (<h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}
         >
             {error}
@@ -90,7 +90,7 @@ function Mycollection(props) {
                     </Title>
 
                     {/* messages d'erreur */}
-                    {tabErrorsSaving}
+                    {tabErrorsCaps}
 
                     {/* messages d'absenced de données en BDD */}
                     {noCapsule}
@@ -100,7 +100,7 @@ function Mycollection(props) {
                         <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
 
 
-                            <div className="mapContainer">
+                            <div className="displayContainer">
 
                                 <div className="eachCapsule">
 

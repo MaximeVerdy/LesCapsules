@@ -47,6 +47,7 @@ var  handleSubmitSignup = async () => {
   // si l'échange avec la BDD a fonctionné, envoie du token dans le Redux Store
   if(body.result === true){
     props.addToken(body.token)
+    props.changeStatus(body.newMessage)
     setUserExists(true)
   // sinon récupérer le tableau d'erreurs venu du back
   } else {
@@ -70,6 +71,7 @@ var handleSubmitSignin = async () => {
     // si l'échange avec la BDD a fonctionné, envoie du token dans le Redux Store
   if(body.result === true){
     props.addToken(body.token)
+    props.newMessage(body.newMessage)
     setUserExists(true)
   }  else {
       // sinon récupérer le tableau d'erreurs venu du back
@@ -256,6 +258,9 @@ function mapDispatchToProps(dispatch){
   return {
     addToken: function(token){
       dispatch({type: 'addToken', token: token})
+    },
+    newMessage: function(newMessage){
+      dispatch({type: 'changeStatus', newMessage: newMessage})
     }
   }
 }

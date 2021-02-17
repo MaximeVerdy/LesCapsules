@@ -16,6 +16,17 @@
 
 }
 
+.notificationMessage {
+    color: rgb(233, 113, 77);
+    transform: rotate(-7deg);
+    -webkit-animation:spin 600ms linear infinite;
+    -moz-animation:spin 600ms linear infinite;
+    animation:spin 600ms linear infinite;
+}
+@-moz-keyframes spin { 50% { -moz-transform: rotate(14deg); } }
+@-webkit-keyframes spin { 50% { -webkit-transform: rotate(14deg); } }
+@keyframes spin { 50% { -webkit-transform: rotate(14deg); transform:rotate(14deg); } }
+
 .menu {
     background-image: url('../images/background-metal.jpg');
     background-repeat: repeat;
