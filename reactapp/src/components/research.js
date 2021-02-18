@@ -13,6 +13,7 @@ import {
     Input,
     Button,
     Modal,
+    Popover,
 } from 'antd';
 
 //composants
@@ -65,18 +66,19 @@ function Research(props) {
 
     const [redirection, setredirection] = useState(false)
 
+    const [timeOff, setTimeOff] = useState(false)
+
     // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
         const findcapsules = async () => {
-            const data = await fetch(`/research?brand=${brand}&year=${year}&country=${country}`) // pour récupérer des données 
+            const data = await fetch(`/research?token=${token}&brand=${brand}&year=${year}&country=${country}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
             setErrors(body.error)
             setfavorites(body.favorites)
-
         }
         findcapsules()
-
+        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
     }, [])
 
 
@@ -116,34 +118,6 @@ function Research(props) {
         }
     }
 
-    
-        // ajout d'une capsule favorite en base de données
-        var handleSendMessage = async (capsuleRef) => {
-            const data = await fetch('/first-message', {
-                method: 'POST', // pour écrire des données en BDD
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `token=${token}&capsuleRef=${capsuleRef}`
-            })
-    
-            // convertion des données reçues en objet JS (parsage)
-            const body = await data.json()
-            console.log("body.updated --------", body.updated);
-            // réponse positive du back
-            if (body.updated) {
-                setredirection(true)
-                // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
-            } else {
-                Modal.warning({
-                    content: 'Vous ne pouvez pas écrire à vous même'
-                  });
-                // setErrors(body.error)
-            }
-        }
-
-    if (redirection === true) {
-        return <Redirect to='/messages' />
-    }
-
     // suppression d'une capsule favorite en base de données
     var handleSuppFavorite = async (capsuleRef) => {
         const data = await fetch('/supp-favorite', {
@@ -164,24 +138,59 @@ function Research(props) {
         }
     }
 
-    // message en cas d'absence de données enregistrée pour l'instant
-    var noCapsule
-    if (capsulesList == 0 && listErrors.length == 0) {
-        noCapsule = <h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}>Aucune capsule enregistrée</h4>
+    // Envoi d'un message 
+    var handleSendMessage = async (capsuleRef) => {
+        const data = await fetch('/first-message', {
+            method: 'POST', // pour écrire des données en BDD
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `token=${token}&capsuleRef=${capsuleRef}`
+        })
+
+        // convertion des données reçues en objet JS (parsage)
+        const body = await data.json()
+        // réponse positive du back
+        if (body.updated) {
+            setredirection(true)
+            // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
+        } else {
+            Modal.warning({
+                content: 'Vous ne pouvez pas écrire à vous même'
+            });
+        }
     }
 
+    if (redirection === true) {
+        return <Redirect to='/messages' />
+    }
+
+
+    const handleModalNoAccess = () => {
+        Modal.warning({
+            content: 'Vous devez d\'abord vous connecter'
+        })
+    }
 
     // mise en forme des titres antd
     const { Title } = Typography;
 
-    // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-    var Errors = listErrors.map((error, i) => {
-        return (<h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}
-        >
-            {error}
-        </h4>
-        )
-    })
+
+
+    if (timeOff) {
+        // message en cas d'absence de données enregistrée pour l'instant
+        var noCapsule
+        if (capsulesList == 0 && listErrors.length == 0) {
+            noCapsule = <h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}>Aucune capsule enregistrée</h4>
+        }
+
+        // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+        var Errors = listErrors.map((error, i) => {
+            return (<h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}
+            >
+                {error}
+            </h4>
+            )
+        })
+    }
 
     // condition de rediction en cas d'absence de token 
     // if(token == ''){
@@ -195,11 +204,11 @@ function Research(props) {
 
             <Topnavbar />
 
-            <Row className="capsuleRow">
+            <Row className="capsuleRow capsuleRowParam">
                 <div className="ColForm" >
 
-                    <Title level={3} className="title">
-                        Recherche
+                    <Title level={6} className="title">
+                        Toutes les capsules publiées
                     </Title>
 
 
@@ -537,11 +546,6 @@ function Research(props) {
                 </div>
             </Row>
 
-            <Row>
-
-            </Row>
-
-
 
 
             <Row className="capsuleRow capsuleRowSearch">
@@ -566,42 +570,60 @@ function Research(props) {
 
                                 <div className="eachCapsule">
 
+
                                     <img className="imgCapsule" src={capsule.photo} alt="une capsule" width="80px" />
 
-                                    <Tag color="#E09500">{capsule.brand}</Tag>
 
-                                    <Tag color="#E09500"> {capsule.year}</Tag>
+                                    <div className="presentationData">
+                                        <div>
+                                            <Tag color="rgba(51,79,140,0.2)"><span style={{ color: 'black', fontSize: '15px' }}>{capsule.brand}</span></Tag>
+                                        </div>
+                                        <div className="presentationDataSecond">
+                                            <Tag color="rgba(51,79,140,0.2)"><span style={{ color: '#565656' }}>{capsule.year}</span></Tag>
 
-                                    <Tag color="#E09500"> {capsule.country}</Tag>
-
-
+                                            <Tag color="rgba(51,79,140,0.2)"> <span style={{ color: '#565656' }}>{capsule.country}</span></Tag>
+                                        </div>
+                                    </div>
 
                                 </div>
 
                             </div>
 
                             <div className="trashBt">
-                                {favorites.includes(capsule.capsuleRef) &&
+                                {token != '' && favorites.includes(capsule.capsuleRef) &&
                                     <FontAwesomeIcon icon={faHeart} size="lg" color='red'
                                         // au clic, ajout aux favoris 
                                         onClick={() => handleSuppFavorite(capsule.capsuleRef)}
                                     />
                                 }
-                                {!favorites.includes(capsule.capsuleRef) &&
+                                {token != '' && !favorites.includes(capsule.capsuleRef) &&
                                     <FontAwesomeIcon icon={faHeart} size="lg" color='grey'
                                         // au clic, suppression des favoris 
                                         onClick={() => handleAddFavorite(capsule.capsuleRef)}
                                     />
                                 }
+                                {token == '' &&
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'
+                                        // au clic, ouverture du pop up d'avertissement
+                                        onClick={() => handleModalNoAccess()}
+                                    />
+                                }
 
-                                <div className = "spaceFavMsg">
+                                <div className="spaceFavMsg">
                                 </div>
 
-                                {}
-                                <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
-                                    // au clic, envoi d'un message
-                                    onClick={() => handleSendMessage(capsule.capsuleRef)}
-                                />
+                                {token != '' &&
+                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                        // au clic, envoi d'un message
+                                        onClick={() => handleSendMessage(capsule.capsuleRef)}
+                                    />
+                                }
+                                {token == '' &&
+                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                        // au clic, ouverture du pop up d'avertissement
+                                        onClick={() => handleModalNoAccess()}
+                                    />
+                                }
                             </div>
 
                         </div>

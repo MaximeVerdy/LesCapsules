@@ -22,7 +22,7 @@ import logo from '../images/logo-capsules.png';
 import capsule from '../images/capsule.png';
 
 
-function Topnavbar(props) {
+function TopnavbarLogin(props) {
 
   const [newMessage, setnewMessage] = useState(props.newMessage)
   const [token, settoken] = useState(props.token)
@@ -36,14 +36,14 @@ function Topnavbar(props) {
   const handleModalNoAccess = () => {
     Modal.warning({
       content: 'Vous devez d\'abord vous connecter'
-    });
+    })
   }
 
   return (
 
     <div className="sticky">
 
-      <div
+      {/* <div
         style={{
           position: 'absolute',
           top: 3,
@@ -61,8 +61,7 @@ function Topnavbar(props) {
           height="42px"
         />
 
-        {/* <span className="hiddenTextMenu" style={{color:'black' }}> Les capsules </span> */}
-      </div>
+      </div> */}
 
       <Menu className="menu" style={{ textAlign: 'center' }} mode="horizontal" >
 
@@ -72,7 +71,7 @@ function Topnavbar(props) {
             <div style={{ color: 'black' }}>
               <FontAwesomeIcon icon={faSearch} size="lg" />
               {/* search, accueil, home, toutes les capsules */}
-              <span className="text hiddenTextMenu"> Recherche</span>
+              <span className="text hiddenTextMenuLogin "> Recherche</span>
             </div>
           </Link>
         </Menu.Item>
@@ -82,7 +81,7 @@ function Topnavbar(props) {
             <Link to="/favorites">
               <div style={{ color: 'black' }}>
                 <FontAwesomeIcon icon={faHeart} size="lg" />
-                <span className="text hiddenTextMenu"> Favoris</span>
+                <span className="text hiddenTextMenuLogin "> Favoris</span>
               </div>
             </Link>
           }
@@ -91,7 +90,7 @@ function Topnavbar(props) {
               onClick={() => handleModalNoAccess()}
             >
               <FontAwesomeIcon icon={faHeart} size="lg" />
-              <span className="text hiddenTextMenu"> Favoris</span>
+              <span className="text hiddenTextMenuLogin "> Favoris</span>
             </div>
 
           }
@@ -102,7 +101,7 @@ function Topnavbar(props) {
             <Link to="/addcapsule">
               <div style={{ color: 'black' }}>
                 <FontAwesomeIcon icon={faPlusCircle} size="lg" />
-                <span className="text hiddenTextMenu"> Ajout</span>
+                <span className="text hiddenTextMenuLogin "> Ajout</span>
               </div>
             </Link>
           }
@@ -112,7 +111,7 @@ function Topnavbar(props) {
               onClick={() => handleModalNoAccess()}
             >
               <FontAwesomeIcon icon={faPlusCircle} size="lg" />
-              <span className="text hiddenTextMenu"> Ajout</span>
+              <span className="text hiddenTextMenuLogin "> Ajout</span>
 
             </div>
 
@@ -124,7 +123,7 @@ function Topnavbar(props) {
             <Link to="/mycollection">
               <div style={{ color: 'black' }}>
                 <FontAwesomeIcon icon={faCoins} size="lg" />
-                <span className="text hiddenTextMenu"> Ma collection </span>
+                <span className="text hiddenTextMenuLogin "> Ma collection </span>
               </div>
             </Link>
           }
@@ -133,7 +132,7 @@ function Topnavbar(props) {
               onClick={() => handleModalNoAccess()}
             >
               <FontAwesomeIcon icon={faCoins} size="lg" />
-              <span className="text hiddenTextMenu"> Ma collection </span>
+              <span className="text hiddenTextMenuLogin "> Ma collection </span>
             </div>
 
           }
@@ -144,7 +143,7 @@ function Topnavbar(props) {
             <Link to="/messages">
               <div style={{ color: 'black' }}>
                 <FontAwesomeIcon className="notificationMessage" icon={faEnvelope} size="lg" />
-                <span className="text hiddenTextMenu"> Messages </span>
+                <span className="text hiddenTextMenuLogin "> Messages </span>
               </div>
             </Link>
           }
@@ -153,7 +152,7 @@ function Topnavbar(props) {
             <Link to="/messages">
               <div style={{ color: 'black' }}>
                 <FontAwesomeIcon icon={faEnvelope} size="lg" />
-                <span className="text hiddenTextMenu"> Messages </span>
+                <span className="text hiddenTextMenuLogin"> Messages </span>
               </div>
             </Link>
           }
@@ -163,7 +162,7 @@ function Topnavbar(props) {
               onClick={() => handleModalNoAccess()}
             >
               <FontAwesomeIcon icon={faEnvelope} size="lg" />
-              <span className="text hiddenTextMenu"> Messages </span>
+              <span className="text hiddenTextMenuLogin"> Messages </span>
             </div>
           }
 
@@ -181,12 +180,7 @@ function Topnavbar(props) {
           paddingTop: '10px',
         }}
       >
-        {token == '' &&
-          <Link to="/">
-            <FontAwesomeIcon icon={faPowerOff} size="lg" color="black" />
-            <span className="text hiddenTextMenu" style={{ color: 'black' }}> Connexion </span>
-          </Link>
-        }
+
         {token != '' &&
           <Link to="/disconnected">
             <FontAwesomeIcon icon={faPowerOff} size="lg" color="black" />
@@ -213,4 +207,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps,
   null
-)(Topnavbar)
+)(TopnavbarLogin)

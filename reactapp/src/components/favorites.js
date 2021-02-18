@@ -12,6 +12,7 @@ import {
     InputNumber,
     Input,
     Button,
+    Modal,
 } from 'antd';
 
 //composants
@@ -26,6 +27,7 @@ import '../css/other.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 function Favorites(props) {
 
@@ -58,64 +60,100 @@ function Favorites(props) {
     const [deleted, setDeleted] = useState(false)
 
     const [favorites, setfavorites] = useState([])
+    const [positiveResult, setpositiveResult] = useState(false)
+    const [timeOff, setTimeOff] = useState(false)
+    const [redirection, setredirection] = useState(false)
 
     // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
         const findcapsules = async () => {
             const data = await fetch(`/all-my-favorites?token=${token}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
-            setCapsulesList(body.capsules)
+            setCapsulesList(body.capsulesSorted)
             setErrors(body.error)
             setfavorites(body.favorites)
-            
+            setpositiveResult(body.result)
+            // console.log("body.result", body.result);
         }
         findcapsules()
-
+        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
     }, [favorites])
 
-        // suppression d'une capsule favorite en base de données
-        var handleSuppFavorite = async (capsuleRef) => {
-            const data = await fetch('/supp-favorite', {
-                method: 'PUT', // pour supprimer des données en BDD
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `token=${token}&capsuleRef=${capsuleRef}`
-            })
-    
-            // convertion des données reçues en objet JS (parsage)
-            const body = await data.json()
-            // réponse positive du back
-            if (body.result) {
-                setDeleted(true)
-                setfavorites(body.favorites)
-                // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
-            } else {
-                setErrors(body.error)
-            }
-        }
+    // suppression d'une capsule favorite en base de données
+    var handleSuppFavorite = async (capsuleRef) => {
+        const data = await fetch('/supp-favorite', {
+            method: 'PUT', // pour supprimer des données en BDD
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `token=${token}&capsuleRef=${capsuleRef}`
+        })
 
-    // message en cas d'absence de données enregistrée pour l'instant
-    var noCapsule
-    if (capsulesList == 0 && listErrors.length == 0) {
-        noCapsule = <h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}>Aucune capsule favorite</h4>
+        // convertion des données reçues en objet JS (parsage)
+        const body = await data.json()
+        // réponse positive du back
+        if (body.result) {
+            setDeleted(true)
+            setfavorites(body.favorites)
+            // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
+        } else {
+            setErrors(body.error)
+        }
     }
 
+    // Envoi d'un message 
+    var handleSendMessage = async (capsuleRef) => {
+        const data = await fetch('/first-message', {
+            method: 'POST', // pour écrire des données en BDD
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `token=${token}&capsuleRef=${capsuleRef}`
+        })
+
+        // convertion des données reçues en objet JS (parsage)
+        const body = await data.json()
+        // réponse positive du back
+        if (body.updated) {
+            setredirection(true)
+            // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
+        } else {
+            Modal.warning({
+                content: 'Vous ne pouvez pas écrire à vous même'
+            });
+        }
+    }
+
+    const handleModalNoAccess = () => {
+        Modal.warning({
+            content: 'Vous devez d\'abord vous connecter'
+        })
+    }
+
+    if (redirection === true) {
+        return <Redirect to='/messages' />
+    }
 
     // mise en forme des titres antd
     const { Title } = Typography;
 
-    // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-    var Errors = listErrors.map((error, i) => {
-        return (<h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}
-        >
-            {error}
-        </h4>
-        )
-    })
+    if (timeOff) {
+        // message en cas d'absence de données enregistrée pour l'instant
+        var noCapsule
+        if (capsulesList == 0 && listErrors.length == 0) {
+            noCapsule = <h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}>Aucune capsule favorite</h4>
+        }
+
+        // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+        var Errors = listErrors.map((error, i) => {
+            return (<h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}
+            >
+                {error}
+            </h4>
+            )
+        })
+    }
 
     // condition de rediction en cas d'absence de token 
-    // if(token == ''){
-    //     return <Redirect to='/notlogged' />
-    //     }   
+    if (token == '') {
+        return <Redirect to='/notlogged' />
+    }
 
     return (
         // le style de la page history est dans css/other.css
@@ -127,7 +165,7 @@ function Favorites(props) {
             <Row className="capsuleRow">
                 <div className="ColForm" >
 
-                    <Title level={3} className="title">
+                    <Title level={6} className="title">
                         Mes capsules favorites
                     </Title>
 
@@ -137,40 +175,65 @@ function Favorites(props) {
                     {/* messages d'absenced de données en BDD */}
                     {noCapsule}
 
-                    {/* map du tableau de données */}
-                    {capsulesList.map((capsule, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
+                    {positiveResult == true &&
+                        <div>
+                            {/* map du tableau de données */}
+                            {capsulesList.map((capsule, i) => (
+                                <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
 
 
-                            <div className="displayContainer">
+                                    <div className="displayContainer">
 
-                                <div className="eachCapsule">
+                                        <div className="eachCapsule">
 
-                                    <img className="imgCapsule" src={capsule.photo} alt="une capsule" width="80px" />
+                                            <img className="imgCapsule" src={capsule.photo} alt="une capsule" width="80px" />
 
-                                    <Tag color="#E09500">{capsule.brand}</Tag>
+                                            <div className="presentationData">
+                                                <div>
+                                                    <Tag color="rgba(51,79,140,0.2)"><span style={{ color: 'black', fontSize: '15px' }}>{capsule.brand}</span></Tag>
+                                                </div>
+                                                <div className="presentationDataSecond">
+                                                    <Tag color="rgba(51,79,140,0.2)"><span style={{ color: '#565656' }}>{capsule.year}</span></Tag>
 
-                                    <Tag color="#E09500"> {capsule.year}</Tag>
+                                                    <Tag color="rgba(51,79,140,0.2)"> <span style={{ color: '#565656' }}>{capsule.country}</span></Tag>
+                                                </div>
+                                            </div>
 
-                                    <Tag color="#E09500"> {capsule.country}</Tag>
+                                        </div>
+
+                                    </div>
+
+                                    <div className="trashBt">
+                                        <FontAwesomeIcon icon={faHeart} size="lg" color='red'
+                                            // au clic, ajout aux favoris 
+                                            onClick={() => handleSuppFavorite(capsule.capsuleRef)}
+                                        />
 
 
+
+                                        <div className="spaceFavMsg">
+                                        </div>
+
+                                        {token != '' &&
+                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                                // au clic, envoi d'un message
+                                                onClick={() => handleSendMessage(capsule.capsuleRef)}
+                                            />
+                                        }
+                                        {token == '' &&
+                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                                // au clic, ouverture du pop up d'avertissement
+                                                onClick={() => handleModalNoAccess()}
+                                            />
+                                        }
+                                    </div>
 
                                 </div>
 
-                            </div>
-
-                            <div className="trashBt">
-                                    <FontAwesomeIcon icon={faHeart} size="lg" color='red'
-                                        // au clic, ajout aux favoris 
-                                        onClick={() => handleSuppFavorite(capsule.capsuleRef)}
-                                        />
-                                
-                            </div>
-
+                            ))}
                         </div>
+                    }
 
-                    ))}
 
                 </div>
             </Row>

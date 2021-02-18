@@ -122,7 +122,7 @@ function Addcapsule(props) {
       const data = await fetch('/save-capsule', {
         method: 'POST', // pour écrire des données en BDD
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `yearFromFront=${year}&brandFromFront=${brand}&countryFromFront=${country}&photoFromFront=${fileList[0].thumbUrl}`
+        body: `tokenFromFront=${token}&yearFromFront=${year}&brandFromFront=${brand}&countryFromFront=${country}&photoFromFront=${fileList[0].thumbUrl}`
       })
 
       // convertion des données reçues en objet JS (parsage)
@@ -134,8 +134,11 @@ function Addcapsule(props) {
         setErrorsSaving(body.error)
       }
     } else {
-      setfillingRequest(<p className="erreurs">Remplissez le formulaire</p>)
+      // setfillingRequest(<p className="erreurs">Remplissez le formulaire</p>)
       setBrand('non renseigné')
+      Modal.warning({
+        content: 'Remplissez les informations nécessaires'
+      });
     }
 
   }
@@ -180,9 +183,9 @@ function Addcapsule(props) {
   }
 
   // condition de rediction en cas d'absence de token 
-  // if(token == ''){
-  //   return <Redirect to='/notlogged' />
-  //   }   
+  if(token == ''){
+    return <Redirect to='/notlogged' />
+    }   
 
 
   return (
@@ -202,16 +205,19 @@ function Addcapsule(props) {
             name="basic"
             onFinish={onSubmit}
             span={5}
+          // layout= "horizontal"
+          // colon= "false"
+          // preserve = "false"
           >
 
-            <Title level={3} className="title">
-              Nouvelle capsule
+            <Title level={6} className="title">
+              Une capsule à ajouter ?
             </Title>
-
 
             <Form.Item
               label="Marque"
               name="text"
+            // noStyle="true"
             >
 
               <Input
@@ -499,12 +505,15 @@ function Addcapsule(props) {
             <Form.Item
               label="Photo de la capsule"
               name="photo"
+              style={{
+                paddingBottom: "30px",
+              }}
             >
               <ImgCrop rotate
 
                 style={{
                   width: 150,
-                  textAlign: "left"
+                  textAlign: "left",
                 }}
               >
                 <Upload
@@ -515,6 +524,7 @@ function Addcapsule(props) {
                   onPreview={onPreview}
                   customRequest={successRequest}
                   beforeUpload={beforeUpload}
+
                 >
                   {fileList.length < 1 && 'Ajoutez une photo'}
                 </Upload>
@@ -550,6 +560,8 @@ function Addcapsule(props) {
 
       </Row>
 
+      <Row className="endDiv">
+      </Row>
 
       <Footer />
 

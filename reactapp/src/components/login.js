@@ -12,6 +12,7 @@ import '../css/login.css';
 import Logo from '../images/logo-capsules.png';
 
 // composants
+import TopnavbarLogin from './navbarLogin.js'
 import Footer from './footer.js'
 
 
@@ -121,6 +122,7 @@ var tabErrorsSignup = listErrorsSignup.map((error,i) => {
 
     <Layout className= "loginLayout"> 
 
+ <TopnavbarLogin />
 
               <Row className="loginRow">
                   <Col className="loginColImg">
@@ -147,7 +149,7 @@ var tabErrorsSignup = listErrorsSignup.map((error,i) => {
                           initialValues={{ remember: true }}
                         >
 
-                          <Title level={3} className="title">
+                          <Title level={6} className="title">
                             Reconnexion
                           </Title>
 
@@ -200,7 +202,7 @@ var tabErrorsSignup = listErrorsSignup.map((error,i) => {
                           initialValues={{ remember: true }}
                         >
 
-                          <Title level={3}className="title">                          
+                          <Title level={6}className="title">                          
                             Inscription
                           </Title>
 

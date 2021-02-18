@@ -1,12 +1,16 @@
 // page affichée en cas d'absence de token trouvé
 
 
-import React, {useEffect, useState} from 'react'
-import {Redirect} from 'react-router-dom'
-import {Layout, Row, Col} from 'antd';
+import React, { useEffect, useState } from 'react'
+import { Redirect } from 'react-router-dom'
+import { Layout, Row, Col } from 'antd';
+
+
+// style
+import '../css/other.css';
 
 // images
-import Runner from '../images/Runner.png';
+import Logo from '../images/logo-capsules.png';
 
 export default function NotLogged() {
 
@@ -14,51 +18,49 @@ export default function NotLogged() {
 
     useEffect(() => {
 
-        const timer = setTimeout(() => {setTimeOff(true)}, 3000);
+        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
 
-    },[])
+    }, [])
 
     if(timeOff){
         return <Redirect to='/' />
     }    
 
     return (
-  
-        <Layout
-            style = {{
-                display: 'flex',
+
+        <Layout className="researchLayout"
+            style={{
                 placeContent: 'center',
                 alignItems: 'center',
                 height: '100vh',
-                backgroundColor: 'white',
             }}
         >
 
+            <Row
+                style={{
+                    marginTop: '-120px'
+                }}
+            >
+                <h3>Vous devez être connecté.e pour accéder à</h3>
+            </Row>
 
-                <Row>
-                    <Col
-                        style = {{
-                            marginBottom: '10px'
-                        }}
-                    >
-                        <img 
-                            src={Runner} 
-                            alt="joggeuse" 
-                            width="180px" 
-                        />
-                    </Col>
-                </Row>
-
-
-
-                <Row>
-                    <h3>Il faut être connecté pour accéder à cette page</h3>
-                </Row>
+            <Row>
+                <Col
+                    style={{
+                        marginTop: '30px'
+                    }}
+                >
+                    <img
+                        src={Logo}
+                        alt="Logo Les Capsules"
+                        width="600px"
+                    />
+                </Col>
+            </Row>
 
 
 
         </Layout>
-  
+
     );
-  }
-  
+}

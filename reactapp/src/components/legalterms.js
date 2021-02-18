@@ -19,11 +19,11 @@ function MentionsLegales (props) {
   
         <div>
 
-            {  token != '' &&
+     
              <Topnavbar/>
-            }
+           
 
-            {  token == '' &&
+            {/* {  token == '' &&
                 <div 
                    style={{
                      position: 'absolute',          
@@ -37,7 +37,7 @@ function MentionsLegales (props) {
                      <span className="hiddenTextMenu" style={{color:'black' }}> Connexion </span>
                    </Link>
                </div>
-            }
+            } */}
 
             <div
               style=

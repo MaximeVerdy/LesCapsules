@@ -28,6 +28,8 @@ function Messages(props) {
     const [discussionMessagesOpened, setdiscussionMessagesOpened] = useState([])
     const [myNewMsg, setmyNewMsg] = useState('')
     const [discussionUpdated, setdiscussionUpdated] = useState(false)
+    const [positiveResult, setpositiveResult] = useState(false)
+    const [timeOff, setTimeOff] = useState(false)
 
 
     // échange de données avec le back pour la récuration des données à chaque changement de l'état interaction
@@ -35,14 +37,15 @@ function Messages(props) {
         const findDiscussions = async () => {
             const data = await fetch(`/discussions?token=${token}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
+            setErrorsMessages(body.error)
+            setpositiveResult(body.result)
             setDiscussionsList(body.sortedDiscussions)
             setdiscussionMessagesOpened(body.sortedDiscussions[0].messages)
             setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
-            setErrorsMessages(body.error)
-            // console.log('discussionMessagesOpened ----', discussionMessagesOpened);
             props.newMessage(false)
         }
         findDiscussions()
+        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
     }, [interaction])
 
 
@@ -102,25 +105,25 @@ function Messages(props) {
         }
     })
 
-
-    // message en cas d'absence de données enregistrée pour l'instant
-    var noMessage
-    if (discussionsList == 0 && listErrorsMessages.length == 0) {
-        noMessage = <h4 style={{ display: 'flex', width: '100%', height: '100%', marginBottom: "20px", justifyContent: 'center', alignItems: 'center', color: 'red' }}>Aucun message</h4>
-    }
-
-
     // mise en forme des titres antd
     const { Title } = Typography;
 
-    // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-    var tabErrorsMessages = listErrorsMessages.map((error, i) => {
-        return (<div style={{ display: 'flex', width: '100%', height: '100%', marginBottom: "20px", justifyContent: 'center', alignItems: 'center', color: 'red' }}
-        >
-            {error}
-        </div>
-        )
-    })
+    if (timeOff) {
+        // message en cas d'absence de données enregistrée pour l'instant
+        var noMessage
+        if (discussionsList == 0 && listErrorsMessages.length == 0) {
+            noMessage = <h4 style={{ display: 'flex', width: '100%', height: '100%', paddingBottom: "180px", justifyContent: 'center', alignItems: 'center', color: 'red', fontWeight: 'bold' }}>Aucun message</h4>
+        }
+
+        // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+        var tabErrorsMessages = listErrorsMessages.map((error, i) => {
+            return (<div style={{ display: 'flex', width: '100%', height: '100%', marginBottom: "20px", justifyContent: 'center', alignItems: 'center', color: 'red', fontWeight: 'bold' }}
+            >
+                {error}
+            </div>
+            )
+        })
+    }
 
     const [form] = Form.useForm();
 
@@ -131,9 +134,9 @@ function Messages(props) {
 
 
     // condition de rediction en cas d'absence de token 
-    // if(token == ''){
-    //     return <Redirect to='/notlogged' />
-    //     }   
+    if (token == '') {
+        return <Redirect to='/notlogged' />
+    }
 
     return (
         // le style de la page history est dans css/messages.css
@@ -145,176 +148,195 @@ function Messages(props) {
             <Row className="messageRow">
                 <div className="mainFrameChat" >
 
-                    <Title level={3} className="title">
-                        Mes messages
+                    <Title level={6} className="title">
+                        Echangeons entre passionnés
                     </Title>
 
+                    {positiveResult == false &&
+                        <div style={{
+                            height: "452px",
+                        }}>
+                            {/* messages d'erreur */}
+                            {tabErrorsMessages}
 
-                    <div className="techPart">
-
-                        <div className="leftPanelChat">
-
-                            {/* map du tableau de données */}
-                            {discussionsList.map((discussion, i) => (
-
-                                <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
+                            {/* messages d'absence de données en BDD */}
+                            {noMessage}
+                        </div>
+                    }
 
 
-                                    {discussionOpenedRef == discussion.discussionRef &&
-                                    <div className="containerDiscussionSelected ">
+                    {positiveResult == true &&
 
-                                    <div className="eachDiscussion"
-                                        onClick={() => changeDiscussion(discussion.discussionRef)}
-                                    >
+                        <div className="techPart">
 
-                                        <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
 
-                                        <div className="presentationData">
 
-                                            <div>
-                                                <Tag color="grey">{discussion.capsuleData.brand}</Tag>
-                                                {/* rgb(255, 136, 107, 0.9) */}
-                                            </div>
-                                            <div className="presentationDataSecond">
+                            <div className="leftPanelChat">
 
-                                                <Tag color="grey"> {discussion.capsuleData.year}</Tag>
+                                {/* map du tableau de données */}
+                                {discussionsList.map((discussion, i) => (
 
-                                                <Tag color="grey"> {discussion.capsuleData.country}</Tag>
-                                            </div>
-                                        </div>
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
 
-                                    </div>
 
-                                </div>
-                                    }
+                                        {discussionOpenedRef == discussion.discussionRef &&
+                                            <div className="containerDiscussionSelected ">
 
-                                    {discussionOpenedRef != discussion.discussionRef &&
-                                    
-                                    <div className="containerDiscussion">
+                                                <div className="eachDiscussion"
+                                                    onClick={() => changeDiscussion(discussion.discussionRef)}
+                                                >
 
-                                        <div className="eachDiscussion"
-                                            onClick={() => changeDiscussion(discussion.discussionRef)}
-                                        >
+                                                    <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
 
-                                            <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
+                                                    <div className="presentationData">
 
-                                            <div className="presentationData">
+                                                        <div>
+                                                            <Tag color="rgba(81,97,119,1)">{discussion.capsuleData.brand}</Tag>
+                                                            {/* rgb(255, 136, 107, 0.9) */}
+                                                        </div>
+                                                        <div className="presentationDataSecond">
 
-                                                <div>
-                                                    <Tag color="grey">{discussion.capsuleData.brand}</Tag>
-                                                    {/* rgb(255, 136, 107, 0.9) */}
+                                                            <Tag color="rgba(81,97,119,1)"> {discussion.capsuleData.year}</Tag>
+
+                                                            <Tag color="rgba(81,97,119,1)"> {discussion.capsuleData.country}</Tag>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
-                                                <div className="presentationDataSecond">
 
-                                                    <Tag color="grey"> {discussion.capsuleData.year}</Tag>
-
-                                                    <Tag color="grey"> {discussion.capsuleData.country}</Tag>
-                                                </div>
                                             </div>
+                                        }
 
-                                        </div>
+                                        {discussionOpenedRef != discussion.discussionRef &&
 
-                                    </div>
-                                    }
+                                            <div className="containerDiscussion">
+
+                                                <div className="eachDiscussion"
+                                                    onClick={() => changeDiscussion(discussion.discussionRef)}
+                                                >
+
+                                                    <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
+
+                                                    <div className="presentationData">
+
+                                                        <div>
+                                                            <Tag color="rgba(81,97,119,0.3)">{discussion.capsuleData.brand}</Tag>
+                                                            {/* rgb(255, 136, 107, 0.9) */}
+                                                        </div>
+                                                        <div className="presentationDataSecond">
+
+                                                            <Tag color="rgba(81,97,119,0.3)"> {discussion.capsuleData.year}</Tag>
+
+                                                            <Tag color="rgba(81,97,119,0.3)"> {discussion.capsuleData.country}</Tag>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        }
 
 
-                                    {/* <div className="trashBt">
+                                        {/* <div className="trashBt">
                                         <FontAwesomeIcon icon={faTrash} size="lg" color='grey'
                                         // au clic, ajout aux favoris 
                                         // onClick={() => handleSuppDiscussion(discussion.capsuleData.capsuleRef)}
                                         />
                                     </div> */}
 
-                                </div>
-
-                            ))}
-
-
-                        </div>
-
-                        <div className="verticalSpaceChat">
-                        </div>
-
-                        <div className="rightWindowChat">
-
-                            <div className="chatBox">
-
-                                <div className="informativeMessages">
-
-                                    {/* messages d'erreur */}
-                                    {tabErrorsMessages}
-
-                                    {/* messages d'absence de données en BDD */}
-                                    {noMessage}
-                                </div>
-
-                                <div className="messagesWrapper">
-                                    <div className="message">
-
-                                        {chatMessages}
                                     </div>
+
+                                ))}
+
+
+                            </div>
+
+                            <div className="verticalSpaceChat">
+                            </div>
+
+                            <div className="rightWindowChat">
+
+                                <div className="chatBox">
+
+                                    <div className="informativeMessages">
+
+                                        {/* messages d'erreur */}
+                                        {tabErrorsMessages}
+
+                                        {/* messages d'absence de données en BDD */}
+                                        {noMessage}
+                                    </div>
+
+                                    <div className="messagesWrapper">
+                                        <div className="message">
+
+                                            {chatMessages}
+                                        </div>
+                                    </div>
+
+
                                 </div>
 
+                                <div className="horizontalSpaceChat">
+                                </div>
 
-                            </div>
-
-                            <div className="horizontalSpaceChat">
-                            </div>
-
-                            <div className="inputMessage" >
+                                <div className="inputMessage" >
 
 
-                                <Form
-                                    layout="inline"
-                                    form={form}
-                                    onFinish={onSubmit}
-                                    style={{
-                                        display: 'flex',
-                                        width: '100%',
-                                        textAlign: "left",
-                                        justifyContent: 'right'
-                                    }}
-                                >
-                                    <Form.Item
-                                        name="message"
+                                    <Form
+                                        layout="inline"
+                                        form={form}
+                                        onFinish={onSubmit}
                                         style={{
-                                            // width: '368px',
-                                            width: '83%',
+                                            display: 'flex',
+                                            width: '100%',
                                             textAlign: "left",
-                                            bottom: '0px',
+                                            justifyContent: 'right'
                                         }}
                                     >
-                                        <Input
-                                            placeholder={"votre message"}
-                                            onChange={(e) => setmyNewMsg(e.target.value)}
-                                        />
-                                    </Form.Item>
-
-                                    <div className="layerButton">
-                                        <Form.Item>
-                                            <Button type="primary" htmlType="submit"
-                                                style={{
-                                                    width: '100px',
-                                                    justifyContent: 'right',
-                                                }}
-                                                onClick={() => submitMessage()}
-                                            >
-                                                Envoyer
-                                        </Button>
+                                        <Form.Item
+                                            name="message"
+                                            style={{
+                                                // width: '368px',
+                                                width: '83%',
+                                                textAlign: "left",
+                                                bottom: '0px',
+                                            }}
+                                        >
+                                            <Input
+                                                placeholder={"votre message"}
+                                                onChange={(e) => setmyNewMsg(e.target.value)}
+                                            />
                                         </Form.Item>
-                                    </div>
 
-                                </Form>
+                                        <div className="layerButton">
+                                            <Form.Item>
+                                                <Button type="primary" htmlType="submit"
+                                                    style={{
+                                                        width: '100px',
+                                                        justifyContent: 'right',
+                                                    }}
+                                                    onClick={() => submitMessage()}
+                                                >
+                                                    Envoyer
+                                        </Button>
+                                            </Form.Item>
+                                        </div>
+
+                                    </Form>
+
+
+                                </div>
 
 
                             </div>
 
-                        </div>
 
-                    </div>
+                        </div>
+                    }
 
                 </div>
-                
+
 
             </Row>
 
@@ -329,18 +351,19 @@ function Messages(props) {
 
 // fonction de récupération de données dans le Redux Store 
 function mapStateToProps(state) {
-    return { token: state.token,
+    return {
+        token: state.token,
         // newMessage: state.newMessage
-       }
+    }
 }
 
-function mapDispatchToProps(dispatch){
+function mapDispatchToProps(dispatch) {
     return {
-      newMessage: function(newMessage){
-        dispatch({type: 'changeStatus', newMessage: newMessage})
-      }
+        newMessage: function (newMessage) {
+            dispatch({ type: 'changeStatus', newMessage: newMessage })
+        }
     }
-  }
+}
 
 export default connect(
     mapStateToProps,

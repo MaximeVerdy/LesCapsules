@@ -110,7 +110,8 @@
      margin-top: 1px;
      margin-bottom: 1px;
      /* background-color: rgba(255, 255, 255, 0.6); */
-     background-color: rgb(117, 123, 134);
+     /* background-color: rgb(117, 123, 134); */
+     background-color: rgb(61, 78, 114);
      border-radius: 6px;
 }
 
@@ -123,9 +124,13 @@
      /* border-bottom: 3px solid; */
 }
 
-/* .imgCapsuleDiscussion {
-     padding: 1px;
-} */
+.imgCapsuleDiscussion {
+}
+
+.imgCapsuleDiscussion:hover {
+     position: absolute;
+     transform: scale(3.5) translate(16px, -16px);
+}
 
 .presentationData {
      display: flex;
@@ -260,7 +265,8 @@
      justify-content: right;
 }
 
-.trashBt {      /* ----------------------------- A SUPPRIMER ???? */
+.trashBt {
+     /* ----------------------------- A SUPPRIMER ???? */
      display: flex;
      justify-content: center;
      align-items: center;

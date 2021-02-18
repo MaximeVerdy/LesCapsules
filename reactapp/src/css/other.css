@@ -19,6 +19,14 @@
     margin-top: 4%;
 }
 
+/* .capsuleRowParam {
+    display: flex;
+    justify-content: center;
+    text-align: right;
+    margin-top: 4%;
+    height: 200px;
+} */
+
 .capsuleRowSearch {
     margin-top: 1%;
 }
@@ -48,7 +56,7 @@
 }
 
 .ColFormCapNew {
-    height: 490px;
+    min-height: 490px;
 }
 
 .buttonNewCap {
@@ -80,6 +88,24 @@
 
 .imgCapsule {
     padding-right: 8px;
+}
+
+.imgCapsule:hover {
+    transform: scale(3.2) translate(24px, -23px);
+}
+
+.presentationData {
+    display: flex;
+    flex-direction: column;
+    width: 0px;
+    justify-content: top;
+    padding-left: 5px;
+}
+
+.presentationDataSecond {
+    display: flex;
+    flex-direction: row;
+    padding-top: 5px;
 }
 
 .trashBt {
@@ -138,8 +164,10 @@
 .title {
     justify-content: center;
     text-align: center;
-    margin-top: 15px;
-    padding-bottom: 25px;
+    /* margin-top: 150px;
+    padding-bottom: -250px; */
+    font-family: barber;
+    height: 50px;
 }
 
 .button {

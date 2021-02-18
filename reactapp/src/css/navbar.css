@@ -35,6 +35,13 @@
 }
 
   /* sur un écran étroit le texte disparait pour ne laisser que les icônes */
+
+  @media (max-width: 704px) {
+    .hiddenTextMenuLogin {
+        display: none;
+    }
+}
+
 @media (max-width: 1010px) {
     .hiddenTextMenu {
         display: none;

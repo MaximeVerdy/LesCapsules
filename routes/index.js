@@ -94,9 +94,9 @@ router.post('/sign-up', async function (req, res, next) {
 });
 
 
-// -------------------- //
-// route de reconnexion //
-// -------------------- //
+// ------------------------------- //
+//      route de reconnexion       //
+// ------------------------------- //
 
 router.post('/sign-in', async function (req, res, next) {
 
@@ -141,6 +141,7 @@ router.post('/sign-in', async function (req, res, next) {
 
 });
 
+
 // ------------------------------------- //
 // route d'écriture d'une capsule en BDD //
 // ------------------------------------- //
@@ -150,29 +151,30 @@ router.post('/save-capsule', async function (req, res, next) {
   var error = []
   var result = false
   var saveCapsule = null
+  var token = req.body.tokenFromFront
 
-  // enregistrement en BDD
-  var newCapsule = new capsuleModel({
-    // token: req.body.tokenFromFront,
-    brand: req.body.brandFromFront,
-    year: req.body.yearFromFront,
-    country: req.body.countryFromFront,
-    token: "TokenTest01", // ---------------------------- A CHANGER
-    capsuleRef: uid2(32),
-    photo: req.body.photoFromFront.replace(/\s/g, '+'),
-  })
-  // console.log(newCapsule);
-  saveCapsule = await newCapsule.save()
+  var user = await userModel.findOne({ token: token })
+  if (user) {
+    // enregistrement en BDD
+    var newCapsule = new capsuleModel({
+      token: req.body.tokenFromFront,
+      brand: req.body.brandFromFront,
+      year: req.body.yearFromFront,
+      country: req.body.countryFromFront,
+      capsuleRef: uid2(32),
+      photo: req.body.photoFromFront.replace(/\s/g, '+'),
+    })
+    saveCapsule = await newCapsule.save()
 
-  if (saveCapsule) {
-    result = true
+    if (saveCapsule) {
+      result = true
+    } else {
+      error.push('Une erreur est advenue. Enregistrement impossible')
+    }
+  } else {
+    error.push('Utilisateur inconnu')
   }
 
-
-  // message d'erreur d'enregistrement
-  if (result == false) {
-    error.push('Une erreur est advenue. Enregistrement impossible')
-  }
 
   // données envoyées en front
   res.json({ result, saveCapsule, error })
@@ -190,10 +192,10 @@ router.get('/research', async function (req, res, next) {
   var brand = req.query.brand
   var year = req.query.year
   var country = req.query.country
-  var token = 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5'
+  var token = req.query.token
   var favorites = []
 
-  var user = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
+  var user = await userModel.findOne({ token: token })
   if (user) {
     favorites = user.favorites
   }
@@ -219,7 +221,6 @@ router.get('/research', async function (req, res, next) {
     capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year } && { country: country })
   }
 
-
   if (capsules.length == 0) {
     error.push('Aucune capsule trouvée en base de données')
   }
@@ -227,7 +228,6 @@ router.get('/research', async function (req, res, next) {
   // données envoyées en front
   res.json({ capsules, favorites, error })
 
-  // console.log('console -----------', capsules);
 })
 
 
@@ -239,27 +239,27 @@ router.get('/my-collection', async function (req, res, next) {
 
   var error = []
   var capsules = []
+  var result = false
 
   // vérification que ce token existe 
   var user = await userModel.findOne({ token: req.query.token })
   if (user != null) {
+    var favorites = user.favorites
     // recherche des données en BDD
     capsules = await capsuleModel.find({ token: req.query.token })
+  } else {
+    error.push('Une erreur est advenue. Reconnectez-vous')
+  }
+
+  if (Object.keys(capsules).length != 0) {
+    result = true
   }
 
   // rangement par ordre chronologique invervé
-  const sortedCapsules = capsules.sort((a, b) => b.date - a.date)
-
-  // if (user == null) {
-  //   error.push('Veuillez vous connecter')
-  // }
-
-  // --------------- temporaire temporaire temporaire temporaire temporaire temporaire temporaire
-  // --------------- temporaire temporaire temporaire temporaire temporaire temporaire temporaire
-  // capsules = await capsuleModel.find()
+  const sortedCapsules = capsules.reverse()
 
   // données envoyées en front
-  res.json({ capsules, error })
+  res.json({ result, sortedCapsules, error, favorites })
 
 })
 
@@ -280,20 +280,11 @@ router.delete('/my-collection', async function (req, res, next) {
 
     if (deleteInDB.deletedCount == 1) {
       result = true
+    } else {
+      error.push('Suppression impossible')
     }
-  }
-
-  // --------------- temporaire temporaire temporaire temporaire temporaire temporaire temporaire
-  // --------------- temporaire temporaire temporaire temporaire temporaire temporaire temporaire
-  var deleteInDB = await capsuleModel.deleteOne({ capsuleRef: req.body.capsuleRef })
-  if (deleteInDB.deletedCount == 1) {
-    result = true
-  }
-
-
-  // message d'erreur pour front
-  if (user == null) {
-    error.push('Veuillez vous connecter')
+  } else {
+    error.push('Une erreur est advenue. Reconnectez-vous')
   }
 
   // données envoyées en front
@@ -311,45 +302,37 @@ router.post('/add-favorite', async function (req, res, next) {
   var error = []
   var result = false
   var capsuleRef = ''
-  var foundFavorite = false
   var favorites = []
 
-  capsuleRef = req.body.capsuleRef
+  var capsuleRef = req.body.capsuleRef
+  var token = req.body.token
 
-  mongoose.set('useFindAndModify', false);
+  var existingUser = await userModel.findOne({ token: token })
 
-  var existingUser = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
-
-  if (existingUser.favorites.find(capsule => capsule == capsuleRef)) {
-    foundFavorite = true
-  }
-
-  if (foundFavorite == false) {
-    var user = await userModel.findOneAndUpdate(
-      { token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' },
-      { '$push': { 'favorites': capsuleRef } }
-    )
-  }
-
-  var userUpdated = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
-  favorites = userUpdated.favorites
-
-
-  if (foundFavorite == true) {
-    error.push('Déjà enregistré en tant que favori')
-  }
-
-  if (user) {
+  if (existingUser) {
     result = true
+
+    if (existingUser.favorites.find(capsule => capsule == capsuleRef)) {
+      error.push('Déjà enregistré en tant que favori')
+    } else {
+      mongoose.set('useFindAndModify', false);
+      var user = await userModel.findOneAndUpdate(
+        { token: token },
+        { '$push': { 'favorites': capsuleRef } }
+      )
+    }
+  } else {
+    // message d'erreur d'enregistrement
+    error.push('Une erreur est advenue. Veuillez vous reconnecter')
   }
 
-  // message d'erreur d'enregistrement
-  if (result == false && error.length == 0) {
-    error.push('Une erreur est advenue. Enregistrement impossible')
-  }
+  var userUpdated = await userModel.findOne({ token: token })
+  favorites = userUpdated.favorites
 
   // données envoyées en front
   res.json({ result, favorites, error })
+
+  console.log("console ---", token);
 })
 
 
@@ -362,41 +345,34 @@ router.put('/supp-favorite', async function (req, res, next) {
   var error = []
   var result = false
   var capsuleRef = ''
-  var foundFavorite = false
+  var capsuleRef = req.body.capsuleRef
+  var token = req.body.token
 
-  capsuleRef = req.body.capsuleRef
+  var existingUser = await userModel.findOne({ token: token })
 
-  mongoose.set('useFindAndModify', false);
-
-  var existingUser = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
-
-  if (existingUser.favorites.find(capsule => capsule == capsuleRef)) {
-    foundFavorite = true
-  }
-
-  var favorites = existingUser.favorites
-
-  var index = favorites.indexOf(capsuleRef);
-  if (index > -1) {
-    favorites.splice(index, 1);
-  }
-
-  if (foundFavorite == true) {
-    var user = await userModel.findOneAndUpdate(
-      { token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' },
-      { 'favorites': favorites }
-    )
-  } else {
-    error.push('N\'est déjà pas en favori')
-  }
-
-  if (user) {
+  if (existingUser) {
     result = true
-  }
+    if (existingUser.favorites.find(capsule => capsule == capsuleRef)) {
 
-  // message d'erreur d'enregistrement
-  if (result == false && error.length == 0) {
-    error.push('Une erreur est advenue. Suppression impossible')
+      var favorites = existingUser.favorites
+
+      var index = favorites.indexOf(capsuleRef);
+      if (index > -1) {
+        favorites.splice(index, 1);
+      }
+
+      mongoose.set('useFindAndModify', false);
+      var user = await userModel.findOneAndUpdate(
+        { token: token },
+        { 'favorites': favorites }
+      )
+
+    } else {
+      error.push('N\'est déjà pas en favori')
+    }
+  } else {
+    // message d'erreur
+    error.push('Une erreur est advenue. Veuillez vous reconnecter')
   }
 
   // données envoyées en front
@@ -415,31 +391,33 @@ router.get('/all-my-favorites', async function (req, res, next) {
   var capsules = {}
   var favorites = []
 
-  capsuleRef = req.body.capsuleRef
+  // var capsuleRef = req.body.capsuleRef
+  var token = req.query.token
 
-  var existingUser = await userModel.findOne({ token: 'lSUO1AeKD5rxBYExBqXR9m9cGF09fYn5' })
-
-  if (existingUser) {
-    favorites = existingUser.favorites
-    capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } })
-    // for (i=0; i<favorites.length; i++) {
-    // }
-  }
+  var existingUser = await userModel.findOne({ token: token })
 
   if (existingUser) {
+    var favorites = existingUser.favorites
+    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } })
     result = true
-  }
 
-  // message d'erreur d'enregistrement
-  if (result == false) {
-    error.push('Une erreur est advenue. Favoris non trouvés')
+    if (Object.keys(capsules).length != 0) {
+  
+      capsules.sort(function (a, b) {
+        return favorites.indexOf(a.capsuleRef) - favorites.indexOf(b.capsuleRef);
+      });
+      var capsulesSorted = capsules.reverse()
+    } else {
+      error.push('Impossible de trouver les favoris')
+    }
+  } else {
+    // message d'erreur d'enregistrement
+    error.push('Une erreur est advenue. Veuillez vous connecter')
   }
 
   // données envoyées en front
-  res.json({ result, capsules, error })
-
+  res.json({ result, capsulesSorted, error })
 })
-
 
 
 // ---------------------------------------------- //
@@ -503,6 +481,8 @@ router.post('/first-message', async function (req, res, next) {
 
       if (savedDiscussion) {
         saved = true
+      } else {
+        error.push('Non enregistré')
       }
     }
 
@@ -536,6 +516,7 @@ router.get('/discussions', async function (req, res, next) {
   var existingUser = await userModel.findOne({ token: token })
 
   if (existingUser) {
+    result = true
     var discussions = await discussionModel.find({ users: { $in: token } })
     if (discussions) {
       isDiscussionsExist = true
@@ -552,18 +533,17 @@ router.get('/discussions', async function (req, res, next) {
         })
 
         var sortedDiscussions = discussionsExtended.sort((a, b) => b.lastMessageDate - a.lastMessageDate)
-        result = true
       }
     } else {
       error.push('Discussions non trouvées')
     }
   } else {
-    error.push('Cet utilisateur n\'existe pas')
+    error.push('Une erreur est advenue. Reconnectez-vous')
   }
 
   // données envoyées en front
-  res.json({result, error, sortedDiscussions })
-
+  res.json({ result, error, sortedDiscussions })
+  // console.log("console -----", result, error);
 })
 
 
@@ -574,20 +554,14 @@ router.get('/discussions', async function (req, res, next) {
 router.post('/new-message', async function (req, res, next) {
 
   var error = []
-  var saved = false
   var updated = false
-  // var userIsOwner = false
-  // var isDiscussionExisting = false
   var discussionRef = req.body.discussionRef
   var token = req.body.token
   var message = req.body.newMessage
   var actualDate = new Date()
   var formatedMessage = { token, message }
 
-  // console.log("formatedMessage", formatedMessage);
-
   var existingUser = await userModel.findOne({ token: token })
-  // console.log("existingUser",existingUser);
 
   if (existingUser) {
     mongoose.set('useFindAndModify', false);
@@ -609,7 +583,8 @@ router.post('/new-message', async function (req, res, next) {
       otherParticipant = participants[0]
 
       var userHavingAMessage = await userModel.findOneAndUpdate(
-        { token: otherParticipant,
+        {
+          token: otherParticipant,
           'newMessage': true
         }
       )
@@ -617,7 +592,6 @@ router.post('/new-message', async function (req, res, next) {
         error.push('Pas de notification envoyée')
       }
 
-      // console.log('participants----', participants);
     } else {
       error.push('discussion non updatée')
     }
@@ -630,7 +604,6 @@ router.post('/new-message', async function (req, res, next) {
   res.json({ error, updated })
 
 })
-
 
 
 module.exports = router;

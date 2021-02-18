@@ -39,8 +39,8 @@ function App() {
       <Router>
         <div className="main-wrapper">
           <Switch>
-            <Route component={Research} path="/" exact />
-            <Route component={Login} path="/login" exact />
+            <Route component={Research} path="/research" exact />
+            <Route component={Login} path="/" exact />
             <Route component={MentionsLegales} path="/mentionslegales" exact />
             <Route component={Mycollection} path="/mycollection" exact />
             <Route component={Disconnected} path="/disconnected" exact />

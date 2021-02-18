@@ -5,8 +5,11 @@ import {Redirect} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {Layout, Row, Col} from 'antd';
 
+// style
+import '../css/other.css';
+
 // images
-import Runner from '../images/Runner.png';
+import Logo from '../images/logo-capsules.png';
 
 function Disconnected(props) {
 
@@ -16,7 +19,7 @@ function Disconnected(props) {
 
         props.addToken('')
 
-        const timer = setTimeout(() => {setTimeOff(true)}, 3500);
+        const timer = setTimeout(() => {setTimeOff(true)}, 2500);
 
     },[])
 
@@ -26,36 +29,36 @@ function Disconnected(props) {
 
     return (
   
-        <Layout
-            style = {{
-                display: 'flex',
+        <Layout className="researchLayout"
+            style={{
                 placeContent: 'center',
                 alignItems: 'center',
                 height: '100vh',
-                backgroundColor: 'white',
             }}
         >
 
 
-                <Row>
-                    <Col
-                        style = {{
-                            marginBottom: '10px'
-                        }}
-                    >
-                        <img 
-                            src={Runner} 
-                            alt="joggeuse" 
-                            width="180px" 
-                        />
-                    </Col>
-                </Row>
+<Row
+                style={{
+                    marginTop: '-120px'
+                }}
+            >
+                <h3>Déconnecté.e. A bientôt sur </h3>
+            </Row>
 
-
-
-                <Row>
-                    <h3>Vous avez été correctement déconnecté.e. A bientôt !</h3>
-                </Row>
+            <Row>
+                <Col
+                    style={{
+                        marginTop: '30px'
+                    }}
+                >
+                    <img
+                        src={Logo}
+                        alt="Logo Les Capsules"
+                        width="600px"
+                    />
+                </Col>
+            </Row>
 
 
 
