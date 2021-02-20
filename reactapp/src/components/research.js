@@ -205,13 +205,13 @@ function Research(props) {
         }
     }
 
-    useEffect(() => {
-        console.log("pageSpecific", pageSpecific);
-        if (pageSpecific !== '') {
-            handleSubmitSearch()
-        }
-    }, [pageSpecific]
-    )
+    // useEffect(() => {
+    //     console.log("pageSpecific", pageSpecific);
+    //     if (pageSpecific !== '') {
+    //         handleSubmitSearch()
+    //     }
+    // }, [pageSpecific]
+    // )
 
 
 
