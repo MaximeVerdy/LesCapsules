@@ -7,13 +7,7 @@
   }
 
 .text {
-    /* align-items: center;
-    justify-content: center;
-    font-family: 'barber';
-    font-size: 2em; */
     font-weight: 500;
-
-
 }
 
 .notificationMessage {
@@ -35,7 +29,6 @@
 }
 
   /* sur un écran étroit le texte disparait pour ne laisser que les icônes */
-
   @media (max-width: 704px) {
     .hiddenTextMenuLogin {
         display: none;

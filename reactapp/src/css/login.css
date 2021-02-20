@@ -4,11 +4,6 @@
     display: flex;
     min-height:100vh;
     background-color: rgba(0,0,0,0);
-    /* background-image: url('../images/runner_background.jpg');
-    background-position: left;
-    background-size: cover;
-    background-position-y: top; */
-
 }
 
 .loginRow {
@@ -31,7 +26,6 @@
     justify-content:center;
     align-items: center;
     text-align: center;
-    /* font-family: 'barber'; */
 }
 
 .loginColForm {
@@ -40,12 +34,9 @@
     height: 350px;
     justify-content:center;
     align-items: center;
-    /* background-color: rgba(255, 255, 255, .8); */
     background-image: url('../images/background-metal.jpg');
-    background-position: right;
     padding: 10px;
     margin: 1px;
-    /* border: solid 3px rgb(107, 101, 44, 0.05); */
     border-left: solid 4px rgba(231, 229, 205, 0.8);
     border-top: solid 4px rgba(231, 229, 205, 0.8);
     border-right: solid 4px rgb(107, 101, 44, 0.1);

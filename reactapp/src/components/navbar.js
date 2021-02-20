@@ -24,13 +24,13 @@ import capsule from '../images/capsule.png';
 
 function Topnavbar(props) {
 
+  // Etats
   const [newMessage, setnewMessage] = useState(props.newMessage)
-  const [token, settoken] = useState(props.token)
+  const [token, settoken] = useState(props.token)  // état du token, récupéré du Redux Store
 
 
   useEffect(() => {
     setnewMessage(props.newMessage)
-    // console.log("-----------------", props);
   }, [props])
 
   const handleModalNoAccess = () => {
@@ -42,7 +42,6 @@ function Topnavbar(props) {
   return (
 
     <div className="sticky">
-
       <div
         style={{
           position: 'absolute',
@@ -60,18 +59,14 @@ function Topnavbar(props) {
           alt="une capsule"
           height="42px"
         />
-
-        {/* <span className="hiddenTextMenu" style={{color:'black' }}> Les capsules </span> */}
       </div>
 
       <Menu className="menu" style={{ textAlign: 'center' }} mode="horizontal" >
-
 
         <Menu.Item key="research">
           <Link to="/research">
             <div style={{ color: 'black' }}>
               <FontAwesomeIcon icon={faSearch} size="lg" />
-              {/* search, accueil, home, toutes les capsules */}
               <span className="text hiddenTextMenu"> Recherche</span>
             </div>
           </Link>
@@ -113,9 +108,7 @@ function Topnavbar(props) {
             >
               <FontAwesomeIcon icon={faPlusCircle} size="lg" />
               <span className="text hiddenTextMenu"> Ajout</span>
-
             </div>
-
           }
         </Menu.Item>
 
@@ -171,7 +164,6 @@ function Topnavbar(props) {
 
       </Menu>
 
-
       <div
         style={{
           position: 'absolute',
@@ -194,13 +186,8 @@ function Topnavbar(props) {
           </Link>
         }
       </div>
-
-
     </div>
-
-
   );
-
 }
 
 function mapStateToProps(state) {

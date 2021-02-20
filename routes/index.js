@@ -193,9 +193,18 @@ router.get('/research', async function (req, res, next) {
   var year = req.query.year
   var country = req.query.country
   var token = req.query.token
+  var pageGlobal = parseFloat(req.query.pageGlobal)
+  var pageSpecific = parseFloat(req.query.pageSpecific)
   var favorites = []
-
   var user = await userModel.findOne({ token: token })
+
+  // if (pageSpecific < 0) {
+  //   pageSpecific = 0
+  // }
+
+  console.log(' pageGlobal--------',pageGlobal);
+  console.log(' pageSpecific--------', pageSpecific);
+
   if (user) {
     favorites = user.favorites
   }
@@ -206,23 +215,23 @@ router.get('/research', async function (req, res, next) {
     capsules = await capsuleModel.find()
     // recherche des données en BDD des capsules conditionnée
   } else if (brand != '' && country == 'aucun' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') })
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).skip(pageSpecific).limit(1)
   } else if (brand == '' && country == 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ year: year })
+    capsules = await capsuleModel.find({ year: year }).skip(pageSpecific).limit(1)
   } else if (brand == '' && country != 'aucun' && year == '') {
-    capsules = await capsuleModel.find({ country: country })
+    capsules = await capsuleModel.find({ country: country }).skip(pageSpecific).limit(1)
   } else if (brand == '' && country != 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ country: country } && { year: year })
+    capsules = await capsuleModel.find({ country: country } && { year: year }).skip(pageSpecific).limit(1)
   } else if (brand != '' && country != 'aucun' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { country: country })
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { country: country }).skip(pageSpecific).limit(1)
   } else if (brand != '' && country == 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year })
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year }).skip(pageSpecific).limit(1)
   } else if (brand != '' && country != 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year } && { country: country })
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year } && { country: country }).skip(pageSpecific).limit(1)
   }
 
   if (capsules.length == 0) {
-    error.push('Aucune capsule trouvée en base de données')
+    error.push('Pas de capsules')
   }
 
   // données envoyées en front
@@ -332,7 +341,6 @@ router.post('/add-favorite', async function (req, res, next) {
   // données envoyées en front
   res.json({ result, favorites, error })
 
-  console.log("console ---", token);
 })
 
 
@@ -402,7 +410,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
     result = true
 
     if (Object.keys(capsules).length != 0) {
-  
+
       capsules.sort(function (a, b) {
         return favorites.indexOf(a.capsuleRef) - favorites.indexOf(b.capsuleRef);
       });
@@ -543,7 +551,6 @@ router.get('/discussions', async function (req, res, next) {
 
   // données envoyées en front
   res.json({ result, error, sortedDiscussions })
-  // console.log("console -----", result, error);
 })
 
 

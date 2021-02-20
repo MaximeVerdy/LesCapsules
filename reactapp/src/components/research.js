@@ -1,19 +1,17 @@
+// importation à partir de libraries
 import React, { useState, useEffect } from 'react'
-import { Redirect, useHistory } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import {
     Layout,
     Row,
-    Col,
     Typography,
     Tag,
     Form,
     Select,
     InputNumber,
     Input,
-    Button,
     Modal,
-    Popover,
 } from 'antd';
 
 //composants
@@ -29,6 +27,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { faLongArrowAltLeft } from '@fortawesome/free-solid-svg-icons'
+import { faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons'
 
 function Research(props) {
 
@@ -37,41 +37,29 @@ function Research(props) {
     var yyyy = today.getFullYear();
 
     // Etats
+    const [brand, setBrand] = useState('')
+    const [token, setToken] = useState(props.token)     // état du token, récupéré du Redux Store
+    const [capsulesList, setCapsulesList] = useState([])
+    const [listErrors, setErrors] = useState([])
+    const [favorites, setfavorites] = useState([])
+    const [redirection, setredirection] = useState(false)
+    const [timeOff, setTimeOff] = useState(false)
     const [year, setYear] = useState('')
+    const [country, setCountry] = useState('aucun')
+    const [pageGlobal, setpageGlobal] = useState(0)
+    const [pageSpecific, setpageSpecific] = useState('')
+
     function onChangeYear(value) {
         setYear(value);
     }
-
-    const [brand, setBrand] = useState('')
-    // function onChangeBrand(value) {
-    //   setBrand(value);
-    // }
-
-    const [country, setCountry] = useState('aucun')
     function onChangeCountry(value) {
         setCountry(value);
     }
 
-    // état du token, récupéré du Redux Store
-    const [token, setToken] = useState(props.token)
-    const [capsulesList, setCapsulesList] = useState([])
-    const [listErrors, setErrors] = useState([])
-
-    const [saved, setSaved] = useState(false)
-    const [deleted, setDeleted] = useState(false)
-
-    const [heartColor, setheartColor] = useState()
-
-    const [favorites, setfavorites] = useState([])
-
-    const [redirection, setredirection] = useState(false)
-
-    const [timeOff, setTimeOff] = useState(false)
-
     // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
         const findcapsules = async () => {
-            const data = await fetch(`/research?token=${token}&brand=${brand}&year=${year}&country=${country}`) // pour récupérer des données 
+            const data = await fetch(`/research?token=${token}&brand=${brand}&year=${year}&country=${country}&pageGlobal=${pageGlobal}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
             setErrors(body.error)
@@ -79,23 +67,47 @@ function Research(props) {
         }
         findcapsules()
         const timer = setTimeout(() => { setTimeOff(true) }, 1000);
-    }, [])
+        setpageSpecific(0)
+    }, [pageGlobal])
 
 
     // échange de données avec le back pour chaque recherche
+    // useEffect(() => {
+    //     const findcapsules = async () => {
+    //         // quand l'année est effacée du champ de recherche, year devient null, on fait donc passer '' pour year dans la requête plutôt que null
+    //         if (year === null) {
+    //             const data = await fetch(`/research?brand=${brand}&year=${''}&country=${country}&page=${pageSpecific}`) // pour récupérer des données 
+    //             const body = await data.json() // convertion des données reçues en objet JS (parsage)
+    //             setCapsulesList(body.capsules)
+    //             setErrors(body.error)
+    //         } else {
+    //             const data = await fetch(`/research?brand=${brand}&year=${year}&country=${country}&page=${pageSpecific}`) // pour récupérer des données 
+    //             const body = await data.json() // convertion des données reçues en objet JS (parsage)
+    //             setCapsulesList(body.capsules)
+    //             setErrors(body.error)
+    //         }
+    //     }
+    //     findcapsules()
+    //     setpageGlobal(0)
+    // }, [pageSpecific])
+
+
+
     var handleSubmitSearch = async () => {
+    
         // quand l'année est effacée du champ de recherche, year devient null, on fait donc passer '' pour year dans la requête plutôt que null
         if (year === null) {
-            const data = await fetch(`/research?brand=${brand}&year=${''}&country=${country}`) // pour récupérer des données 
+            const data = await fetch(`/research?brand=${brand}&year=${''}&country=${country}&pageSpecific=${pageSpecific}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
             setErrors(body.error)
         } else {
-            const data = await fetch(`/research?brand=${brand}&year=${year}&country=${country}`) // pour récupérer des données 
+            const data = await fetch(`/research?brand=${brand}&year=${year}&country=${country}&pageSpecific=${pageSpecific}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsules)
             setErrors(body.error)
         }
+        setpageGlobal(0)
     }
 
     // ajout d'une capsule favorite en base de données
@@ -110,7 +122,6 @@ function Research(props) {
         const body = await data.json()
         // réponse positive du back
         if (body.result) {
-            setSaved(true)
             setfavorites(body.favorites)
             // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
         } else {
@@ -130,7 +141,6 @@ function Research(props) {
         const body = await data.json()
         // réponse positive du back
         if (body.result) {
-            setDeleted(true)
             setfavorites(body.favorites)
             // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
         } else {
@@ -164,6 +174,51 @@ function Research(props) {
     }
 
 
+
+
+
+
+
+    const pageNextGlobal = () => {
+        setpageGlobal(pageGlobal + 1)
+    }
+
+    const pageBeforeGlobal = () => {
+        if (pageGlobal > 0) {
+            setpageGlobal(pageGlobal - 1)
+        } else {
+            setpageGlobal(0)
+        }
+    }
+
+/////// ------------------------------------------------------
+
+    const pageNextSpecific = () => {
+        setpageSpecific(pageSpecific + 1)
+    }
+
+    const pageBeforeSpecific = () => {
+        setpageSpecific(pageSpecific - 1)
+
+       if ( pageSpecific <= 0) {
+            setpageSpecific(0)
+        }
+    }
+
+    useEffect(() => {
+        console.log("pageSpecific", pageSpecific);
+        if (pageSpecific !== '') {
+            handleSubmitSearch()
+        }
+    }, [pageSpecific]
+    )
+
+
+
+
+
+
+    // au clic, ouverture du pop up d'avertissement
     const handleModalNoAccess = () => {
         Modal.warning({
             content: 'Vous devez d\'abord vous connecter'
@@ -179,26 +234,20 @@ function Research(props) {
         // message en cas d'absence de données enregistrée pour l'instant
         var noCapsule
         if (capsulesList == 0 && listErrors.length == 0) {
-            noCapsule = <h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}>Aucune capsule enregistrée</h4>
+            noCapsule = <h4 className="noCapsule">Aucune capsule enregistrée</h4>
         }
 
         // messages d'erreurs rencontrées en back-end lors de l'enregistrement
         var Errors = listErrors.map((error, i) => {
-            return (<h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}
-            >
-                {error}
-            </h4>
+            return (
+                <h4 className="errorMessages"> {error} </h4>
             )
         })
     }
 
-    // condition de rediction en cas d'absence de token 
-    // if(token == ''){
-    //     return <Redirect to='/notlogged' />
-    //     }   
 
     return (
-        // le style de la page history est dans css/other.css
+        // le style de la page Research est dans css/other.css
 
         <Layout className="researchLayout">
 
@@ -534,9 +583,9 @@ function Research(props) {
 
                         <div className="searchBt">
 
-                            <FontAwesomeIcon icon={faSearch} size="lg" color={heartColor}
+                            <FontAwesomeIcon icon={faSearch} size="lg"
                                 // au clic, lancer la recherche de capsules en BDD
-                                onClick={() => handleSubmitSearch()}
+                                onClick={() => {handleSubmitSearch(); setpageSpecific(0)}}
                             />
                         </div>
 
@@ -550,10 +599,6 @@ function Research(props) {
 
             <Row className="capsuleRow capsuleRowSearch">
                 <div className="ColForm" >
-
-                    {/* <Title level={3} className="title">
-                        Mes capsules
-                    </Title> */}
 
                     {/* messages d'erreur */}
                     {Errors}
@@ -635,8 +680,30 @@ function Research(props) {
 
             </Row>
 
-            <div className="endDiv"></div>
+            { brand == '' && country == 'aucun' && year == ''
+                ? <Row className="backFoward">
+                    <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'
+                        onClick={() => pageBeforeGlobal()}
+                    />
+                    <div className="backFoward"></div>
+                    <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'
+                        onClick={() => pageNextGlobal()}
+                    />
+                </Row>
 
+                : <Row className="backFoward">
+                    <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='red'
+                        onClick={() => pageBeforeSpecific()}
+                    />
+                    <div className="backFoward"></div>
+                    <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='red'
+                        onClick={() => pageNextSpecific()}
+                    />
+                </Row>
+            }
+
+
+            <div className="endDiv"></div>
 
             <Footer />
 

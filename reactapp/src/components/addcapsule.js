@@ -1,3 +1,4 @@
+// importation à partir de libraries
 import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
@@ -9,20 +10,14 @@ import {
   Button,
   Typography,
   Select,
-  DatePicker,
   InputNumber,
   Input,
   Modal,
   Upload,
-  Space,
   message
 } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
 import ImgCrop from 'antd-img-crop';
 
-
-import moment from 'moment';
-import 'moment/locale/fr';
 
 //composants
 import Topnavbar from './navbar.js'
@@ -35,39 +30,35 @@ import '../css/other.css';
 
 function Addcapsule(props) {
 
-
   // année actuelle
   var today = new Date();
   var yyyy = today.getFullYear();
 
 
   // Etats
-
-
-  // état du token, récupéré du Redux Store
-  const [token, setToken] = useState(props.token)
-
+  const [token, setToken] = useState(props.token)   // état du token, récupéré du Redux Store
   const [year, setYear] = useState(yyyy)
+  const [brand, setBrand] = useState('non renseigné')
+  const [country, setCountry] = useState('France')
+  const [fileList, setFileList] = useState([]);
+  const [saved, setSaved] = useState(false)
+  const [listErrorsSaving, setErrorsSaving] = useState([])
+  const [fillingRequest, setfillingRequest] = useState('')
+
+
+  const [form] = Form.useForm();
+
   function onChangeYear(value) {
     setYear(value);
   }
 
-  const [brand, setBrand] = useState('non renseigné')
-  // function onChangeBrand(value) {
-  //   setBrand(value);
-  // }
-
-  const [country, setCountry] = useState('France')
   function onChangeCountry(value) {
     setCountry(value);
   }
 
-  const [fileList, setFileList] = useState([]);
-  // function onChangePhoto({ fileList: newPhoto })
   const onChangePhoto = ({ fileList: newFileList, file }) => {
     setFileList(newFileList)
   };
-
 
   const onPreview = async file => {
     let src = file.url;
@@ -90,7 +81,6 @@ function Addcapsule(props) {
     }, 0);
   };
 
-
   function beforeUpload(file) {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
@@ -102,17 +92,6 @@ function Addcapsule(props) {
     }
     return isJpgOrPng && isLt2M;
   }
-
-
-  const [saved, setSaved] = useState(false)
-
-  const [listErrorsSaving, setErrorsSaving] = useState([])
-
-  const [form] = Form.useForm();
-
-  const [fillingRequest, setfillingRequest] = useState('')
-
-
 
 
   // échange de données avec le back pour l'écriture en BDD
@@ -134,7 +113,6 @@ function Addcapsule(props) {
         setErrorsSaving(body.error)
       }
     } else {
-      // setfillingRequest(<p className="erreurs">Remplissez le formulaire</p>)
       setBrand('non renseigné')
       Modal.warning({
         content: 'Remplissez les informations nécessaires'
@@ -142,7 +120,6 @@ function Addcapsule(props) {
     }
 
   }
-
 
   // si l'écriture en BDD s'est bien passée 
   useEffect(() => {
@@ -177,15 +154,14 @@ function Addcapsule(props) {
     )
   })
 
-
   const onSubmit = (values) => {
     form.resetFields();
   }
 
   // condition de rediction en cas d'absence de token 
-  if(token == ''){
+  if (token == '') {
     return <Redirect to='/notlogged' />
-    }   
+  }
 
 
   return (
@@ -205,9 +181,6 @@ function Addcapsule(props) {
             name="basic"
             onFinish={onSubmit}
             span={5}
-          // layout= "horizontal"
-          // colon= "false"
-          // preserve = "false"
           >
 
             <Title level={6} className="title">
@@ -217,7 +190,6 @@ function Addcapsule(props) {
             <Form.Item
               label="Marque"
               name="text"
-            // noStyle="true"
             >
 
               <Input
@@ -226,7 +198,6 @@ function Addcapsule(props) {
                   textAlign: "left"
                 }}
                 placeholder={"Gallia ou autre"}
-                // onChange={onChangeBrand}
                 onChange={(e) => setBrand(e.target.value)}
               />
             </Form.Item>
@@ -517,7 +488,6 @@ function Addcapsule(props) {
                 }}
               >
                 <Upload
-                  // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                   listType="picture-card"
                   fileList={fileList}
                   onChange={onChangePhoto}
@@ -529,14 +499,7 @@ function Addcapsule(props) {
                   {fileList.length < 1 && 'Ajoutez une photo'}
                 </Upload>
               </ImgCrop>
-
             </Form.Item>
-
-
-
-
-
-
 
             <Form.Item className="buttonNewCap">
               <Button className="buttonNewCap" type="primary" htmlType="submit" block className="button"
@@ -548,13 +511,9 @@ function Addcapsule(props) {
               {tabErrorsSaving}
               {fillingRequest}
 
-
             </Form.Item>
 
-
           </Form>
-
-
 
         </Col>
 

@@ -1,9 +1,10 @@
 // page affichée en cas de déconnexion volontaire
 
-import React, {useEffect, useState} from 'react'
-import {Redirect} from 'react-router-dom'
-import {connect} from 'react-redux'
-import {Layout, Row, Col} from 'antd';
+// importation à partir de libraries
+import React, { useEffect, useState } from 'react'
+import { Redirect } from 'react-router-dom'
+import { connect } from 'react-redux'
+import { Layout, Row, Col } from 'antd';
 
 // style
 import '../css/other.css';
@@ -13,22 +14,20 @@ import Logo from '../images/logo-capsules.png';
 
 function Disconnected(props) {
 
+    // Etat
     const [timeOff, setTimeOff] = useState(false)
 
     useEffect(() => {
-
         props.addToken('')
+        const timer = setTimeout(() => { setTimeOff(true) }, 2500);
+    }, [])
 
-        const timer = setTimeout(() => {setTimeOff(true)}, 2500);
-
-    },[])
-
-    if(timeOff){
+    if (timeOff) {
         return <Redirect to='/' />
-    }    
+    }
 
     return (
-  
+
         <Layout className="researchLayout"
             style={{
                 placeContent: 'center',
@@ -37,13 +36,12 @@ function Disconnected(props) {
             }}
         >
 
-
-<Row
+            <Row
                 style={{
                     marginTop: '-120px'
                 }}
             >
-                <h3>Déconnecté.e. A bientôt sur </h3>
+                <h3>Vous êtes déconnecté.e. A bientôt sur </h3>
             </Row>
 
             <Row>
@@ -59,23 +57,19 @@ function Disconnected(props) {
                     />
                 </Col>
             </Row>
-
-
-
         </Layout>
-  
     );
-  }
-  
-  function mapDispatchToProps(dispatch){
+}
+
+function mapDispatchToProps(dispatch) {
     return {
-      addToken: function(token){
-        dispatch({type: 'addToken', token: token})
-      }
+        addToken: function (token) {
+            dispatch({ type: 'addToken', token: token })
+        }
     }
-  }
-  
-  export default connect(
+}
+
+export default connect(
     null,
     mapDispatchToProps
-  )(Disconnected)
+)(Disconnected)

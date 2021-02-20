@@ -4,28 +4,15 @@
     display: flex;
     background-color: white;
     min-height: 100vh;
-    /* background-image: url('../images/runner_background.jpg');
-    background-position: left;
-    background-size: cover;
-    background-position-y: top; */
     background-color: rgba(0, 0, 0, 0);
 }
 
 .capsuleRow {
     display: flex;
-    /* flex-direction: column; */
     justify-content: center;
     text-align: right;
     margin-top: 4%;
 }
-
-/* .capsuleRowParam {
-    display: flex;
-    justify-content: center;
-    text-align: right;
-    margin-top: 4%;
-    height: 200px;
-} */
 
 .capsuleRowSearch {
     margin-top: 1%;
@@ -42,10 +29,8 @@
     width: 420px;
     justify-content: center;
     align-items: center;
-    /* background-color: rgb(242, 242, 242); */
     background-image: url('../images/background-metal.jpg');
     background-repeat: repeat;
-    background-position: right;
     border-left: solid 4px rgba(231, 229, 205, 0.8);
     border-top: solid 4px rgba(231, 229, 205, 0.8);
     border-right: solid 4px rgba(107, 101, 44, 0.1);
@@ -113,18 +98,31 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    /* padding: 10px; */
-    /* padding: 10px 50px 30px 50px; */
     background-color: white;
     margin-top: 1px;
     margin-bottom: 1px;
     background-color: rgba(255, 255, 255, 0.6)
 }
 
+.noCapsule {
+    display: flex;
+    margin: 30px;
+    margin-bottom: 50px;
+    justify-content: center;
+    color: red
+}
+
+.errorMessages {
+    display: flex;
+    margin: 30px;
+    margin-top: 15px;
+    justify-content: center;
+    color: red;
+}
+
 .spaceFavMsg {
     width: 100%;
     height: 15px;
-    /* background-color: rgb(0, 0, 0, 0); */
 }
 
 .searchBt {
@@ -135,7 +133,7 @@
     background-color: white;
     margin-top: 1px;
     margin-bottom: 1px;
-    background-color: rgba(0,0,0, 0)
+    background-color: rgba(0, 0, 0, 0)
 }
 
 .endDiv {
@@ -155,7 +153,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    /* background-color: rgb(28, 190, 174); */
     padding-right: 2px;
     padding-left: 2px;
     height: 30px;
@@ -164,24 +161,24 @@
 .title {
     justify-content: center;
     text-align: center;
-    /* margin-top: 150px;
-    padding-bottom: -250px; */
     font-family: barber;
-    height: 50px;
+    height: 45px;
+    margin-top: 0px;
+    padding-bottom: 20px;
 }
+
+
+.backFoward {
+    justify-content: center;
+    padding: 10px 20px 10px 20px;
+}
+
 
 .button {
     justify-content: center;
     align-items: center;
     height: 40px;
     margin-top: 20px;
-}
-
-.erreurs {
-    color: red;
-    position: absolute;
-    text-align: center;
-    width: 100%;
 }
 
 /* sur les écrans étroit le style est redéfini*/
@@ -191,5 +188,4 @@
         width: 500px;
         height: 400px;
     }
-
 }

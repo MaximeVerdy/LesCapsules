@@ -17,20 +17,15 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 
 
-// images
-import logo from '../images/logo-capsules.png';
-import capsule from '../images/capsule.png';
-
-
 function TopnavbarLogin(props) {
 
+  // Etats
   const [newMessage, setnewMessage] = useState(props.newMessage)
-  const [token, settoken] = useState(props.token)
+  const [token, settoken] = useState(props.token)  // état du token, récupéré du Redux Store
 
 
   useEffect(() => {
     setnewMessage(props.newMessage)
-    // console.log("-----------------", props);
   }, [props])
 
   const handleModalNoAccess = () => {
@@ -43,34 +38,12 @@ function TopnavbarLogin(props) {
 
     <div className="sticky">
 
-      {/* <div
-        style={{
-          position: 'absolute',
-          top: 3,
-          left: 10,
-        }}
-      >
-        <img className="hiddenLogoMenu"
-          src={logo}
-          alt="Les Capsules"
-          height="42px"
-        />
-        <img className="showIfSmall"
-          src={capsule}
-          alt="une capsule"
-          height="42px"
-        />
-
-      </div> */}
-
       <Menu className="menu" style={{ textAlign: 'center' }} mode="horizontal" >
-
 
         <Menu.Item key="research">
           <Link to="/research">
             <div style={{ color: 'black' }}>
               <FontAwesomeIcon icon={faSearch} size="lg" />
-              {/* search, accueil, home, toutes les capsules */}
               <span className="text hiddenTextMenuLogin "> Recherche</span>
             </div>
           </Link>
@@ -170,7 +143,6 @@ function TopnavbarLogin(props) {
 
       </Menu>
 
-
       <div
         style={{
           position: 'absolute',
@@ -188,13 +160,8 @@ function TopnavbarLogin(props) {
           </Link>
         }
       </div>
-
-
     </div>
-
-
   );
-
 }
 
 function mapStateToProps(state) {

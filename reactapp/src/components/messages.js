@@ -1,5 +1,6 @@
+// importation à partir de libraries
 import React, { useState, useEffect } from 'react'
-import { Redirect, useHistory } from 'react-router-dom'
+import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import { Layout, Row, Typography, Tag, Input, Form, Button } from 'antd';
 
@@ -11,23 +12,17 @@ import Footer from './footer.js'
 import 'antd/dist/antd.css';
 import '../css/messages.css';
 
-// icônes
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTrash } from '@fortawesome/free-solid-svg-icons'
 
 function Messages(props) {
 
     // Etats
-
-    // état du token, récupéré du Redux Store
-    const [token, setToken] = useState(props.token)
+    const [token, setToken] = useState(props.token)     // état du token, récupéré du Redux Store
     const [discussionsList, setDiscussionsList] = useState([])
     const [interaction, setInteraction] = useState(0)
     const [listErrorsMessages, setErrorsMessages] = useState([])
     const [discussionOpenedRef, setdiscussionOpenedRef] = useState('')
     const [discussionMessagesOpened, setdiscussionMessagesOpened] = useState([])
     const [myNewMsg, setmyNewMsg] = useState('')
-    const [discussionUpdated, setdiscussionUpdated] = useState(false)
     const [positiveResult, setpositiveResult] = useState(false)
     const [timeOff, setTimeOff] = useState(false)
 
@@ -73,18 +68,6 @@ function Messages(props) {
         setdiscussionOpenedRef(selectedDiscussion[0].discussionRef)
     }
 
-    // fonction de suppression d'une conversation en base de données
-    // const deleteMessage = async (capsuleRef) => {
-    //     const deleting = await fetch('/messages', {
-    //         method: 'DELETE', // méthode pour supprimer en BDD
-    //         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    //         body: `capsuleRef=${capsuleRef}&token=${token}`
-    //     })
-
-    //     setInteraction(interaction + 1)
-    // }
-
-
     var chatMessages = discussionMessagesOpened.map((message, i) => {
         if (message.token === token) {
             return (
@@ -112,15 +95,15 @@ function Messages(props) {
         // message en cas d'absence de données enregistrée pour l'instant
         var noMessage
         if (discussionsList == 0 && listErrorsMessages.length == 0) {
-            noMessage = <h4 style={{ display: 'flex', width: '100%', height: '100%', paddingBottom: "180px", justifyContent: 'center', alignItems: 'center', color: 'red', fontWeight: 'bold' }}>Aucun message</h4>
+            noMessage = <h4 className="noMessage">Aucun message</h4>
         }
 
         // messages d'erreurs rencontrées en back-end lors de l'enregistrement
         var tabErrorsMessages = listErrorsMessages.map((error, i) => {
-            return (<div style={{ display: 'flex', width: '100%', height: '100%', marginBottom: "20px", justifyContent: 'center', alignItems: 'center', color: 'red', fontWeight: 'bold' }}
-            >
-                {error}
-            </div>
+            return (
+                <div className="problemNotif">
+                    {error}
+                </div>
             )
         })
     }
@@ -148,14 +131,12 @@ function Messages(props) {
             <Row className="messageRow">
                 <div className="mainFrameChat" >
 
-                    <Title level={6} className="title">
+                    <Title level={6} className="titleMessage">
                         Echangeons entre passionnés
                     </Title>
 
                     {positiveResult == false &&
-                        <div style={{
-                            height: "452px",
-                        }}>
+                        <div style={{ height: "452px" }} >
                             {/* messages d'erreur */}
                             {tabErrorsMessages}
 
@@ -192,7 +173,6 @@ function Messages(props) {
 
                                                         <div>
                                                             <Tag color="rgba(81,97,119,1)">{discussion.capsuleData.brand}</Tag>
-                                                            {/* rgb(255, 136, 107, 0.9) */}
                                                         </div>
                                                         <div className="presentationDataSecond">
 
@@ -221,7 +201,6 @@ function Messages(props) {
 
                                                         <div>
                                                             <Tag color="rgba(81,97,119,0.3)">{discussion.capsuleData.brand}</Tag>
-                                                            {/* rgb(255, 136, 107, 0.9) */}
                                                         </div>
                                                         <div className="presentationDataSecond">
 
@@ -235,14 +214,6 @@ function Messages(props) {
 
                                             </div>
                                         }
-
-
-                                        {/* <div className="trashBt">
-                                        <FontAwesomeIcon icon={faTrash} size="lg" color='grey'
-                                        // au clic, ajout aux favoris 
-                                        // onClick={() => handleSuppDiscussion(discussion.capsuleData.capsuleRef)}
-                                        />
-                                    </div> */}
 
                                     </div>
 
@@ -297,7 +268,6 @@ function Messages(props) {
                                         <Form.Item
                                             name="message"
                                             style={{
-                                                // width: '368px',
                                                 width: '83%',
                                                 textAlign: "left",
                                                 bottom: '0px',
@@ -322,22 +292,12 @@ function Messages(props) {
                                         </Button>
                                             </Form.Item>
                                         </div>
-
                                     </Form>
-
-
                                 </div>
-
-
                             </div>
-
-
                         </div>
                     }
-
                 </div>
-
-
             </Row>
 
             <div className="endDiv"></div>

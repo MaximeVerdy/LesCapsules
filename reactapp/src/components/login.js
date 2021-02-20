@@ -1,4 +1,4 @@
-// librairies
+// importation à partir de libraries
 import React, {useState} from 'react'
 import {Redirect} from 'react-router-dom'
 import {Layout, Row, Col, Form, Input, Button, Typography} from 'antd';
@@ -21,16 +21,11 @@ function Login(props) {
 // liste des états utilisés dans le composant Sign
 const [signUpEmail, setSignUpEmail] = useState('')
 const [signUpPassword, setSignUpPassword] = useState('')
-
 const [signInEmail, setSignInEmail] = useState('')
 const [signInPassword, setSignInPassword] = useState('')
-
 const [userExists, setUserExists] = useState(false)
-
 const [listErrorsSignin, setErrorsSignin] = useState([])
 const [listErrorsSignup, setErrorsSignup] = useState([])
-
-
 
 
 // échange de données avec le back pour l'inscription par fonction asynchrone. le await indique qu'il faut attendre le retour des données pour terminer la fonction
@@ -136,7 +131,7 @@ var tabErrorsSignup = listErrorsSignup.map((error,i) => {
 
               <Row className="loginRow">
                   <Col className="loginColSlog">
-                    <h4>Vous cherchez à échanger vos capsules de bière ou à agrandir votre collection ? <br></br> Inscrivez-vous et partagez votre passion avec des gens du monde entier</h4>
+                    <h4>Vous cherchez à échanger vos capsules de bière ou à agrandir votre collection ? <br></br> Inscrivez-vous et partagez votre passion avec des gens du monde entier.</h4>
                   </Col>
               </Row>
 

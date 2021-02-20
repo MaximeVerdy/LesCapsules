@@ -1,10 +1,9 @@
 // page affichée en cas d'absence de token trouvé
 
-
+// importation à partir de libraries
 import React, { useEffect, useState } from 'react'
 import { Redirect } from 'react-router-dom'
 import { Layout, Row, Col } from 'antd';
-
 
 // style
 import '../css/other.css';
@@ -14,17 +13,16 @@ import Logo from '../images/logo-capsules.png';
 
 export default function NotLogged() {
 
+    // Etat
     const [timeOff, setTimeOff] = useState(false)
 
     useEffect(() => {
-
         const timer = setTimeout(() => { setTimeOff(true) }, 1000);
-
     }, [])
 
-    if(timeOff){
+    if (timeOff) {
         return <Redirect to='/' />
-    }    
+    }
 
     return (
 
@@ -58,9 +56,6 @@ export default function NotLogged() {
                 </Col>
             </Row>
 
-
-
         </Layout>
-
     );
 }

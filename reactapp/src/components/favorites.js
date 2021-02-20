@@ -1,17 +1,12 @@
+// importation à partir de libraries
 import React, { useState, useEffect } from 'react'
 import { Redirect, useHistory } from 'react-router-dom'
 import { connect } from 'react-redux'
 import {
     Layout,
     Row,
-    Col,
     Typography,
     Tag,
-    Form,
-    Select,
-    InputNumber,
-    Input,
-    Button,
     Modal,
 } from 'antd';
 
@@ -26,39 +21,14 @@ import '../css/other.css';
 // icônes
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 function Favorites(props) {
 
-    // année actuelle
-    var today = new Date();
-    var yyyy = today.getFullYear();
-
     // Etats
-    const [year, setYear] = useState('')
-    function onChangeYear(value) {
-        setYear(value);
-    }
-
-    const [brand, setBrand] = useState('')
-    // function onChangeBrand(value) {
-    //   setBrand(value);
-    // }
-
-    const [country, setCountry] = useState('aucun')
-    function onChangeCountry(value) {
-        setCountry(value);
-    }
-
-    // état du token, récupéré du Redux Store
-    const [token, setToken] = useState(props.token)
+    const [token, setToken] = useState(props.token)     // état du token, récupéré du Redux Store
     const [capsulesList, setCapsulesList] = useState([])
     const [listErrors, setErrors] = useState([])
-
-    const [saved, setSaved] = useState(false)
-    const [deleted, setDeleted] = useState(false)
-
     const [favorites, setfavorites] = useState([])
     const [positiveResult, setpositiveResult] = useState(false)
     const [timeOff, setTimeOff] = useState(false)
@@ -73,7 +43,7 @@ function Favorites(props) {
             setErrors(body.error)
             setfavorites(body.favorites)
             setpositiveResult(body.result)
-            // console.log("body.result", body.result);
+
         }
         findcapsules()
         const timer = setTimeout(() => { setTimeOff(true) }, 1000);
@@ -91,7 +61,7 @@ function Favorites(props) {
         const body = await data.json()
         // réponse positive du back
         if (body.result) {
-            setDeleted(true)
+   
             setfavorites(body.favorites)
             // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
         } else {
@@ -137,15 +107,13 @@ function Favorites(props) {
         // message en cas d'absence de données enregistrée pour l'instant
         var noCapsule
         if (capsulesList == 0 && listErrors.length == 0) {
-            noCapsule = <h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}>Aucune capsule favorite</h4>
+            noCapsule = <h4 className="noCapsule">Aucune capsule favorite</h4>
         }
 
         // messages d'erreurs rencontrées en back-end lors de l'enregistrement
         var Errors = listErrors.map((error, i) => {
-            return (<h4 style={{ display: 'flex', margin: "30px", marginBottom: "50px", justifyContent: 'center', color: 'red' }}
-            >
-                {error}
-            </h4>
+            return (
+                <h4 className="errorMessages">{error} </h4>
             )
         })
     }
@@ -172,7 +140,7 @@ function Favorites(props) {
                     {/* messages d'erreur */}
                     {Errors}
 
-                    {/* messages d'absenced de données en BDD */}
+                    {/* messages d'absence de données en BDD */}
                     {noCapsule}
 
                     {positiveResult == true &&
