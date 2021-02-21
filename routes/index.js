@@ -193,15 +193,11 @@ router.get('/research', async function (req, res, next) {
   var year = req.query.year
   var country = req.query.country
   var token = req.query.token
-  var pageGlobal = parseFloat(req.query.pageGlobal)
-  var pageSpecific = parseFloat(req.query.pageSpecific)
+  var pageActual = parseFloat(req.query.pageActual)
   var favorites = []
   var user = await userModel.findOne({ token: token })
 
-  console.log('-- page Global', pageGlobal);
-  console.log('-- page Specific', pageSpecific);
-
-  var test = 'esaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'
+  console.log('-- pageActual', pageActual);
 
   if (user) {
     favorites = user.favorites
@@ -210,22 +206,23 @@ router.get('/research', async function (req, res, next) {
   // lors du chargement du composant Research
   if (brand == '' && country == 'aucun' && year == '') {
     // recherche des données en BDD de toutes les capsules
-    capsules = await capsuleModel.find().skip(pageGlobal).limit(1)
+    capsules = await capsuleModel.find().skip(pageActual).limit(1)
     // recherche des données en BDD des capsules conditionnée
   } else if (brand != '' && country == 'aucun' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).skip(pageSpecific).limit(1)
+    console.log("yeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaah")
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).skip(pageActual).limit(1)
   } else if (brand == '' && country == 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ year: year }).skip(pageSpecific).limit(1)
+    capsules = await capsuleModel.find({ year: year }).skip(pageActual).limit(1)
   } else if (brand == '' && country != 'aucun' && year == '') {
-    capsules = await capsuleModel.find({ country: country }).skip(pageSpecific).limit(1)
+    capsules = await capsuleModel.find({ country: country }).skip(pageActual).limit(1)
   } else if (brand == '' && country != 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ country: country } && { year: year }).skip(pageSpecific).limit(1)
+    capsules = await capsuleModel.find({ country: country } && { year: year }).skip(pageActual).limit(1)
   } else if (brand != '' && country != 'aucun' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { country: country }).skip(pageSpecific).limit(1)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { country: country }).skip(pageActual).limit(1)
   } else if (brand != '' && country == 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year }).skip(pageSpecific).limit(1)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year }).skip(pageActual).limit(1)
   } else if (brand != '' && country != 'aucun' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year } && { country: country }).skip(pageSpecific).limit(1)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') } && { year: year } && { country: country }).skip(pageActual).limit(1)
   }
 
   if (capsules.length == 0) {
@@ -234,9 +231,9 @@ router.get('/research', async function (req, res, next) {
 
   // données envoyées en front
   res.json({ capsules, favorites, error })
-
+  // console.log('-- capsule finale -->', capsules);
   for (i=0; i < capsules.length; i++){
-    console.log('-- capsule finale', capsules[i].brand);
+    console.log('-- capsule finale -->', capsules[i].brand);
   }
 })
 
