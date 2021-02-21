@@ -88,7 +88,10 @@ router.post('/sign-up', async function (req, res, next) {
 
   // données envoyée en front
   res.json({ result, error, token, newMessage })
-  //avant avec saveUser. c'est peu-être dangereux ??? ------------------------- à supprimer ??
+  // ---------------------------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------------------------
+      // ---------------------------------------------------------------------------------------------
+  //avant avec saveUser. c'est peu-être dangereux ??? -------------------------------------------------------------------------- à supprimer ??
   // res.json({ result, saveUser, error, token })
 
 });

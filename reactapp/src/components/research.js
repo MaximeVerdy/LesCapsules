@@ -589,19 +589,19 @@ function Research(props) {
 
                             <div className="trashBt">
                                 {token != '' && favorites.includes(capsule.capsuleRef) &&
-                                    <FontAwesomeIcon icon={faHeart} size="lg" color='red'
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='red' id="button"
                                         // au clic, ajout aux favoris 
                                         onClick={() => handleSuppFavorite(capsule.capsuleRef)}
                                     />
                                 }
                                 {token != '' && !favorites.includes(capsule.capsuleRef) &&
-                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'  id="button"
                                         // au clic, suppression des favoris 
                                         onClick={() => handleAddFavorite(capsule.capsuleRef)}
                                     />
                                 }
                                 {token == '' &&
-                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'  id="button"
                                         // au clic, ouverture du pop up d'avertissement
                                         onClick={() => handleModalNoAccess()}
                                     />
@@ -611,13 +611,13 @@ function Research(props) {
                                 </div>
 
                                 {token != '' &&
-                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'  id="button"
                                         // au clic, envoi d'un message
                                         onClick={() => handleSendMessage(capsule.capsuleRef)}
                                     />
                                 }
                                 {token == '' &&
-                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'  id="button"
                                         // au clic, ouverture du pop up d'avertissement
                                         onClick={() => handleModalNoAccess()}
                                     />
@@ -634,7 +634,7 @@ function Research(props) {
             </Row>
 
             <Row className="backFoward">
-                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'
+                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'  id="button"
                     onClick={() => pageBefore()}
                 />
 
@@ -642,7 +642,7 @@ function Research(props) {
                     (  {pageActual + 1} / {pagesTotal} )
                 </div>
 
-                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'
+                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'  id="button"
                     onClick={() => pageNext()}
                 />
             </Row>

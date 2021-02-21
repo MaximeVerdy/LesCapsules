@@ -161,7 +161,7 @@ function Messages(props) {
 
 
                                         {discussionOpenedRef == discussion.discussionRef &&
-                                            <div className="containerDiscussionSelected ">
+                                            <div className="containerDiscussionSelected" id="hover">
 
                                                 <div className="eachDiscussion"
                                                     onClick={() => changeDiscussion(discussion.discussionRef)}
@@ -189,7 +189,7 @@ function Messages(props) {
 
                                         {discussionOpenedRef != discussion.discussionRef &&
 
-                                            <div className="containerDiscussion">
+                                            <div className="containerDiscussion" id="hover">
 
                                                 <div className="eachDiscussion"
                                                     onClick={() => changeDiscussion(discussion.discussionRef)}

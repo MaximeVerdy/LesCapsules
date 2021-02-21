@@ -203,7 +203,7 @@ function Favorites(props) {
                                     </div>
 
                                     <div className="trashBt">
-                                        <FontAwesomeIcon icon={faHeart} size="lg" color='red'
+                                        <FontAwesomeIcon icon={faHeart} size="lg" color='red' id="button"
                                             // au clic, ajout aux favoris 
                                             onClick={() => handleSuppFavorite(capsule.capsuleRef)}
                                         />
@@ -214,13 +214,13 @@ function Favorites(props) {
                                         </div>
 
                                         {token != '' &&
-                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey' id="button"
                                                 // au clic, envoi d'un message
                                                 onClick={() => handleSendMessage(capsule.capsuleRef)}
                                             />
                                         }
                                         {token == '' &&
-                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'
+                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'  id="button"
                                                 // au clic, ouverture du pop up d'avertissement
                                                 onClick={() => handleModalNoAccess()}
                                             />
@@ -238,7 +238,7 @@ function Favorites(props) {
             </Row>
 
             <Row className="backFoward">
-                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'
+                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey' id="button"
                     onClick={() => pageBefore()}
                 />
 
@@ -246,7 +246,7 @@ function Favorites(props) {
                     (  {pageActual + 1} / {pagesTotal} )
                 </div>
 
-                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'
+                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey' id="button"
                     onClick={() => pageNext()}
                 />
             </Row>
