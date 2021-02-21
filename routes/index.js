@@ -201,7 +201,7 @@ router.get('/research', async function (req, res, next) {
   console.log('-- page Global', pageGlobal);
   console.log('-- page Specific', pageSpecific);
 
-  
+  var test = 'esaiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii'
 
   if (user) {
     favorites = user.favorites
