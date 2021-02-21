@@ -22,6 +22,8 @@ import '../css/other.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { faLongArrowAltLeft } from '@fortawesome/free-solid-svg-icons'
+import { faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons'
 
 function Favorites(props) {
 
@@ -33,24 +35,53 @@ function Favorites(props) {
     const [positiveResult, setpositiveResult] = useState(false)
     const [timeOff, setTimeOff] = useState(false)
     const [redirection, setredirection] = useState(false)
+    const [pageActual, setpageActual] = useState(0)
+    const [pagesTotal, setPagesTotal] = useState(0)
+    const [stepOfCapsule, setstepOfCapsule] = useState(0)
 
     // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
         const findcapsules = async () => {
-            const data = await fetch(`/all-my-favorites?token=${token}`) // pour récupérer des données 
+            const data = await fetch(`/all-my-favorites?token=${token}&stepOfCapsule=${stepOfCapsule}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.capsulesSorted)
             setErrors(body.error)
             setfavorites(body.favorites)
             setpositiveResult(body.result)
+            setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
 
         }
         findcapsules()
-        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
-    }, [favorites])
+        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
+    }, [favorites, pageActual])
+
+
+    const pageNext = () => {
+        if (pageActual < pagesTotal - 1) {
+            setpageActual(pageActual + 1)
+            setstepOfCapsule(stepOfCapsule + 10)
+        }
+    }
+
+    const pageBefore = () => {
+        if (pageActual > 0) {
+            setpageActual(pageActual - 1)
+        } else {
+            setpageActual(0)
+        }
+        if (stepOfCapsule > 0) {
+            setstepOfCapsule(stepOfCapsule - 10)
+        } else {
+            setstepOfCapsule(0)
+        }
+    }
+
 
     // suppression d'une capsule favorite en base de données
     var handleSuppFavorite = async (capsuleRef) => {
+        setpageActual(0)
+        setstepOfCapsule(0)
+
         const data = await fetch('/supp-favorite', {
             method: 'PUT', // pour supprimer des données en BDD
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -61,7 +92,7 @@ function Favorites(props) {
         const body = await data.json()
         // réponse positive du back
         if (body.result) {
-   
+
             setfavorites(body.favorites)
             // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
         } else {
@@ -206,6 +237,19 @@ function Favorites(props) {
                 </div>
             </Row>
 
+            <Row className="backFoward">
+                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'
+                    onClick={() => pageBefore()}
+                />
+
+                <div className="numberOfPages">
+                    (  {pageActual + 1} / {pagesTotal} )
+                </div>
+
+                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'
+                    onClick={() => pageNext()}
+                />
+            </Row>
 
             <div className="endDiv"></div>
 

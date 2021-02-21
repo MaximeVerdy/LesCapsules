@@ -167,6 +167,11 @@
     padding-bottom: 20px;
 }
 
+.numberOfPages {
+    font-weight: bold;
+    color: grey;
+    padding: 16px 20px 10px 20px;
+}
 
 .backFoward {
     justify-content: center;

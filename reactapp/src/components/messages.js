@@ -40,7 +40,7 @@ function Messages(props) {
             props.newMessage(false)
         }
         findDiscussions()
-        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
+        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
     }, [interaction])
 
 

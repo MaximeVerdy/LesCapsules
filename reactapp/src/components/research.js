@@ -45,9 +45,11 @@ function Research(props) {
     const [redirection, setredirection] = useState(false)
     const [timeOff, setTimeOff] = useState(false)
     const [year, setYear] = useState('')
-    const [country, setCountry] = useState('aucun')
+    const [country, setCountry] = useState('tous')
     const [pageActual, setpageActual] = useState(0)
     const [searchAction, setsearchAction] = useState(0)
+    const [pagesTotal, setPagesTotal] = useState(0)
+    const [stepOfCapsule, setstepOfCapsule] = useState(0)
 
     function onChangeYear(value) {
         setYear(value);
@@ -62,31 +64,36 @@ function Research(props) {
     useEffect(() => {
         const findcapsules = async () => {
             if (year === null) {
-                const data = await fetch(`/research?token=${token}&brand=${brand}&year=${''}&country=${country}&pageActual=${pageActual}`) // pour récupérer des données 
+                const data = await fetch(`/research?token=${token}&brand=${brand}&year=${''}&country=${country}&stepOfCapsule=${stepOfCapsule}`) // pour récupérer des données 
                 const body = await data.json() // convertion des données reçues en objet JS (parsage)
                 setCapsulesList(body.capsules)
                 setfavorites(body.favorites)
+                setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
                 setErrors(body.error)
             } else {
-                const data = await fetch(`/research?token=${token}&brand=${brand}&year=${year}&country=${country}&pageActual=${pageActual}`) // pour récupérer des données 
+                const data = await fetch(`/research?token=${token}&brand=${brand}&year=${year}&country=${country}&stepOfCapsule=${stepOfCapsule}`) // pour récupérer des données 
                 const body = await data.json() // convertion des données reçues en objet JS (parsage)
                 setCapsulesList(body.capsules)
                 setfavorites(body.favorites)
+                setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
                 setErrors(body.error)
             }
         }
         findcapsules()
-        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
-    }, [pageActual, searchAction])
 
+        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
+    }, [pageActual, searchAction])
 
     var handleSubmitSearch = () => {
         setsearchAction(searchAction + 1)
+        setpageActual(0)
     }
 
     const pageNext = () => {
-        setpageActual(pageActual + 1)
-        console.log('console ------>', pageActual );
+        if (pageActual < pagesTotal - 1) {
+            setpageActual(pageActual + 1)
+            setstepOfCapsule(stepOfCapsule + 10)
+        }
     }
 
     const pageBefore = () => {
@@ -95,8 +102,12 @@ function Research(props) {
         } else {
             setpageActual(0)
         }
+        if (stepOfCapsule > 0) {
+            setstepOfCapsule(stepOfCapsule - 10)
+        } else {
+            setstepOfCapsule(0)
+        }
     }
-
 
     // ajout d'une capsule favorite en base de données
     var handleAddFavorite = async (capsuleRef) => {
@@ -274,11 +285,9 @@ function Research(props) {
                                             textAlign: "left"
                                         }}
                                         placeholder="pays"
-                                        // defaultValue= 'aucun'
                                         onChange={onChangeCountry}
-
                                     >
-                                        <Select.Option value="aucun">AUCUN</Select.Option >
+                                        <Select.Option value="tous">TOUS</Select.Option >
                                         <Select.Option value="Albania">Albania</Select.Option >
                                         <Select.Option value="Algeria">Algeria</Select.Option >
                                         <Select.Option value="American Samoa">American Samoa</Select.Option >
@@ -628,7 +637,11 @@ function Research(props) {
                 <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'
                     onClick={() => pageBefore()}
                 />
-                <div className="backFoward"></div>
+
+                <div className="numberOfPages">
+                    (  {pageActual + 1} / {pagesTotal} )
+                </div>
+
                 <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'
                     onClick={() => pageNext()}
                 />

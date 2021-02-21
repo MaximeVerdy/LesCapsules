@@ -16,41 +16,72 @@ import '../css/other.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrash } from '@fortawesome/free-solid-svg-icons'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faLongArrowAltLeft } from '@fortawesome/free-solid-svg-icons'
+import { faLongArrowAltRight } from '@fortawesome/free-solid-svg-icons'
 
 function Mycollection(props) {
 
     // Etats
     const [token, setToken] = useState(props.token) // état du token, récupéré du Redux Store
     const [capsulesList, setCapsulesList] = useState([])
-    const [deleted, setDeleted] = useState(0)
     const [positiveResult, setpositiveResult] = useState(false)
     const [timeOff, setTimeOff] = useState(false)
     const [favorites, setfavorites] = useState([])
     const [listErrors, setErrors] = useState([])
+    const [pageActual, setpageActual] = useState(0)
+    const [pagesTotal, setPagesTotal] = useState(0)
+    const [stepOfCapsule, setstepOfCapsule] = useState(0)
+    const [deleted, setdeleted] = useState(0)
 
 
     // échange de données avec le back pour la récuration des données à chaque changement de l'état deleted
     useEffect(() => {
         const findcapsules = async () => {
-            const data = await fetch(`/my-collection?token=${token}`) // pour récupérer des données 
+            const data = await fetch(`/my-collection?token=${token}&stepOfCapsule=${stepOfCapsule}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
             setCapsulesList(body.sortedCapsules)
             setErrors(body.error)
             setpositiveResult(body.result)
             setfavorites(body.favorites)
+            setpositiveResult(body.result)
+            setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
         }
         findcapsules()
-        const timer = setTimeout(() => { setTimeOff(true) }, 1000);
-    }, [deleted])
+        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
+    }, [pageActual, deleted])
+
+
+    const pageNext = () => {
+        if (pageActual < pagesTotal - 1) {
+            setpageActual(pageActual + 1)
+            setstepOfCapsule(stepOfCapsule + 10)
+        }
+    }
+
+    const pageBefore = () => {
+        if (pageActual > 0) {
+            setpageActual(pageActual - 1)
+        } else {
+            setpageActual(0)
+        }
+        if (stepOfCapsule > 0) {
+            setstepOfCapsule(stepOfCapsule - 10)
+        } else {
+            setstepOfCapsule(0)
+        }
+    }
 
     // fonction de suppression d'une capsule en base de données
     var deleteCapsule = async (capsuleRef) => {
+        setpageActual(0)
+        setstepOfCapsule(0) 
+        setdeleted(deleted + 1)
+
         const deleting = await fetch('/my-collection', {
             method: 'DELETE', // méthode pour supprimer en BDD
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `capsuleRef=${capsuleRef}&token=${token}`
         })
-        setDeleted(deleted + 1)
     }
 
     // ajout d'une capsule favorite en base de données
@@ -208,6 +239,20 @@ function Mycollection(props) {
 
                 </div>
 
+            </Row>
+
+            <Row className="backFoward">
+                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'
+                    onClick={() => pageBefore()}
+                />
+
+                <div className="numberOfPages">
+                    (  {pageActual + 1} / {pagesTotal} )
+                </div>
+
+                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'
+                    onClick={() => pageNext()}
+                />
             </Row>
 
             <div className="endDiv"></div>
