@@ -1,5 +1,5 @@
 // importation à partir de libraries
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import {
@@ -47,7 +47,7 @@ function Research(props) {
     const [year, setYear] = useState('')
     const [country, setCountry] = useState('aucun')
     const [pageGlobal, setpageGlobal] = useState(0)
-    const [pageSpecific, setpageSpecific] = useState('')
+    const [pageSpecific, setpageSpecific] = useState(-100)
 
     function onChangeYear(value) {
         setYear(value);
@@ -67,31 +67,19 @@ function Research(props) {
         }
         findcapsules()
         const timer = setTimeout(() => { setTimeOff(true) }, 1000);
-        setpageSpecific(0)
+        if (pageSpecific !== -100) {
+            setpageSpecific(-100)
+        }
     }, [pageGlobal])
 
 
-    // échange de données avec le back pour chaque recherche
-    // useEffect(() => {
-    //     const findcapsules = async () => {
-    //         // quand l'année est effacée du champ de recherche, year devient null, on fait donc passer '' pour year dans la requête plutôt que null
-    //         if (year === null) {
-    //             const data = await fetch(`/research?brand=${brand}&year=${''}&country=${country}&page=${pageSpecific}`) // pour récupérer des données 
-    //             const body = await data.json() // convertion des données reçues en objet JS (parsage)
-    //             setCapsulesList(body.capsules)
-    //             setErrors(body.error)
-    //         } else {
-    //             const data = await fetch(`/research?brand=${brand}&year=${year}&country=${country}&page=${pageSpecific}`) // pour récupérer des données 
-    //             const body = await data.json() // convertion des données reçues en objet JS (parsage)
-    //             setCapsulesList(body.capsules)
-    //             setErrors(body.error)
-    //         }
-    //     }
-    //     findcapsules()
-    //     setpageGlobal(0)
-    // }, [pageSpecific])
-
-
+    useEffect(() => {
+        if (pageSpecific !== -100) {
+            console.log("pageSpecific", pageSpecific);
+            handleSubmitSearch()
+        }
+    }, [pageSpecific]
+    )
 
     var handleSubmitSearch = async () => {
     
@@ -204,15 +192,6 @@ function Research(props) {
             setpageSpecific(0)
         }
     }
-
-    useEffect(() => {
-        console.log("pageSpecific", pageSpecific);
-        if (pageSpecific !== '') {
-            handleSubmitSearch()
-        }
-    }, [pageSpecific]
-    )
-
 
 
 

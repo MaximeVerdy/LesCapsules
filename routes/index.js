@@ -198,12 +198,8 @@ router.get('/research', async function (req, res, next) {
   var favorites = []
   var user = await userModel.findOne({ token: token })
 
-  // if (pageSpecific < 0) {
-  //   pageSpecific = 0
-  // }
-
-  console.log(' pageGlobal--------',pageGlobal);
-  console.log(' pageSpecific--------', pageSpecific);
+  console.log('-- page Global', pageGlobal);
+  console.log('-- page Specific', pageSpecific);
 
   if (user) {
     favorites = user.favorites
@@ -212,7 +208,7 @@ router.get('/research', async function (req, res, next) {
   // lors du chargement du composant Research
   if (brand == '' && country == 'aucun' && year == '') {
     // recherche des données en BDD de toutes les capsules
-    capsules = await capsuleModel.find()
+    capsules = await capsuleModel.find().skip(pageGlobal).limit(1)
     // recherche des données en BDD des capsules conditionnée
   } else if (brand != '' && country == 'aucun' && year == '') {
     capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).skip(pageSpecific).limit(1)
@@ -237,6 +233,9 @@ router.get('/research', async function (req, res, next) {
   // données envoyées en front
   res.json({ capsules, favorites, error })
 
+  for (i=0; i < capsules.length; i++){
+    console.log('-- capsule finale', capsules[i].brand);
+  }
 })
 
 
