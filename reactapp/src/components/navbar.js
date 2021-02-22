@@ -117,7 +117,7 @@ function Topnavbar(props) {
             <Link to="/mycollection">
               <div style={{ color: 'black' }}>
                 <FontAwesomeIcon icon={faCoins} size="lg" />
-                <span className="text hiddenTextMenu"> Ma collection </span>
+                <span className="text hiddenTextMenu"> Collection </span>
               </div>
             </Link>
           }

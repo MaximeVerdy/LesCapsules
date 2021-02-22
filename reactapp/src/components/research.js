@@ -43,13 +43,13 @@ function Research(props) {
     const [listErrors, setErrors] = useState([])
     const [favorites, setfavorites] = useState([])
     const [redirection, setredirection] = useState(false)
-    const [timeOff, setTimeOff] = useState(false)
     const [year, setYear] = useState('')
     const [country, setCountry] = useState('tous')
     const [pageActual, setpageActual] = useState(0)
     const [searchAction, setsearchAction] = useState(0)
     const [pagesTotal, setPagesTotal] = useState(0)
     const [stepOfCapsule, setstepOfCapsule] = useState(0)
+    const [resultFromBack, setresultFromBack] = useState(false)
 
     function onChangeYear(value) {
         setYear(value);
@@ -57,7 +57,6 @@ function Research(props) {
     function onChangeCountry(value) {
         setCountry(value);
     }
-
 
 
     // échange de données avec le back pour la récuration des données au chargement du composant
@@ -70,6 +69,7 @@ function Research(props) {
                 setfavorites(body.favorites)
                 setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
                 setErrors(body.error)
+                if (body.capsules) { setresultFromBack(true) }
             } else {
                 const data = await fetch(`/research?token=${token}&brand=${brand}&year=${year}&country=${country}&stepOfCapsule=${stepOfCapsule}`) // pour récupérer des données 
                 const body = await data.json() // convertion des données reçues en objet JS (parsage)
@@ -77,11 +77,10 @@ function Research(props) {
                 setfavorites(body.favorites)
                 setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
                 setErrors(body.error)
+                if (body.capsules) { setresultFromBack(true) }
             }
         }
         findcapsules()
-
-        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
     }, [pageActual, searchAction])
 
     var handleSubmitSearch = () => {
@@ -186,21 +185,23 @@ function Research(props) {
     const { Title } = Typography;
 
 
-
-    if (timeOff) {
-        // message en cas d'absence de données enregistrée pour l'instant
-        var noCapsule
-        if (capsulesList == 0 && listErrors.length == 0) {
-            noCapsule = <h4 className="noCapsule">Aucune capsule enregistrée</h4>
-        }
-
-        // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-        var Errors = listErrors.map((error, i) => {
-            return (
-                <h4 className="errorMessages"> {error} </h4>
-            )
-        })
+    var noCapsule
+    if (!resultFromBack) {
+        // message d'attente tant que les données en BDD ne sont pas chargées
+        noCapsule = <h4 className="noCapsule">On cherche pour vous...</h4>
     }
+
+    // message en cas d'absence de données enregistrée pour l'instant
+    if (resultFromBack && capsulesList == 0 && listErrors.length == 0) {
+        noCapsule = <h4 className="noCapsule">Aucune capsule enregistrée</h4>
+    }
+
+    // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+    var Errors = listErrors.map((error, i) => {
+        return (
+            <h4 className="errorMessages"> {error} </h4>
+        )
+    })
 
 
     return (
@@ -591,13 +592,13 @@ function Research(props) {
                                     />
                                 }
                                 {token != '' && !favorites.includes(capsule.capsuleRef) &&
-                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'  id="button"
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey' id="button"
                                         // au clic, suppression des favoris 
                                         onClick={() => handleAddFavorite(capsule.capsuleRef)}
                                     />
                                 }
                                 {token == '' &&
-                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey'  id="button"
+                                    <FontAwesomeIcon icon={faHeart} size="lg" color='grey' id="button"
                                         // au clic, ouverture du pop up d'avertissement
                                         onClick={() => handleModalNoAccess()}
                                     />
@@ -607,13 +608,13 @@ function Research(props) {
                                 </div>
 
                                 {token != '' &&
-                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'  id="button"
+                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey' id="button"
                                         // au clic, envoi d'un message
                                         onClick={() => handleSendMessage(capsule.capsuleRef)}
                                     />
                                 }
                                 {token == '' &&
-                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'  id="button"
+                                    <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey' id="button"
                                         // au clic, ouverture du pop up d'avertissement
                                         onClick={() => handleModalNoAccess()}
                                     />
@@ -630,7 +631,7 @@ function Research(props) {
             </Row>
 
             <Row className="backFoward">
-                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey'  id="button"
+                <FontAwesomeIcon icon={faLongArrowAltLeft} size="4x" color='grey' id="button"
                     onClick={() => pageBefore()}
                 />
 
@@ -638,7 +639,7 @@ function Research(props) {
                     (  {pageActual + 1} / {pagesTotal} )
                 </div>
 
-                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey'  id="button"
+                <FontAwesomeIcon icon={faLongArrowAltRight} size="4x" color='grey' id="button"
                     onClick={() => pageNext()}
                 />
             </Row>

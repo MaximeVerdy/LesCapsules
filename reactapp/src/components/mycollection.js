@@ -25,13 +25,13 @@ function Mycollection(props) {
     const [token, setToken] = useState(props.token) // état du token, récupéré du Redux Store
     const [capsulesList, setCapsulesList] = useState([])
     const [positiveResult, setpositiveResult] = useState(false)
-    const [timeOff, setTimeOff] = useState(false)
     const [favorites, setfavorites] = useState([])
     const [listErrors, setErrors] = useState([])
     const [pageActual, setpageActual] = useState(0)
     const [pagesTotal, setPagesTotal] = useState(0)
     const [stepOfCapsule, setstepOfCapsule] = useState(0)
     const [deleted, setdeleted] = useState(0)
+    const [resultFromBack, setresultFromBack] = useState(false)
 
 
     // échange de données avec le back pour la récuration des données à chaque changement de l'état deleted
@@ -45,9 +45,9 @@ function Mycollection(props) {
             setfavorites(body.favorites)
             setpositiveResult(body.result)
             setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
+            if (body.capsules) { setresultFromBack(true) }
         }
         findcapsules()
-        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
     }, [pageActual, deleted])
 
 
@@ -76,7 +76,7 @@ function Mycollection(props) {
     // fonction de suppression d'une capsule en base de données
     var deleteCapsule = async (capsuleRef) => {
         setpageActual(0)
-        setstepOfCapsule(0) 
+        setstepOfCapsule(0)
         setdeleted(deleted + 1)
 
         const deleting = await fetch('/my-collection', {
@@ -132,20 +132,24 @@ function Mycollection(props) {
     // mise en forme des titres antd
     const { Title } = Typography;
 
-    if (timeOff) {
-        // message en cas d'absence de données enregistrée pour l'instant
-        var noCapsule
-        if (capsulesList == 0 && listErrors.length == 0) {
-            noCapsule = <h4 className="noCapsule">Aucune capsule enregistrée</h4>
-        }
-
-        // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-        var tabErrorsCaps = listErrors.map((error, i) => {
-            return (
-                <h4 className="errorMessages">{error} </h4>
-            )
-        })
+    var noCapsule
+    if (!resultFromBack) {
+        // message d'attente tant que les données en BDD ne sont pas chargées
+        noCapsule = <h4 className="noCapsule">On cherche pour vous...</h4>
     }
+
+    // message en cas d'absence de données enregistrée pour l'instant
+    if (resultFromBack && capsulesList == 0 && listErrors.length == 0) {
+        noCapsule = <h4 className="noCapsule">Aucune capsule enregistrée</h4>
+    }
+
+    // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+    var tabErrorsCaps = listErrors.map((error, i) => {
+        return (
+            <h4 className="errorMessages">{error} </h4>
+        )
+    })
+
 
     // condition de rediction en cas d'absence de token 
     if (token == '') {

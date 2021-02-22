@@ -33,11 +33,11 @@ function Favorites(props) {
     const [listErrors, setErrors] = useState([])
     const [favorites, setfavorites] = useState([])
     const [positiveResult, setpositiveResult] = useState(false)
-    const [timeOff, setTimeOff] = useState(false)
     const [redirection, setredirection] = useState(false)
     const [pageActual, setpageActual] = useState(0)
     const [pagesTotal, setPagesTotal] = useState(0)
     const [stepOfCapsule, setstepOfCapsule] = useState(0)
+    const [resultFromBack, setresultFromBack] = useState(false)
 
     // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
@@ -49,10 +49,9 @@ function Favorites(props) {
             setfavorites(body.favorites)
             setpositiveResult(body.result)
             setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
-
+            if (body.capsulesSorted) { setresultFromBack(true) }
         }
         findcapsules()
-        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
     }, [favorites, pageActual])
 
 
@@ -136,20 +135,23 @@ function Favorites(props) {
     // mise en forme des titres antd
     const { Title } = Typography;
 
-    if (timeOff) {
-        // message en cas d'absence de données enregistrée pour l'instant
-        var noCapsule
-        if (capsulesList == 0 && listErrors.length == 0) {
-            noCapsule = <h4 className="noCapsule">Aucune capsule favorite</h4>
-        }
-
-        // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-        var Errors = listErrors.map((error, i) => {
-            return (
-                <h4 className="errorMessages">{error} </h4>
-            )
-        })
+    var noCapsule
+    if (!resultFromBack) {
+        // message d'attente tant que les données en BDD ne sont pas chargées
+        noCapsule = <h4 className="noCapsule">On cherche pour vous...</h4>
     }
+
+    // message en cas d'absence de données enregistrée pour l'instant
+    if (resultFromBack && capsulesList == 0 && listErrors.length == 0) {
+        noCapsule = <h4 className="noCapsule">Aucune capsule favorite</h4>
+    }
+
+    // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+    var Errors = listErrors.map((error, i) => {
+        return (
+            <h4 className="errorMessages">{error} </h4>
+        )
+    })
 
     // condition de rediction en cas d'absence de token 
     if (token == '') {
@@ -222,7 +224,7 @@ function Favorites(props) {
                                             />
                                         }
                                         {token == '' &&
-                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey'  id="button"
+                                            <FontAwesomeIcon icon={faEnvelope} size="lg" color='grey' id="button"
                                                 // au clic, ouverture du pop up d'avertissement
                                                 onClick={() => handleModalNoAccess()}
                                             />

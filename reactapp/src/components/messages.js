@@ -25,6 +25,7 @@ function Messages(props) {
     const [myNewMsg, setmyNewMsg] = useState('')
     const [positiveResult, setpositiveResult] = useState(false)
     const [timeOff, setTimeOff] = useState(false)
+    const [resultFromBack, setresultFromBack] = useState(false)
 
 
     // échange de données avec le back pour la récuration des données à chaque changement de l'état interaction
@@ -38,9 +39,9 @@ function Messages(props) {
             setdiscussionMessagesOpened(body.sortedDiscussions[0].messages)
             setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
             props.newMessage(false)
+            if (body.sortedDiscussions) { setresultFromBack(true) }
         }
         findDiscussions()
-        const timer = setTimeout(() => { setTimeOff(true) }, 1500);
     }, [interaction])
 
     // fonction d'ajout d'un message en base de données
@@ -93,22 +94,24 @@ function Messages(props) {
     // mise en forme des titres antd
     const { Title } = Typography;
 
-    if (timeOff) {
-        // message en cas d'absence de données enregistrée pour l'instant
-        var noMessage
-        if (discussionsList == 0 && listErrorsMessages.length == 0) {
-            noMessage = <h4 className="noMessage">Aucun message</h4>
-        }
-
-        // messages d'erreurs rencontrées en back-end lors de l'enregistrement
-        var tabErrorsMessages = listErrorsMessages.map((error, i) => {
-            return (
-                <div className="problemNotif">
-                    {error}
-                </div>
-            )
-        })
+    
+    var noMessage
+    if (!resultFromBack) {
+        // message d'attente tant que les données en BDD ne sont pas chargées
+        noMessage = <h4 className="noMessage">On cherche pour vous...</h4>
     }
+    // message en cas d'absence de données enregistrée pour l'instant
+    if (resultFromBack && discussionsList == 0 && listErrorsMessages.length == 0) {
+        noMessage = <h4 className="noMessage">Aucun message</h4>
+    }
+    // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+    var tabErrorsMessages = listErrorsMessages.map((error, i) => {
+        return (
+            <div className="problemNotif">
+                {error}
+            </div>
+        )
+    })
 
     const [form] = Form.useForm();
 
