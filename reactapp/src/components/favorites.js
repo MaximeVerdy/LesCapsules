@@ -50,6 +50,7 @@ function Favorites(props) {
             setpositiveResult(body.result)
             setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
             if (body.capsulesSorted) { setresultFromBack(true) }
+            if (body.capsulesSorted.length == 0) { setPagesTotal(1) }
         }
         findcapsules()
     }, [favorites, pageActual])
@@ -178,7 +179,7 @@ function Favorites(props) {
                     {/* messages d'absence de données en BDD */}
                     {noCapsule}
 
-                    {positiveResult == true &&
+                    {positiveResult == true  &&
                         <div>
                             {/* map du tableau de données */}
                             {capsulesList.map((capsule, i) => (

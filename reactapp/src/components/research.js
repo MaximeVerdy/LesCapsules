@@ -70,6 +70,7 @@ function Research(props) {
                 setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
                 setErrors(body.error)
                 if (body.capsules) { setresultFromBack(true) }
+                if (body.capsules.length == 0) { setPagesTotal(1) }
             } else {
                 const data = await fetch(`/research?token=${token}&brand=${brand}&year=${year}&country=${country}&stepOfCapsule=${stepOfCapsule}`) // pour récupérer des données 
                 const body = await data.json() // convertion des données reçues en objet JS (parsage)
@@ -78,6 +79,7 @@ function Research(props) {
                 setPagesTotal(Math.ceil(body.numberOfDocuments / 10))
                 setErrors(body.error)
                 if (body.capsules) { setresultFromBack(true) }
+                if (body.capsules.length == 0) { setPagesTotal(1) }
             }
         }
         findcapsules()
@@ -109,6 +111,7 @@ function Research(props) {
             setstepOfCapsule(0)
         }
     }
+
 
     // ajout d'une capsule favorite en base de données
     var handleAddFavorite = async (capsuleRef) => {

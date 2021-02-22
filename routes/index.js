@@ -235,7 +235,7 @@ router.get('/research', async function (req, res, next) {
   }
   
   if (capsules.length == 0) {
-    error.push('Pas de capsules')
+    error.push('Aucune capsule à afficher')
   }
 
   // données envoyées en front
@@ -400,7 +400,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
 
   var error = []
   var result = false
-  var capsules = {}
+  var capsules = []
   var favorites = []
   var numberOfDocuments = 0
 
@@ -422,12 +422,16 @@ router.get('/all-my-favorites', async function (req, res, next) {
       });
       var capsulesSorted = capsules.reverse()
     } else {
-      error.push('Impossible de trouver les favoris')
+      error.push('Pas de favoris disponibles')
     }
   } else {
     // message d'erreur d'enregistrement
     error.push('Une erreur est advenue. Veuillez vous connecter')
   }
+
+if (capsulesSorted === undefined) {
+  capsulesSorted = []
+}
 
   // données envoyées en front
   res.json({ result, capsulesSorted, error, numberOfDocuments })
@@ -536,15 +540,16 @@ router.get('/discussions', async function (req, res, next) {
       isDiscussionsExist = true
       for (i = 0; i < discussions.length; i++) {
         var capsule = await capsuleModel.findOne({ capsuleRef: discussions[i].capsuleRef })
-
-        discussionsExtended.push({
-          discussionRef: discussions[i].discussionRef,
-          capsuleRef: discussions[i].capsuleRef,
-          lastMessageDate: discussions[i].lastMessageDate,
-          users: discussions[i].users,
-          messages: discussions[i].messages,
-          capsuleData: capsule
-        })
+        if (capsule !== null) {
+          discussionsExtended.push({
+            discussionRef: discussions[i].discussionRef,
+            capsuleRef: discussions[i].capsuleRef,
+            lastMessageDate: discussions[i].lastMessageDate,
+            users: discussions[i].users,
+            messages: discussions[i].messages,
+            capsuleData: capsule
+          })
+        }
 
         var sortedDiscussions = discussionsExtended.sort((a, b) => b.lastMessageDate - a.lastMessageDate)
       }

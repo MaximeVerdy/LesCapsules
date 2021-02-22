@@ -36,9 +36,11 @@ function Messages(props) {
             setErrorsMessages(body.error)
             setpositiveResult(body.result)
             setDiscussionsList(body.sortedDiscussions)
-            setdiscussionMessagesOpened(body.sortedDiscussions[0].messages)
-            setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
-            props.newMessage(false)
+            if (body.sortedDiscussions.length != 0) {
+                setdiscussionMessagesOpened(body.sortedDiscussions[0].messages)
+                setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
+                props.newMessage(false)
+            }
             if (body.sortedDiscussions) { setresultFromBack(true) }
         }
         findDiscussions()
@@ -94,7 +96,7 @@ function Messages(props) {
     // mise en forme des titres antd
     const { Title } = Typography;
 
-    
+
     var noMessage
     if (!resultFromBack) {
         // message d'attente tant que les données en BDD ne sont pas chargées
@@ -165,7 +167,7 @@ function Messages(props) {
                                     <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
 
 
-                                        {discussionOpenedRef == discussion.discussionRef &&
+                                        {discussionOpenedRef == discussion.discussionRef && 
                                             <div className="containerDiscussionSelected" id="hover">
 
                                                 <div className="eachDiscussion"
