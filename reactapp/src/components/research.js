@@ -93,12 +93,14 @@ function Research(props) {
         if (pageActual < pagesTotal - 1) {
             setpageActual(pageActual + 1)
             setstepOfCapsule(stepOfCapsule + 10)
+            window.scrollTo(0, 0)
         }
     }
 
     const pageBefore = () => {
         if (pageActual > 0) {
             setpageActual(pageActual - 1)
+            window.scrollTo(0, 0)
         } else {
             setpageActual(0)
         }
@@ -229,13 +231,8 @@ function Research(props) {
                             >
                                 <Form.Item >
 
-                                    <Input
-                                        style={{
-                                            width: 150,
-                                            textAlign: "left"
-                                        }}
+                                    <Input id="brandInput"
                                         placeholder={"Gallia ou autre"}
-                                        // onChange={onChangeBrand}
                                         onChange={(e) => setBrand(e.target.value)}
                                     />
                                 </Form.Item>
@@ -260,7 +257,6 @@ function Research(props) {
                                         }}
                                         max={yyyy}
                                         pattern={"^[0-9]+$"}
-                                        // defaultValue={yyyy}
                                         placeholder={"annnée"}
                                         defaultValue={''}
                                         onChange={onChangeYear}

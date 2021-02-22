@@ -1,10 +1,11 @@
 /* fixation de la barre de navigation en haut */
+
 .sticky {
     position: -webkit-sticky;
     position: sticky;
     top: 0;
-    z-index: 1; 
-  }
+    z-index: 1;
+}
 
 .text {
     font-weight: 500;
@@ -13,33 +14,58 @@
 .notificationMessage {
     color: rgb(233, 113, 77);
     transform: rotate(-7deg);
-    -webkit-animation:spin 600ms linear infinite;
-    -moz-animation:spin 600ms linear infinite;
-    animation:spin 600ms linear infinite;
+    -webkit-animation: spin 600ms linear infinite;
+    -moz-animation: spin 600ms linear infinite;
+    animation: spin 600ms linear infinite;
 }
-@-moz-keyframes spin { 50% { -moz-transform: rotate(14deg); } }
-@-webkit-keyframes spin { 50% { -webkit-transform: rotate(14deg); } }
-@keyframes spin { 50% { -webkit-transform: rotate(14deg); transform:rotate(14deg); } }
+
+
+@-moz-keyframes spin {
+    50% {
+        -moz-transform: rotate(14deg);
+    }
+}
+
+@-webkit-keyframes spin {
+    50% {
+        -webkit-transform: rotate(14deg);
+    }
+}
+
+@keyframes spin {
+    50% {
+        -webkit-transform: rotate(14deg);
+        transform: rotate(14deg);
+    }
+}
 
 .menu {
     background-image: url('../images/background-metal.jpg');
     background-repeat: repeat;
     border-bottom: solid 2px rgb(107, 101, 44, 0.2);
-
 }
 
-  /* sur un écran étroit le texte disparait pour ne laisser que les icônes */
-  @media (max-width: 704px) {
+/* sur un écran étroit le texte disparait pour ne laisser que les icônes */
+
+@media (max-width: 1150px) {
+    #rubric {
+        /* padding: 0px !important; */
+        margin: 0px 13px 0px 13px !important;
+    }
+}
+
+@media (max-width: 1000px) {
+    .hiddenTextMenu {
+        display: none;
+    }
+}
+
+@media (max-width: 704px) {
     .hiddenTextMenuLogin {
         display: none;
     }
 }
 
-@media (max-width: 1010px) {
-    .hiddenTextMenu {
-        display: none;
-    }
-}
 
 @media (max-width: 720px) {
     .hiddenLogoMenu {

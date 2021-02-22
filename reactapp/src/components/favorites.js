@@ -60,12 +60,14 @@ function Favorites(props) {
         if (pageActual < pagesTotal - 1) {
             setpageActual(pageActual + 1)
             setstepOfCapsule(stepOfCapsule + 10)
+            window.scrollTo(0, 0)
         }
     }
 
     const pageBefore = () => {
         if (pageActual > 0) {
             setpageActual(pageActual - 1)
+            window.scrollTo(0, 0)
         } else {
             setpageActual(0)
         }

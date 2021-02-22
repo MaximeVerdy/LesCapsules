@@ -38,6 +38,7 @@
     border-radius: 6px;
     padding: 10px;
     margin: 1px;
+    box-shadow: 6px 6px 6px rgb(78, 78, 78, 0.5);
 }
 
 .ColFormCapNew {
@@ -193,11 +194,19 @@
     margin-top: 20px;
 }
 
+#brandInput {
+    width: 150px;
+    text-align: left;
+}
+
 /* sur les écrans étroit le style est redéfini*/
 
-@media (max-width: 802px) {
-    .ColStats {
-        width: 500px;
-        height: 400px;
+@media (max-width: 721px) {
+    .ColForm {
+        width: 370px;
+    }
+
+    #brandInput {
+        width: 335px;
     }
 }

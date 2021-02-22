@@ -209,35 +209,35 @@ router.get('/research', async function (req, res, next) {
   if (brand == '' && country == 'tous' && year == '') {
     // recherche des données en BDD de toutes les capsules
     capsules = await capsuleModel.find().countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find().skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find().sort({_id:-1}).skip(stepOfCapsule).limit(10)
     // recherche des données en BDD des capsules conditionnée
   } else if (brand != '' && country == 'tous' && year == '') {
     capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   } else if (brand == '' && country == 'tous' && year != '') {
     capsules = await capsuleModel.find({ year: year }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ year: year }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ year: year }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   } else if (brand == '' && country != 'tous' && year == '') {
     capsules = await capsuleModel.find({ country: country }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ country: country }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ country: country }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   } else if (brand == '' && country != 'tous' && year != '') {
     capsules = await capsuleModel.find({ country: country, year: year }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ country: country, year: year }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ country: country, year: year }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   } else if (brand != '' && country != 'tous' && year == '') {
     capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   } else if (brand != '' && country == 'tous' && year != '') {
     capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   } else if (brand != '' && country != 'tous' && year != '') {
     capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   }
   
   if (capsules.length == 0) {
     error.push('Pas de capsules')
   }
-  console.log('numberOfDocuments', numberOfDocuments);
+
   // données envoyées en front
   res.json({ capsules, favorites, error, numberOfDocuments })
 
@@ -262,7 +262,7 @@ router.get('/my-collection', async function (req, res, next) {
     var favorites = user.favorites
     // recherche des données en BDD
     capsules = await capsuleModel.find({ token: req.query.token }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ token: req.query.token }).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ token: req.query.token }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
   } else {
     error.push('Une erreur est advenue. Reconnectez-vous')
   }
@@ -271,11 +271,8 @@ router.get('/my-collection', async function (req, res, next) {
     result = true
   }
 
-  // rangement par ordre chronologique invervé
-  const sortedCapsules = capsules.reverse()
-
   // données envoyées en front
-  res.json({ result, sortedCapsules, error, favorites, numberOfDocuments })
+  res.json({ result, capsules, error, favorites, numberOfDocuments })
 
 })
 
@@ -415,7 +412,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
   if (existingUser) {
     var favorites = existingUser.favorites
     var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).skip(stepOfCapsule).limit(10)
+    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
     result = true
 
     if (Object.keys(capsules).length != 0) {
@@ -435,7 +432,6 @@ router.get('/all-my-favorites', async function (req, res, next) {
   // données envoyées en front
   res.json({ result, capsulesSorted, error, numberOfDocuments })
 
-  console.log( "stepOfCapsule" , stepOfCapsule);
 })
 
 // ---------------------------------------------- //

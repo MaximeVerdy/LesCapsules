@@ -63,7 +63,7 @@ function Topnavbar(props) {
 
       <Menu className="menu" style={{ textAlign: 'center' }} mode="horizontal" >
 
-        <Menu.Item key="research">
+        <Menu.Item key="research" id="rubric">
           <Link to="/research">
             <div style={{ color: 'black' }}>
               <FontAwesomeIcon icon={faSearch} size="lg" />
@@ -72,7 +72,7 @@ function Topnavbar(props) {
           </Link>
         </Menu.Item>
 
-        <Menu.Item key="favorites">
+        <Menu.Item key="favorites" id="rubric">
           {token != '' &&
             <Link to="/favorites">
               <div style={{ color: 'black' }}>
@@ -92,7 +92,7 @@ function Topnavbar(props) {
           }
         </Menu.Item>
 
-        <Menu.Item key="ajout">
+        <Menu.Item key="ajout" id="rubric">
           {token != '' &&
             <Link to="/addcapsule">
               <div style={{ color: 'black' }}>
@@ -112,7 +112,7 @@ function Topnavbar(props) {
           }
         </Menu.Item>
 
-        <Menu.Item key="collection">
+        <Menu.Item key="collection" id="rubric">
           {token != '' &&
             <Link to="/mycollection">
               <div style={{ color: 'black' }}>
@@ -132,7 +132,7 @@ function Topnavbar(props) {
           }
         </Menu.Item>
 
-        <Menu.Item key="messages">
+        <Menu.Item key="messages" id="rubric">
           {token != '' && newMessage == true &&
             <Link to="/messages">
               <div style={{ color: 'black' }}>

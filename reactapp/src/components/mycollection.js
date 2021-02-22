@@ -39,7 +39,7 @@ function Mycollection(props) {
         const findcapsules = async () => {
             const data = await fetch(`/my-collection?token=${token}&stepOfCapsule=${stepOfCapsule}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
-            setCapsulesList(body.sortedCapsules)
+            setCapsulesList(body.capsules)
             setErrors(body.error)
             setpositiveResult(body.result)
             setfavorites(body.favorites)
@@ -55,12 +55,14 @@ function Mycollection(props) {
         if (pageActual < pagesTotal - 1) {
             setpageActual(pageActual + 1)
             setstepOfCapsule(stepOfCapsule + 10)
+            window.scrollTo(0, 0)
         }
     }
 
     const pageBefore = () => {
         if (pageActual > 0) {
             setpageActual(pageActual - 1)
+            window.scrollTo(0, 0)
         } else {
             setpageActual(0)
         }

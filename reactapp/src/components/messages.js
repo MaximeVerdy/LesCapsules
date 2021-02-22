@@ -43,18 +43,20 @@ function Messages(props) {
         const timer = setTimeout(() => { setTimeOff(true) }, 1500);
     }, [interaction])
 
-
     // fonction d'ajout d'un message en base de données
     const submitMessage = async () => {
-        const data = await fetch('/new-message', {
-            method: 'POST', // méthode pour ajouter en BDD
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `discussionRef=${discussionOpenedRef}&token=${token}&newMessage=${myNewMsg}`
-        })
-        // convertion des données reçues en objet JS (parsage)
-        const body = await data.json()
-        if (body.updated == true) {
-            setInteraction(interaction + 1)
+        if (myNewMsg.length > 0) {
+            const data = await fetch('/new-message', {
+                method: 'POST', // méthode pour ajouter en BDD
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `discussionRef=${discussionOpenedRef}&token=${token}&newMessage=${myNewMsg}`
+            })
+            // convertion des données reçues en objet JS (parsage)
+            const body = await data.json()
+            if (body.updated == true) {
+                setInteraction(interaction + 1)
+                document.getElementById('chat').scrollTo(0, 0)
+            }
         }
     }
 
@@ -169,7 +171,7 @@ function Messages(props) {
 
                                                     <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
 
-                                                    <div className="presentationData">
+                                                    <div className="presentationDataMsg">
 
                                                         <div>
                                                             <Tag color="rgba(81,97,119,1)">{discussion.capsuleData.brand}</Tag>
@@ -197,7 +199,7 @@ function Messages(props) {
 
                                                     <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
 
-                                                    <div className="presentationData">
+                                                    <div className="presentationDataMsg">
 
                                                         <div>
                                                             <Tag color="rgba(81,97,119,0.3)">{discussion.capsuleData.brand}</Tag>
@@ -227,7 +229,7 @@ function Messages(props) {
 
                             <div className="rightWindowChat">
 
-                                <div className="chatBox">
+                                <div className="chatBox" id="chat">
 
                                     <div className="informativeMessages">
 
