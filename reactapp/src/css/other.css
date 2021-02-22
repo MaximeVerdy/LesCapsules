@@ -1,4 +1,4 @@
-/* le syle de la page d'ajout d'activité, d'historique et de statistiques */
+/* le syle des pages de recherche, de favoris, d'ajout et de collection */
 
 .researchLayout {
     display: flex;
@@ -200,13 +200,14 @@
 }
 
 /* sur les écrans étroit le style est redéfini*/
-
 @media (max-width: 721px) {
     .ColForm {
-        width: 370px;
+        width: 350px;
     }
-
     #brandInput {
-        width: 335px;
+        width: 280px;
+    }
+    .searchBt {
+        padding-left: 25px;
     }
 }
