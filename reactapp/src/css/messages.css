@@ -330,4 +330,9 @@
      .imgCapsuleDiscussion {
           width: 30px;
      }
+
+     .messageRow {
+          margin-top: 0.5%;
+     }
+     
 }
