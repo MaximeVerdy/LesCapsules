@@ -94,18 +94,18 @@
     padding-top: 5px;
 }
 
-.noCapsule {
+/* .noCapsule {
     display: flex;
     margin: 30px;
     margin-bottom: 50px;
     justify-content: center;
     color: red
-}
+} */
 
 .errorMessages {
     display: flex;
     margin: 30px;
-    margin-top: 15px;
+    margin-bottom: 50px;
     justify-content: center;
     color: red;
 }

@@ -27,6 +27,7 @@ router.post('/sign-up', async function (req, res, next) {
   var result = false
   var saveUser = null
   var token = null
+  var newMessage = false
 
   // recherche de l'existence d'un utilisateur en BDD
   const data = await userModel.findOne({
@@ -88,12 +89,6 @@ router.post('/sign-up', async function (req, res, next) {
 
   // données envoyée en front
   res.json({ result, error, token, newMessage })
-  // ---------------------------------------------------------------------------------------------
-    // ---------------------------------------------------------------------------------------------
-      // ---------------------------------------------------------------------------------------------
-  //avant avec saveUser. c'est peu-être dangereux ??? -------------------------------------------------------------------------- à supprimer ??
-  // res.json({ result, saveUser, error, token })
-
 });
 
 
@@ -141,6 +136,8 @@ router.post('/sign-in', async function (req, res, next) {
 
   // données envoyée en front
   res.json({ result, user, error, token, newMessage })
+
+  console.log("token ----->", token);
 
 });
 
@@ -208,32 +205,32 @@ router.get('/research', async function (req, res, next) {
   // lors du chargement du composant Research
   if (brand == '' && country == 'tous' && year == '') {
     // recherche des données en BDD de toutes les capsules
-    capsules = await capsuleModel.find().countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find().sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find().countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find().sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche des données en BDD des capsules conditionnée
   } else if (brand != '' && country == 'tous' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   } else if (brand == '' && country == 'tous' && year != '') {
-    capsules = await capsuleModel.find({ year: year }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ year: year }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   } else if (brand == '' && country != 'tous' && year == '') {
-    capsules = await capsuleModel.find({ country: country }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ country: country }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   } else if (brand == '' && country != 'tous' && year != '') {
-    capsules = await capsuleModel.find({ country: country, year: year }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ country: country, year: year }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ country: country, year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ country: country, year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   } else if (brand != '' && country != 'tous' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   } else if (brand != '' && country == 'tous' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   } else if (brand != '' && country != 'tous' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   }
-  
+
   if (capsules.length == 0) {
     error.push('Aucune capsule à afficher')
   }
@@ -261,8 +258,8 @@ router.get('/my-collection', async function (req, res, next) {
   if (user != null) {
     var favorites = user.favorites
     // recherche des données en BDD
-    capsules = await capsuleModel.find({ token: req.query.token }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    capsules = await capsuleModel.find({ token: req.query.token }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    capsules = await capsuleModel.find({ token: req.query.token }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsules = await capsuleModel.find({ token: req.query.token }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   } else {
     error.push('Une erreur est advenue. Reconnectez-vous')
   }
@@ -411,8 +408,8 @@ router.get('/all-my-favorites', async function (req, res, next) {
 
   if (existingUser) {
     var favorites = existingUser.favorites
-    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).countDocuments((function(err, count){numberOfDocuments =  count}))
-    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).sort({_id:-1}).skip(stepOfCapsule).limit(10)
+    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     result = true
 
     if (Object.keys(capsules).length != 0) {
@@ -429,9 +426,9 @@ router.get('/all-my-favorites', async function (req, res, next) {
     error.push('Une erreur est advenue. Veuillez vous connecter')
   }
 
-if (capsulesSorted === undefined) {
-  capsulesSorted = []
-}
+  if (capsulesSorted === undefined) {
+    capsulesSorted = []
+  }
 
   // données envoyées en front
   res.json({ result, capsulesSorted, error, numberOfDocuments })
@@ -531,12 +528,18 @@ router.get('/discussions', async function (req, res, next) {
   var discussionsExtended = []
   token = req.query.token
 
-  var existingUser = await userModel.findOne({ token: token })
+  // var existingUser = await userModel.findOne({ token: token })
+  var userHavingAMessage = await userModel.findOneAndUpdate(
+    { token: token },
+    {
+      'newMessage': false
+    }
+  )
 
-  if (existingUser) {
+  if (userHavingAMessage) {
     result = true
     var discussions = await discussionModel.find({ users: { $in: token } })
-    if (discussions) {
+    if (discussions.length != 0) {
       isDiscussionsExist = true
       for (i = 0; i < discussions.length; i++) {
         var capsule = await capsuleModel.findOne({ capsuleRef: discussions[i].capsuleRef })
@@ -549,19 +552,36 @@ router.get('/discussions', async function (req, res, next) {
             messages: discussions[i].messages,
             capsuleData: capsule
           })
+        } else {
+          discussionsExtended.push({
+            discussionRef: discussions[i].discussionRef,
+            capsuleRef: discussions[i].capsuleRef,
+            lastMessageDate: discussions[i].lastMessageDate,
+            users: discussions[i].users,
+            messages: discussions[i].messages,
+            capsuleData: {
+              token: '',
+              brand: 'Capsule supprimée',
+              year: '',
+              country: '',
+              capsuleRef: '',
+              photo: '',
+            }
+          })
         }
 
         var sortedDiscussions = discussionsExtended.sort((a, b) => b.lastMessageDate - a.lastMessageDate)
       }
     } else {
-      error.push('Discussions non trouvées')
+      error.push('Aucune discussion')
     }
   } else {
     error.push('Une erreur est advenue. Reconnectez-vous')
   }
 
   // données envoyées en front
-  res.json({ result, error, sortedDiscussions })
+  res.json({ result, error, sortedDiscussions, isDiscussionsExist })
+
 })
 
 
@@ -601,8 +621,8 @@ router.post('/new-message', async function (req, res, next) {
       otherParticipant = participants[0]
 
       var userHavingAMessage = await userModel.findOneAndUpdate(
+        { token: otherParticipant },
         {
-          token: otherParticipant,
           'newMessage': true
         }
       )
@@ -620,6 +640,24 @@ router.post('/new-message', async function (req, res, next) {
 
   // données envoyées en front
   res.json({ error, updated })
+  console.log("updated --->", updated);
+})
+
+// ---------------------------------------------------- //
+//        route de notification de nouveau message      //
+// ---------------------------------------------------- //
+
+router.get('/notification-message', async function (req, res, next) {
+
+  var notification = false
+  var token = req.query.token
+
+  // vérification que ce token existe 
+  var user = await userModel.findOne({ token : token})
+  notification = user.newMessage
+
+  // données envoyées en front
+  res.json({ notification })
 
 })
 

@@ -1,5 +1,5 @@
 
-export default function(token = 'TokenTest01', action){
+export default function(token = '', action){
 
 
     if(action.type == 'addToken'){

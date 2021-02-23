@@ -29,9 +29,16 @@ function Topnavbar(props) {
   const [token, settoken] = useState(props.token)  // état du token, récupéré du Redux Store
 
 
+  
   useEffect(() => {
-    setnewMessage(props.newMessage)
-  }, [props])
+    const findNewMessage = async () => {
+      const data = await fetch(`/notification-message?token=${token}`)  // pour récupérer des données 
+      const body = await data.json() // convertion des données reçues en objet JS (parsage)
+      setnewMessage(body.notification)
+    }
+    findNewMessage()
+  }, [newMessage])
+
 
   const handleModalNoAccess = () => {
     Modal.warning({

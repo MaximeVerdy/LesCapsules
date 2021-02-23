@@ -12,6 +12,9 @@ import Footer from './footer.js'
 import 'antd/dist/antd.css';
 import '../css/messages.css';
 
+//image
+import capsuleAlt from '../images/capsule-alt.png';
+
 
 function Messages(props) {
 
@@ -24,8 +27,8 @@ function Messages(props) {
     const [discussionMessagesOpened, setdiscussionMessagesOpened] = useState([])
     const [myNewMsg, setmyNewMsg] = useState('')
     const [positiveResult, setpositiveResult] = useState(false)
-    const [timeOff, setTimeOff] = useState(false)
     const [resultFromBack, setresultFromBack] = useState(false)
+    const [existingDiscussions, setexistingDiscussions] = useState(false)
 
 
     // échange de données avec le back pour la récuration des données à chaque changement de l'état interaction
@@ -33,15 +36,16 @@ function Messages(props) {
         const findDiscussions = async () => {
             const data = await fetch(`/discussions?token=${token}`) // pour récupérer des données 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
-            setErrorsMessages(body.error)
-            setpositiveResult(body.result)
-            setDiscussionsList(body.sortedDiscussions)
-            if (body.sortedDiscussions.length != 0) {
-                setdiscussionMessagesOpened(body.sortedDiscussions[0].messages)
-                setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
-                props.newMessage(false)
-            }
-            if (body.sortedDiscussions) { setresultFromBack(true) }
+                setErrorsMessages(body.error)
+                setpositiveResult(body.result)
+                setexistingDiscussions(body.isDiscussionsExist)
+                setDiscussionsList(body.sortedDiscussions)
+                if (body.sortedDiscussions != null) {
+                    setdiscussionMessagesOpened(body.sortedDiscussions[0].messages)
+                    setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
+                    props.newMessage(false)
+                }
+                if (body.sortedDiscussions) { setresultFromBack(true) }
         }
         findDiscussions()
     }, [interaction])
@@ -100,12 +104,13 @@ function Messages(props) {
     var noMessage
     if (!resultFromBack) {
         // message d'attente tant que les données en BDD ne sont pas chargées
-        noMessage = <h4 className="noMessage">On cherche pour vous...</h4>
+        noMessage = <h4 className="problemNotif">On rassemble les données pour vous...</h4>
     }
     // message en cas d'absence de données enregistrée pour l'instant
-    if (resultFromBack && discussionsList == 0 && listErrorsMessages.length == 0) {
-        noMessage = <h4 className="noMessage">Aucun message</h4>
-    }
+    // if (resultFromBack && discussionsList != null && listErrorsMessages.length == 0) {
+    //     noMessage = <h4 className="noMessage">Aucun message</h4>
+    // }
+
     // messages d'erreurs rencontrées en back-end lors de l'enregistrement
     var tabErrorsMessages = listErrorsMessages.map((error, i) => {
         return (
@@ -142,18 +147,21 @@ function Messages(props) {
                         Echangeons entre passionnés
                     </Title>
 
-                    {positiveResult == false &&
+                    {positiveResult == false || existingDiscussions == false &&
                         <div style={{ height: "452px" }} >
                             {/* messages d'erreur */}
                             {tabErrorsMessages}
-
-                            {/* messages d'absence de données en BDD */}
+                            </div>
+                    }
+                    {positiveResult == false &&
+                     <div style={{ height: "452px" }} >
+                            {/* messages d'attente */}
                             {noMessage}
                         </div>
                     }
 
 
-                    {positiveResult == true &&
+                    {existingDiscussions === true &&
 
                         <div className="techPart">
 
@@ -167,17 +175,19 @@ function Messages(props) {
                                     <div key={i} style={{ display: 'flex', justifyContent: 'center' }}>
 
 
-                                        {discussionOpenedRef == discussion.discussionRef && 
+                                        {discussionOpenedRef == discussion.discussionRef &&
                                             <div className="containerDiscussionSelected" id="hover">
 
                                                 <div className="eachDiscussion"
                                                     onClick={() => changeDiscussion(discussion.discussionRef)}
                                                 >
 
-                                                    <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
+                                                    {discussion.capsuleData.photo == ''
+                                                        ? <img className="imgCapsuleDiscussion" src={capsuleAlt} alt="une capsule" width="50px" />
+                                                        : <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
+                                                    }
 
                                                     <div className="presentationDataMsg">
-
                                                         <div>
                                                             <Tag color="rgba(81,97,119,1)">{discussion.capsuleData.brand}</Tag>
                                                         </div>
@@ -202,10 +212,12 @@ function Messages(props) {
                                                     onClick={() => changeDiscussion(discussion.discussionRef)}
                                                 >
 
-                                                    <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
+                                                    {discussion.capsuleData.photo == ''
+                                                        ? <img className="imgCapsuleDiscussion" src={capsuleAlt} alt="une capsule" width="50px" />
+                                                        : <img className="imgCapsuleDiscussion" src={discussion.capsuleData.photo} alt="une capsule" width="50px" />
+                                                    }
 
                                                     <div className="presentationDataMsg">
-
                                                         <div>
                                                             <Tag color="rgba(81,97,119,0.3)">{discussion.capsuleData.brand}</Tag>
                                                         </div>

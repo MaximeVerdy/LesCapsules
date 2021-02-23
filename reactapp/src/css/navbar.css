@@ -12,7 +12,7 @@
 }
 
 .notificationMessage {
-    color: rgb(233, 113, 77);
+    color: red;
     transform: rotate(-7deg);
     -webkit-animation: spin 600ms linear infinite;
     -moz-animation: spin 600ms linear infinite;

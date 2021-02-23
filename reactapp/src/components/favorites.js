@@ -139,13 +139,13 @@ function Favorites(props) {
     var noCapsule
     if (!resultFromBack) {
         // message d'attente tant que les données en BDD ne sont pas chargées
-        noCapsule = <h4 className="noCapsule">On cherche pour vous...</h4>
+        noCapsule = <h4 className="errorMessages">On rassemble les données pour vous...</h4>
     }
 
     // message en cas d'absence de données enregistrée pour l'instant
-    if (resultFromBack && capsulesList == 0 && listErrors.length == 0) {
-        noCapsule = <h4 className="noCapsule">Aucune capsule favorite</h4>
-    }
+    // if (resultFromBack && capsulesList == 0 && listErrors.length == 0) {
+    //     noCapsule = <h4 className="errorMessages">Aucune capsule favorite</h4>
+    // }
 
     // messages d'erreurs rencontrées en back-end lors de l'enregistrement
     var Errors = listErrors.map((error, i) => {

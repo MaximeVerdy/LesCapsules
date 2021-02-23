@@ -1,5 +1,5 @@
 // importation à partir de libraries
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import {Redirect} from 'react-router-dom'
 import {Layout, Row, Col, Form, Input, Button, Typography} from 'antd';
 import {connect} from 'react-redux'
@@ -27,7 +27,6 @@ const [userExists, setUserExists] = useState(false)
 const [listErrorsSignin, setErrorsSignin] = useState([])
 const [listErrorsSignup, setErrorsSignup] = useState([])
 
-
 // échange de données avec le back pour l'inscription par fonction asynchrone. le await indique qu'il faut attendre le retour des données pour terminer la fonction
 var  handleSubmitSignup = async () => {
     
@@ -43,7 +42,7 @@ var  handleSubmitSignup = async () => {
   // si l'échange avec la BDD a fonctionné, envoie du token dans le Redux Store
   if(body.result === true){
     props.addToken(body.token)
-    props.changeStatus(body.newMessage)
+    props.newMessage(body.newMessage)
     setUserExists(true)
   // sinon récupérer le tableau d'erreurs venu du back
   } else {
@@ -77,7 +76,7 @@ var handleSubmitSignin = async () => {
 
 // si l'utilisateur existe en BDD, le rediriger vers la page de statistiques
 if((userExists && listErrorsSignup.length == 0) || (userExists && listErrorsSignin.length == 0)){
-  return <Redirect to='/' />
+  return <Redirect to='/research' />
 }
 
 // mise en forme des titres antd
