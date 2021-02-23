@@ -162,10 +162,11 @@ function Research(props) {
         // convertion des données reçues en objet JS (parsage)
         const body = await data.json()
         // réponse positive du back
-        if (body.updated) {
+        if (body.updated == true) {
             setredirection(true)
             // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
-        } else {
+        } 
+        if (body.userIsOwner == true) {
             Modal.warning({
                 content: 'Vous ne pouvez pas écrire à vous même'
             });

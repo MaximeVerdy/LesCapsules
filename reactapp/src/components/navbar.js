@@ -37,7 +37,7 @@ function Topnavbar(props) {
       setnewMessage(body.notification)
     }
     findNewMessage()
-  }, [newMessage])
+  }, [newMessage, props])
 
 
   const handleModalNoAccess = () => {

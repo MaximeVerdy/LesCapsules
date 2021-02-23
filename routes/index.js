@@ -513,6 +513,7 @@ router.post('/first-message', async function (req, res, next) {
   // données envoyées en front
   res.json({ saved, error, userIsOwner, isDiscussionExisting, updated })
 
+console.log('updated ----->', updated);
 })
 
 
@@ -528,7 +529,7 @@ router.get('/discussions', async function (req, res, next) {
   var discussionsExtended = []
   token = req.query.token
 
-  // var existingUser = await userModel.findOne({ token: token })
+  mongoose.set('useFindAndModify', false);
   var userHavingAMessage = await userModel.findOneAndUpdate(
     { token: token },
     {
@@ -619,7 +620,7 @@ router.post('/new-message', async function (req, res, next) {
         participants.splice(authorOfMessage, 1);
       }
       otherParticipant = participants[0]
-
+      mongoose.set('useFindAndModify', false);
       var userHavingAMessage = await userModel.findOneAndUpdate(
         { token: otherParticipant },
         {
