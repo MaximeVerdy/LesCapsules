@@ -9,6 +9,7 @@ const userSchema = mongoose.Schema({
     salt: String, 
     favorites: Array,
     newMessage: Boolean,
+    notifications:  Boolean,
 })
 
 var userModel = mongoose.model('users', userSchema)

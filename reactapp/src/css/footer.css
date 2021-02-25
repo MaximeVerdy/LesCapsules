@@ -1,18 +1,34 @@
   /* style du bas de page*/
   
-  .footer {
+  .footer1 {
     display:flex;
     position: absolute;          
-    bottom: 0;
+    bottom: 18px;
+    right: 10px
+  }
+
+  .footer2 {
+    display:flex;
+    position: absolute;          
+    bottom: 0px;
     right: 10px
   }
 
 /* sur les écrans étroit le style est redéfini*/
-  @media (max-width: 960px) {
-    .footer {
+  @media (max-width: 1145px) {
+
+    .footer1 {
+      display:flex;
+      position: absolute;          
+      bottom: 10px;
+      left: 50%;
+      transform: translate(-34px);
+  }
+
+    .footer2 {
         display:flex;
         position: absolute;          
-        bottom: 0%;
+        bottom: -6px;
         left: 50%;
         transform: translate(-52px);
     }

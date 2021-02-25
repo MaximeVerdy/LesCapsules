@@ -1,18 +1,19 @@
 // framework express.js
-var express = require('express');
-var router = express.Router();
+var express = require('express')
+var router = express.Router()
 
-var mongoose = require('../models/connection');
-
-// modèles mongoose
+// Mongoose va servir de passerelle entre notre serveur Node.js et notre serveur MongoDB
+var mongoose = require('../models/connection')
 var userModel = require('../models/users')
 var capsuleModel = require('../models/capsules')
 var discussionModel = require('../models/discussions')
+mongoose.set('useFindAndModify', false)
 
 // modules de chiffrement
 var uid2 = require('uid2')
 var SHA256 = require('crypto-js/sha256')
 var encBase64 = require('crypto-js/enc-base64')
+
 
 
 // ------------------- //
@@ -71,7 +72,9 @@ router.post('/sign-up', async function (req, res, next) {
       token: uid2(32),
       salt: salt,
       favorites: 'none yet',
-      newMessage: false
+      newMessage: false,
+      notifications: true,
+
     })
     saveUser = await newUser.save()
 
@@ -124,6 +127,8 @@ router.post('/sign-in', async function (req, res, next) {
         result = true
         token = user.token
         newMessage = user.newMessage
+        notifications = user.notifications
+
       } else {
         result = false
         error.push('Mot de passe incorrect')
@@ -135,10 +140,7 @@ router.post('/sign-in', async function (req, res, next) {
   }
 
   // données envoyée en front
-  res.json({ result, user, error, token, newMessage })
-
-  console.log("token ----->", token);
-
+  res.json({ result, user, error, token, newMessage, notifications })
 });
 
 
@@ -325,7 +327,6 @@ router.post('/add-favorite', async function (req, res, next) {
     if (existingUser.favorites.find(capsule => capsule == capsuleRef)) {
       error.push('Déjà enregistré en tant que favori')
     } else {
-      mongoose.set('useFindAndModify', false);
       var user = await userModel.findOneAndUpdate(
         { token: token },
         { '$push': { 'favorites': capsuleRef } }
@@ -370,7 +371,6 @@ router.put('/supp-favorite', async function (req, res, next) {
         favorites.splice(index, 1);
       }
 
-      mongoose.set('useFindAndModify', false);
       var user = await userModel.findOneAndUpdate(
         { token: token },
         { 'favorites': favorites }
@@ -442,10 +442,8 @@ router.get('/all-my-favorites', async function (req, res, next) {
 router.post('/first-message', async function (req, res, next) {
 
   var error = []
-  var saved = false
   var updated = false
   var userIsOwner = false
-  var isDiscussionExisting = false
   var capsuleRef = req.body.capsuleRef
   var token = req.body.token
   var actualDate = new Date()
@@ -460,8 +458,8 @@ router.post('/first-message', async function (req, res, next) {
 
     if (capsuleOwner == token) {
       userIsOwner = true
-    } else {
 
+    } else {
       var users = [capsuleOwner, token]
 
       var existingDiscussion = await discussionModel.findOne({
@@ -470,8 +468,6 @@ router.post('/first-message', async function (req, res, next) {
       })
 
       if (existingDiscussion) {
-        isDiscussionExisting = true
-        mongoose.set('useFindAndModify', false);
         var discussionUpdated = await discussionModel.findOneAndUpdate(
           { discussionRef: existingDiscussion.discussionRef },
           { 'lastMessageDate': actualDate }
@@ -492,12 +488,12 @@ router.post('/first-message', async function (req, res, next) {
           messages: [],
         })
         var savedDiscussion = await newDiscussion.save()
-      }
 
-      if (savedDiscussion) {
-        saved = true
-      } else {
-        error.push('Non enregistré')
+        if (savedDiscussion) {
+          updated = true
+        } else {
+          error.push('Création de discussion impossible')
+        }
       }
     }
 
@@ -505,15 +501,9 @@ router.post('/first-message', async function (req, res, next) {
     error.push('Cet utilisateur n\'existe pas')
   }
 
-  // message d'erreur d'enregistrement
-  if (saved == false && error.length == 0) {
-    error.push('Impossible d\'écrire à vous même')
-  }
-
   // données envoyées en front
-  res.json({ saved, error, userIsOwner, isDiscussionExisting, updated })
+  res.json({ error, userIsOwner, updated })
 
-console.log('updated ----->', updated);
 })
 
 
@@ -529,7 +519,6 @@ router.get('/discussions', async function (req, res, next) {
   var discussionsExtended = []
   token = req.query.token
 
-  mongoose.set('useFindAndModify', false);
   var userHavingAMessage = await userModel.findOneAndUpdate(
     { token: token },
     {
@@ -603,7 +592,6 @@ router.post('/new-message', async function (req, res, next) {
   var existingUser = await userModel.findOne({ token: token })
 
   if (existingUser) {
-    mongoose.set('useFindAndModify', false);
     var discussionUpdated = await discussionModel.findOneAndUpdate(
       { discussionRef: discussionRef },
       {
@@ -620,14 +608,39 @@ router.post('/new-message', async function (req, res, next) {
         participants.splice(authorOfMessage, 1);
       }
       otherParticipant = participants[0]
-      mongoose.set('useFindAndModify', false);
       var userHavingAMessage = await userModel.findOneAndUpdate(
         { token: otherParticipant },
         {
           'newMessage': true
         }
       )
-      if (!userHavingAMessage) {
+
+      if (userHavingAMessage.notifications == true) {
+        var nodemailer = require('nodemailer')
+
+        var transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'lescapsules.notifications@gmail.com',
+            pass: 'aA1#Developpeur'
+          }
+        });
+
+        var mailOptions = {
+          from: 'lescapsules.notifications@gmail.com',
+          to: userHavingAMessage.email,
+          subject: '[Les Capsules] Vous avez reçu un message :)',
+          text: ' Rendez-vous sur https://les-capsules.herokuapp.com pour lire votre nouveau message'
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+          // if (error) {
+          //   console.log(error);
+          // } else {
+          //   console.log('Email sent: ' + info.response); -----------------------------------------------------------
+          // }
+        });
+
+      } else {
         error.push('Pas de notification envoyée')
       }
 
@@ -641,7 +654,6 @@ router.post('/new-message', async function (req, res, next) {
 
   // données envoyées en front
   res.json({ error, updated })
-  console.log("updated --->", updated);
 })
 
 // ---------------------------------------------------- //
@@ -654,13 +666,95 @@ router.get('/notification-message', async function (req, res, next) {
   var token = req.query.token
 
   // vérification que ce token existe 
-  var user = await userModel.findOne({ token : token})
-  notification = user.newMessage
+  var user = await userModel.findOne({ token: token })
+  if (user) {
+    notification = user.newMessage
+  }
 
   // données envoyées en front
   res.json({ notification })
 
 })
+
+// ---------------------------------------------------- //
+//           route de suppression de compte             //
+// ---------------------------------------------------- //
+
+router.post('/erase-account', async function (req, res, next) {
+
+  var result = false
+  var error = []
+  var token = req.body.token
+
+
+  // vérification que ce token existe 
+  var user = await userModel.findOne({ token: req.body.token })
+  if (user) {
+
+    var allDiscussionsGoneUser = await discussionModel.find({ users: token })
+
+    if (allDiscussionsGoneUser) {
+      var message = '[Cet utilisateur est parti]'
+      var formatedMessage = { token, message }
+
+      for (i = 0; i < allDiscussionsGoneUser.length; i++) {
+
+        var discussionUpdated = await discussionModel.findOneAndUpdate(
+          { discussionRef: allDiscussionsGoneUser[i].discussionRef },
+          {
+            '$push': { 'messages': formatedMessage }
+          }
+        )
+      }
+    }
+
+    // suppression des données en BDD
+    var userDeletedInDB = await userModel.deleteOne({ token: req.body.token })
+    var capsuleDeletedInDB = await capsuleModel.deleteMany({ token: req.body.token })
+
+    if (userDeletedInDB.deletedCount == 1) {
+      result = true
+    } else {
+      error.push('Suppression impossible')
+    }
+
+
+  } else {
+    error.push('Une erreur est advenue. Reconnectez-vous')
+  }
+
+  // données envoyées en front
+  res.json({ result, error })
+
+})
+
+
+// ------------------------------------------------------------ //
+//       route changement de statut de notifiaction par email   //
+// ------------------------------------------------------------ //
+
+router.put('/notif-status', async function (req, res, next) {
+
+  var result = false
+  var error = []
+
+  var notifStatusChanged = await userModel.findOneAndUpdate(
+    { token: req.body.token },
+    {
+      'notifications': req.body.notifications
+    }
+  )
+
+  if (notifStatusChanged) {
+    result = true
+  } else {
+    error.push('Changement impossible')
+  }
+
+  res.json({ result, error })
+
+})
+
 
 
 module.exports = router;

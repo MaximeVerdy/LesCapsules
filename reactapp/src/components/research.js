@@ -1,5 +1,5 @@
 // importation à partir de libraries
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 import {
@@ -58,7 +58,6 @@ function Research(props) {
         setCountry(value);
     }
 
-
     // échange de données avec le back pour la récuration des données au chargement du composant
     useEffect(() => {
         const findcapsules = async () => {
@@ -112,7 +111,6 @@ function Research(props) {
         }
     }
 
-
     // ajout d'une capsule favorite en base de données
     var handleAddFavorite = async (capsuleRef) => {
         const data = await fetch('/add-favorite', {
@@ -161,11 +159,11 @@ function Research(props) {
 
         // convertion des données reçues en objet JS (parsage)
         const body = await data.json()
-        // réponse positive du back
-        if (body.updated == true) {
-            setredirection(true)
+            setredirection(body.updated)
             // si l'échange avec la BDD n'a pas fonctionné, récupérer le tableau d'erreurs venu du back
-        } 
+        if (body.error.length > 0) {
+            setErrors(body.error)
+        }
         if (body.userIsOwner == true) {
             Modal.warning({
                 content: 'Vous ne pouvez pas écrire à vous même'
@@ -173,10 +171,9 @@ function Research(props) {
         }
     }
 
-    if (redirection === true) {
+    if (redirection == true) {
         return <Redirect to='/messages' />
     }
-
 
     // au clic, ouverture du pop up d'avertissement
     const handleModalNoAccess = () => {
@@ -194,11 +191,6 @@ function Research(props) {
         // message d'attente tant que les données en BDD ne sont pas chargées
         noCapsule = <h4 className="errorMessages">On rassemble les données pour vous...</h4>
     }
-
-    // message en cas d'absence de données enregistrée pour l'instant
-    // if (resultFromBack && capsulesList == 0 && listErrors.length == 0) {
-    //     noCapsule = <h4 className="errorMessages">Aucune capsule enregistrée</h4>
-    // }
 
     // messages d'erreurs rencontrées en back-end lors de l'enregistrement
     var Errors = listErrors.map((error, i) => {

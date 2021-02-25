@@ -106,10 +106,6 @@ function Messages(props) {
         // message d'attente tant que les données en BDD ne sont pas chargées
         noMessage = <h4 className="problemNotif">On rassemble les données pour vous...</h4>
     }
-    // message en cas d'absence de données enregistrée pour l'instant
-    // if (resultFromBack && discussionsList != null && listErrorsMessages.length == 0) {
-    //     noMessage = <h4 className="noMessage">Aucun message</h4>
-    // }
 
     // messages d'erreurs rencontrées en back-end lors de l'enregistrement
     var tabErrorsMessages = listErrorsMessages.map((error, i) => {
@@ -332,7 +328,6 @@ function Messages(props) {
 function mapStateToProps(state) {
     return {
         token: state.token,
-        // newMessage: state.newMessage
     }
 }
 

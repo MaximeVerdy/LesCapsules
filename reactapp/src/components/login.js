@@ -1,5 +1,5 @@
 // importation à partir de libraries
-import React, {useState, useEffect} from 'react'
+import React, {useState} from 'react'
 import {Redirect} from 'react-router-dom'
 import {Layout, Row, Col, Form, Input, Button, Typography} from 'antd';
 import {connect} from 'react-redux'
@@ -67,6 +67,7 @@ var handleSubmitSignin = async () => {
   if(body.result === true){
     props.addToken(body.token)
     props.newMessage(body.newMessage)
+    props.notifActivation(body.notifications)
     setUserExists(true)
   }  else {
       // sinon récupérer le tableau d'erreurs venu du back
@@ -257,6 +258,9 @@ function mapDispatchToProps(dispatch){
     },
     newMessage: function(newMessage){
       dispatch({type: 'changeStatus', newMessage: newMessage})
+    },
+    notifActivation: function(notif) {
+      dispatch ({type: 'notifStatus', notif : notif})
     }
   }
 }

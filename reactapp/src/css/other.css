@@ -41,6 +41,13 @@
     box-shadow: 6px 6px 6px rgb(78, 78, 78, 0.5);
 }
 
+.parameters {
+    display: flex;
+    /* width: 500px; */
+    height: 80px;
+    justify-content: center;
+}
+
 .ColFormCapNew {
     min-height: 490px;
 }

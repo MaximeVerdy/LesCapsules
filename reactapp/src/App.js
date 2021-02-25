@@ -6,6 +6,7 @@ import {Provider} from 'react-redux'
 import {createStore, combineReducers} from 'redux'
 import token from './reducers/token'
 import newMessage from './reducers/newMessage'
+import notif from './reducers/notif'
 
 // import des composants
 import Login from './components/login.js';
@@ -17,12 +18,14 @@ import Addcapsule from './components/addcapsule.js';
 import Research from './components/research.js';
 import Favorites from './components/favorites.js';
 import Messages from './components/messages.js';
+import Parameters from './components/parameters.js';
+import Deleted from './components/deletedAccount.js';
 
 //style
 import './css/mainwrapper.css';
 
 // création du store qui contiendra les états voulus dans les reducers
-const store = createStore(combineReducers({token, newMessage}))
+const store = createStore(combineReducers({token, newMessage, notif}))
 
 // contrôle des états dans Redux. Permet juste leur affichage dans la console
 // store.subscribe(() => console.log('CONSOLE LOG REDUX ----->', store.getState()))
@@ -48,6 +51,8 @@ function App() {
             <Route component={Addcapsule} path="/addcapsule" exact />
             <Route component={Favorites} path="/favorites" exact />
             <Route component={Messages} path="/messages" exact />
+            <Route component={Parameters} path="/parameters" exact />
+            <Route component={Deleted} path="/erased-account" exact />
 
           </Switch>
         </div>

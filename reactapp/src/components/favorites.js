@@ -1,6 +1,6 @@
 // importation à partir de libraries
 import React, { useState, useEffect } from 'react'
-import { Redirect, useHistory } from 'react-router-dom'
+import { Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 import {
     Layout,
@@ -141,11 +141,6 @@ function Favorites(props) {
         // message d'attente tant que les données en BDD ne sont pas chargées
         noCapsule = <h4 className="errorMessages">On rassemble les données pour vous...</h4>
     }
-
-    // message en cas d'absence de données enregistrée pour l'instant
-    // if (resultFromBack && capsulesList == 0 && listErrors.length == 0) {
-    //     noCapsule = <h4 className="errorMessages">Aucune capsule favorite</h4>
-    // }
 
     // messages d'erreurs rencontrées en back-end lors de l'enregistrement
     var Errors = listErrors.map((error, i) => {
