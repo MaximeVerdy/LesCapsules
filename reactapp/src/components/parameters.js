@@ -39,7 +39,7 @@ function Parameters(props) {
   // au clic sur la confirmation de suppression de compte, suppression du compte en BDD
   const suppressionCompte = async () => {
     const data = await fetch('/erase-account', { // communication avec le back sur cette route 
-      method: 'POST', // méthode pour supprimer en BDD
+      method: 'DELETE', // méthode pour supprimer en BDD
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: `token=${token}` // données envoyées au Back
     })

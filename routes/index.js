@@ -232,7 +232,7 @@ router.get('/research', async function (req, res, next) {
   var year = req.query.year
   var country = req.query.country
   var token = req.query.token
-  // pour assurer que stepOfCapsule soit typé nombre flottant (utile pour l'utilisation dans cette route), implication de parseFloat
+  // pour assurer que stepOfCapsule soit typé nombre (utile pour l'utilisation dans cette route), implication de parseFloat
   var stepOfCapsule = parseFloat(req.query.stepOfCapsule)
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var user = await userModel.findOne({ token: token })
@@ -800,7 +800,7 @@ router.get('/notification-message', async function (req, res, next) {
 // ---------------------------------------------------- //
 
 // route utilisant une méthode POST dédiée à l'écriture en BDD
-router.post('/erase-account', async function (req, res, next) {
+router.delete('/erase-account', async function (req, res, next) {
 
   var result = false
   var error = []
