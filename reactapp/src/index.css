@@ -12,6 +12,7 @@ code {
     monospace;
 }
 
+/* ajout de la police Barder à l'application */
 @font-face {
   font-family: 'barber';
   src: url(./fonts/barber.ttf);

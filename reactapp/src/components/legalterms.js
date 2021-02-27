@@ -1,9 +1,10 @@
-// importation à partir de libraries
-import React from 'react'
+// import de fonctionnalité à partir de libraries/bibliothèques
+import React from 'react' // bibliothèque de création de composants
 
-//composants
+//composants créés ailleurs et importés
 import Topnavbar from './navbar.js'
 
+// composant 
 function MentionsLegales() {
 
   return (

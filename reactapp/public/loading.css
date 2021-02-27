@@ -1,7 +1,11 @@
+/* style du fond de toute l'application */
+
 .loading {
   background-color: #FFE773;
 }
 
+
+/* style appliqué au loader qui s'affiche quand les composants ne sont pas encore chargés */
 .loader {
      width: 200px;  
      position: absolute;
@@ -11,6 +15,7 @@
      animation: rotation 1s infinite linear ;
 }
 
+/* caractéristiques de l'animation du loader */
 @keyframes rotation {
      from {
        transform:

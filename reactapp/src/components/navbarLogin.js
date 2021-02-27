@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { Menu, Modal } from 'antd'
+// import de fonctionnalités à partir de libraries/bibliothèques
+import React, { useState, useEffect } from 'react'; // bibliothèque de création de composants
+import { Link } from 'react-router-dom' // bibliothèque de liaison entre les composants
+import { connect } from 'react-redux' // bibliothèque de gestion d'état 
+import { Menu, Modal } from 'antd' // bibliothèque d'interface graphique
 
 // style
 import 'antd/dist/antd.css';
 import '../css/navbar.css';
 
-// icônes
+// icônes utilisées dans le composant
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCoins } from '@fortawesome/free-solid-svg-icons'
 import { faPowerOff } from '@fortawesome/free-solid-svg-icons'
@@ -16,18 +17,24 @@ import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons'
 
-
+// composant prenant pour seul argument props (grâce auquel les données transitent entre le Redux Store et le composant. Voir function mapStateToProps en bas de fichier)
 function TopnavbarLogin(props) {
 
-  // Etats
-  const [newMessage, setnewMessage] = useState(props.newMessage)
+  // Etats avec leurs valeurs initiales à l'inialisation du composant 
+  const [newMessage, setnewMessage] = useState(props.newMessage) // valeur de l'indictateur de nouveau message récupéré du Redux Store
   const [token, settoken] = useState(props.token)  // état du token, récupéré du Redux Store
 
 
-  useEffect(() => {
-    setnewMessage(props.newMessage)
-  }, [props])
+  useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour de newMessage ou props 
+    const findNewMessage = async () => {
+      const data = await fetch(`/notification-message?token=${token}`)  // pour lire des données en base de données avec méthode GET. la route utilisée et les données envoyées en back après le ? 
+      const body = await data.json() // convertion des données reçues en objet JS (parsage)
+      setnewMessage(body.notification)
+    }
+    findNewMessage()  // appel de la fonction
+  }, [newMessage, props])
 
+    // en cas de clic sur un bouton non autorisé quand l'utilisateur n'est pas connecté un popup d'avertissement s'ouvre
   const handleModalNoAccess = () => {
     Modal.warning({
       content: 'Vous devez d\'abord vous connecter'

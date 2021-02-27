@@ -1,54 +1,59 @@
-// importation à partir de libraries
-import React, { useState, useEffect } from 'react'
-import { Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { Switch, Button, Modal } from 'antd'
+// import de fonctionnalités à partir de libraries/bibliothèques
+import React, { useState, useEffect } from 'react' // bibliothèque de création de composants
+import { Redirect } from 'react-router-dom' // bibliothèque de liaison entre les composants
+import { connect } from 'react-redux' // bibliothèque de gestion d'état 
+import { Switch, Button, Modal } from 'antd' // bibliothèque d'interface graphique
 
-//composants
+//composants créés ailleurs et importés
 import Topnavbar from './navbar.js'
 
 // style
 import '../css/other.css';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
+// composant prenant pour seul argument props (grâce auquel les données transitent entre le Redux Store et le composant. Voir function mapStateToProps en bas de fichier)
 function Parameters(props) {
 
-  // Etats
+  // Etats avec leurs valeurs initiales à l'inialisation du composant 
   const [token, setToken] = useState(props.token)     // état du token, récupéré du Redux Store
   const [notifications, setnotifications] = useState(props.notifications)    // état des notifications, récupéré du Redux Store
   const [listErrors, setErrors] = useState([])
   const [erasedConfirmed, seterasedConfirmed] = useState(false)
   
-  // Envoi d'un message 
-  var changeNotifStatus = async (checked) => {
+  // au clic, changement du statut de notification par email
+  var changeNotifStatus = async (checked) => { // communication avec le back sur cette route 
     const data = await fetch('/notif-status', {
-      method: 'PUT', // pour écrire des données en BDD
+      method: 'PUT', // pour mettre à jour des données en BDD
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `token=${token}&notifications=${checked}`
+      body: `token=${token}&notifications=${checked}` // données envoyées au Back
     })
     
-    // réponse du back
     const body = await data.json() // convertion des données reçues en objet JS (parsage)
     setErrors(body.error)
   }
 
+  // configuration du popup ouvert au clic sur "Suppression" pour demander si l'utilisateur est sûr de vouloir supprimer son compte
   const { confirm } = Modal
 
-  const redirection = async () => {
-    const data = await fetch('/erase-account', {
+
+  // au clic sur la confirmation de suppression de compte, suppression du compte en BDD
+  const suppressionCompte = async () => {
+    const data = await fetch('/erase-account', { // communication avec le back sur cette route 
       method: 'POST', // méthode pour supprimer en BDD
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `token=${token}`
+      body: `token=${token}` // données envoyées au Back
     })
-    const body = await data.json()
-    seterasedConfirmed(body.result)
+    const body = await data.json() // convertion des données reçues en objet JS (parsage)
+    seterasedConfirmed(body.result) // récupération de la confirmation de suppression
   }
-  
-  if (erasedConfirmed == true) {
+  // si supprimé alors redirection de l'utilisateur vers la page deleted account
+  if (erasedConfirmed == true) { 
     return <Redirect to='/erased-account' />
   }
 
+    // au clic sur le bouton "Suppression", ouverture du popup de confirmation
   const handleErase = () => {
+    // option du popup
     confirm({
       icon: <ExclamationCircleOutlined />,
       content: 'Etes-vous sûr.e de vouloir supprimer ce compte ?',
@@ -56,7 +61,7 @@ function Parameters(props) {
       okType: 'danger',
       cancelText: 'J\'ai un doute',
       iconType: 'warning',
-      onOk: () => { redirection() } ,
+      onOk: () => { suppressionCompte() } ,
     })
   }
 
@@ -65,6 +70,7 @@ function Parameters(props) {
     return <Redirect to='/notlogged' />
   }
 
+  // mise en page des erreurs venues du back
   var Errors = listErrors.map((error, i) => {
     return (
       <h4 className="errorMessages"> {error} </h4>

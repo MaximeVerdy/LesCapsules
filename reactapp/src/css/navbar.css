@@ -1,5 +1,6 @@
-/* fixation de la barre de navigation en haut */
+/* style de la barre de navigation*/
 
+/* fixation de la barre de navigation en haut */
 .sticky {
     position: -webkit-sticky;
     position: sticky;
@@ -11,6 +12,7 @@
     font-weight: 500;
 }
 
+  /* style de l'icône de message*/
 .notificationMessage {
     color: red;
     transform: rotate(-7deg);
@@ -19,7 +21,7 @@
     animation: spin 600ms linear infinite;
 }
 
-
+  /* animation de l'icône de message*/
 @-moz-keyframes spin {
     50% {
         -moz-transform: rotate(14deg);

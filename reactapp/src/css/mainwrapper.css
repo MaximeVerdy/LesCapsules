@@ -1,7 +1,7 @@
   /* style relatif à App.js*/
+  /* ses propriétés permettent de bien placer le footer*/
 
-.main-wrapper {
+  .main-wrapper {
     position: relative;
     min-height: 100vh;
-   }
-   
+  }

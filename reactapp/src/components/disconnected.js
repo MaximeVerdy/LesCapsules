@@ -1,10 +1,10 @@
 // page affichée en cas de déconnexion volontaire
 
-// importation à partir de libraries
-import React, { useEffect, useState } from 'react'
-import { Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { Layout, Row, Col } from 'antd';
+// import de fonctionnalités à partir de libraries/bibliothèques
+import React, { useEffect, useState } from 'react' // bibliothèque de création de composants
+import { Redirect } from 'react-router-dom' // bibliothèque de liaison entre les composants
+import { connect } from 'react-redux' // bibliothèque de gestion d'état 
+import { Layout, Row, Col } from 'antd'; // bibliothèque d'interface graphique
 
 // style
 import '../css/other.css';
@@ -12,21 +12,25 @@ import '../css/other.css';
 // images
 import Logo from '../images/logo-capsules.png';
 
+// composant prenant pour seul argument props (grâce auquel les données transitent entre le Redux Store et le composant. Voir function mapDispatchToProps en bas de fichier)
 function Disconnected(props) {
 
-    // Etat
+    // Etat avec sa valeurs initiale à l'inialisation du composant 
     const [timeOff, setTimeOff] = useState(false)
 
+    // à l'initialisation du composant le token prend la valeur '' et un compte à rebourd est déclenché, la fin duquel TimeOff prend la valeur true
     useEffect(() => {
         props.addToken('')
         const timer = setTimeout(() => { setTimeOff(true) }, 2500);
     }, [])
 
+    // si l'état TimeOff à la valeur true alors l'utilisateur est redirigé vers la page de connexion
     if (timeOff) {
         return <Redirect to='/' />
     }
 
     return (
+        // le style de la page est dans ../css/other.css
 
         <Layout className="researchLayout"
             style={{
@@ -61,6 +65,7 @@ function Disconnected(props) {
     );
 }
 
+// fonction de transmission de données au Redux Store
 function mapDispatchToProps(dispatch) {
     return {
         addToken: function (token) {

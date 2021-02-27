@@ -1,7 +1,7 @@
 // appel du module mongoose
 var mongoose = require('mongoose')
 
-// création du modèle user
+// création du schéma user et typage de ses propriétés
 const userSchema = mongoose.Schema({
     email: String,
     password: String,
@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
     notifications:  Boolean,
 })
 
+// lien entre le modèle défini ici et la collection users sur mongoDB
 var userModel = mongoose.model('users', userSchema)
 
 module.exports = userModel;

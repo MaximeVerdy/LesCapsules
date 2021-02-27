@@ -1,7 +1,7 @@
-// importation à partir de libraries
-import React, { useState, useEffect } from 'react'
-import { Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
+// import de fonctionnalités à partir de libraries/bibliothèques
+import React, { useState, useEffect } from 'react' // bibliothèque de création de composants
+import { Redirect } from 'react-router-dom' // bibliothèque de liaison entre les composants
+import { connect } from 'react-redux' // bibliothèque de gestion d'état 
 import {
   Layout,
   Row,
@@ -15,11 +15,10 @@ import {
   Modal,
   Upload,
   message
-} from 'antd';
-import ImgCrop from 'antd-img-crop';
+} from 'antd'; // bibliothèque d'interface graphique
+import ImgCrop from 'antd-img-crop'; // bibliothèque de découpage d'image
 
-
-//composants
+//composants créés ailleurs et importés
 import Topnavbar from './navbar.js'
 import Footer from './footer.js'
 
@@ -27,15 +26,14 @@ import Footer from './footer.js'
 import 'antd/dist/antd.css';
 import '../css/other.css';
 
-
+// composant prenant pour seul argument props (grâce auquel les données transitent entre le Redux Store et le composant. Voir function mapStateToProps en bas de fichier)
 function Addcapsule(props) {
 
-  // année actuelle
+  // caractérisation de l'année actuelle
   var today = new Date();
   var yyyy = today.getFullYear();
 
-
-  // Etats
+  // Etats avec leurs valeurs initiales à l'inialisation du composant 
   const [token, setToken] = useState(props.token)   // état du token, récupéré du Redux Store
   const [year, setYear] = useState(yyyy)
   const [brand, setBrand] = useState('non renseigné')
@@ -45,21 +43,21 @@ function Addcapsule(props) {
   const [listErrorsSaving, setErrorsSaving] = useState([])
   const [fillingRequest, setfillingRequest] = useState('')
 
-
+  // configuration du formulaire et récupération des valeurs du formulaire et transmission aux états
   const [form] = Form.useForm();
 
+  // changement des valeurs des état par les champs de saisie
   function onChangeYear(value) {
     setYear(value);
   }
-
   function onChangeCountry(value) {
     setCountry(value);
   }
-
   const onChangePhoto = ({ fileList: newFileList, file }) => {
     setFileList(newFileList)
   };
 
+  // fonction de découpage de l'image uploadée
   const onPreview = async file => {
     let src = file.url;
     if (!src) {
@@ -75,16 +73,18 @@ function Addcapsule(props) {
     imgWindow.document.write(image.outerHTML);
   };
 
+  // fonction personnalisée, rudimentaire et nécessaire pour faire fonctionner la validation  de l'upload
   const successRequest = ({ file, onSuccess }) => {
     setTimeout(() => {
       onSuccess("ok");
     }, 0);
   };
 
+  // fonction de vérification de bon format de l'image
   function beforeUpload(file) {
     const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
     if (!isJpgOrPng) {
-      message.error('Seulement un JPG ou un PNG peut être chargé');
+      message.error('Seule une image JPG ou PNG peut être uploadée');
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
@@ -94,38 +94,35 @@ function Addcapsule(props) {
   }
 
 
-  // échange de données avec le back pour l'écriture en BDD
+  // échange de données avec le back pour l'écriture en BDD au clic sur "Ajouter"
   var handleSubmitSaving = async () => {
-
-    if (fileList.length > 0 && brand != 'non renseigné') {
-      const data = await fetch('/save-capsule', {
+    if (fileList.length > 0 && brand != 'non renseigné') { // conditions à remplir pour échanger avec le Back
+      const data = await fetch('/save-capsule', { // communication avec le back sur cette route 
         method: 'POST', // pour écrire des données en BDD
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `tokenFromFront=${token}&yearFromFront=${year}&brandFromFront=${brand}&countryFromFront=${country}&photoFromFront=${fileList[0].thumbUrl}`
+        body: `tokenFromFront=${token}&yearFromFront=${year}&brandFromFront=${brand}&countryFromFront=${country}&photoFromFront=${fileList[0].thumbUrl}` // données envoyées au Back
       })
 
-      // convertion des données reçues en objet JS (parsage)
-      const body = await data.json()
-      // si l'échange avec la BDD n'a fonctionné, récupérer le tableau d'erreurs venu du back
-      if (body.result) {
-        setSaved(true)
-      } else {
-        setErrorsSaving(body.error)
+      const body = await data.json() // convertion des données reçues en objet JS (parsage)
+      
+      if (body.result) { // si l'échange avec la BDD a fonctionné
+        setSaved(true) // alors l'état saved passe à true
+      } else { //  sinon récupérer le tableau d'erreurs venu du back
+        setErrorsSaving(body.error) // erreurs éventuellement rencontrées en Back
       }
-    } else {
-      setBrand('non renseigné')
-      Modal.warning({
+      
+    } else { // sinon
+      setBrand('non renseigné') // la marque n'est pas renseignée
+      Modal.warning({ // et un popup d'avertissement s'affiche
         content: 'Remplissez les informations nécessaires'
       });
     }
 
   }
 
-  // si l'écriture en BDD s'est bien passée 
-  useEffect(() => {
-    // pop-up indiquant que l'écriture en BDD 
-    if (saved == true) {
-      Modal.success({
+  useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour de l' état saved
+    if (saved == true) { // si l'écriture en BDD s'est bien passée, saved change de valeur
+      Modal.success({ // pop-up indiquant que l'écriture en BDD est effective
         content: 'Capsule correctement enregistrée',
       });
       //réinitialisation des états
@@ -138,7 +135,7 @@ function Addcapsule(props) {
     }
   }, [saved])
 
-  // mise en forme des titres antd
+  // mise en forme des titres via antd
   const { Title } = Typography;
 
   // messages de non conformité pour les formulaires antd
@@ -146,7 +143,7 @@ function Addcapsule(props) {
     required: 'Saisissez votre ${label}',
   };
 
-  // messages d'erreurs rencontrées en back-end lors de l'enregistrement
+  // messages d'erreurs rencontrées en back-end lors de l'enregistrement mis en forme
   var tabErrorsSaving = listErrorsSaving.map((error, i) => {
     return (<p className="erreurs">
       {error}
@@ -154,6 +151,7 @@ function Addcapsule(props) {
     )
   })
 
+  // vidage des champs de saisie après envoi des données au back
   const onSubmit = (values) => {
     form.resetFields();
   }
@@ -165,16 +163,18 @@ function Addcapsule(props) {
 
 
   return (
-    // le style de la page newactivity est dans css/other.css
+    // le style de la page est dans ../css/other.css
 
     <Layout className="researchLayout">
 
+      {/* bar du nagivation */}
       <Topnavbar />
 
 
       <Row className="capsuleRow">
         <Col className="ColForm ColFormCapNew" >
 
+          {/* Formulaire Ant Design */}
           <Form
             form={form}
             validateMessages={validateMessages}

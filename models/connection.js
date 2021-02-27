@@ -1,7 +1,7 @@
 // appel du module mongoose
 var mongoose = require('mongoose');
 
-// configuration de la connexion à MongoDB via mongoose
+// options de la connexion à MongoDB via mongoose
 var options = {
     connectTimeoutMS: 5000,
     useNewUrlParser: true,

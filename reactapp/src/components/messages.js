@@ -1,10 +1,10 @@
-// importation à partir de libraries
-import React, { useState, useEffect } from 'react'
-import { Redirect } from 'react-router-dom'
-import { connect } from 'react-redux'
-import { Layout, Row, Typography, Tag, Input, Form, Button } from 'antd';
+// import de fonctionnalités à partir de libraries/bibliothèques
+import React, { useState, useEffect } from 'react' // bibliothèque de création de composants
+import { Redirect } from 'react-router-dom' // bibliothèque de liaison entre les composants
+import { connect } from 'react-redux' // bibliothèque de gestion d'état 
+import { Layout, Row, Typography, Tag, Input, Form, Button } from 'antd'; // bibliothèque d'interface graphique
 
-//composants
+//composants créés ailleurs et importés
 import Topnavbar from './navbar.js'
 import Footer from './footer.js'
 
@@ -15,10 +15,10 @@ import '../css/messages.css';
 //image
 import capsuleAlt from '../images/capsule-alt.png';
 
-
+// composant prenant pour seul argument props (grâce auquel les données transitent entre le Redux Store et le composant. Voir functions mapDispatchToProps et mapStateToProps en bas de fichier)
 function Messages(props) {
 
-    // Etats
+    // Etats avec leurs valeurs initiales à l'inialisation du composant 
     const [token, setToken] = useState(props.token)     // état du token, récupéré du Redux Store
     const [discussionsList, setDiscussionsList] = useState([])
     const [interaction, setInteraction] = useState(0)
@@ -31,52 +31,53 @@ function Messages(props) {
     const [existingDiscussions, setexistingDiscussions] = useState(false)
 
 
-    // échange de données avec le back pour la récuration des données à chaque changement de l'état interaction
-    useEffect(() => {
+    useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour d'un de l'état interaction
         const findDiscussions = async () => {
-            const data = await fetch(`/discussions?token=${token}`) // pour récupérer des données 
+            const data = await fetch(`/discussions?token=${token}`) // communication avec le back sur cette route avec la méthode GET
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
-                setErrorsMessages(body.error)
-                setpositiveResult(body.result)
-                setexistingDiscussions(body.isDiscussionsExist)
-                setDiscussionsList(body.sortedDiscussions)
-                if (body.sortedDiscussions != null) {
-                    setdiscussionMessagesOpened(body.sortedDiscussions[0].messages)
-                    setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
-                    props.newMessage(false)
-                }
-                if (body.sortedDiscussions) { setresultFromBack(true) }
+            setErrorsMessages(body.error) // erreurs éventuellement rencontrées en Back
+            setpositiveResult(body.result) // indication de la validation de l'opération en BDD
+            setexistingDiscussions(body.isDiscussionsExist)
+            setDiscussionsList(body.sortedDiscussions)  // récupération des données des discussions
+            if (body.sortedDiscussions != null) { // si les données des discussions existent alors ...
+                setdiscussionMessagesOpened(body.sortedDiscussions[0].messages) // préparation de l'affichage avec la discussion ouverte par défaut
+                setdiscussionOpenedRef(body.sortedDiscussions[0].discussionRef)
+                props.newMessage(false) // transmission au Redux Store du changement de valeur relatif au fait qu'il n'y a plus de nouveau message
+                setresultFromBack(true)
+            }
         }
-        findDiscussions()
-    }, [interaction])
+        findDiscussions() // appel de la fonction
+    }, [interaction]) // le hook d'effet se déclenchera à chaque mise à jour d'un de cet état
 
-    // fonction d'ajout d'un message en base de données
+    // envoi de message au clic sur le bouton "Envoyer"
     const submitMessage = async () => {
-        if (myNewMsg.length > 0) {
-            const data = await fetch('/new-message', {
+        if (myNewMsg.length > 0) { // condition d'envoi, le message ne doit pas être vide
+            const data = await fetch('/new-message', { // communication avec le back sur cette route 
                 method: 'POST', // méthode pour ajouter en BDD
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `discussionRef=${discussionOpenedRef}&token=${token}&newMessage=${myNewMsg}`
+                body: `discussionRef=${discussionOpenedRef}&token=${token}&newMessage=${myNewMsg}`  // données envoyées au Back
             })
-            // convertion des données reçues en objet JS (parsage)
-            const body = await data.json()
-            if (body.updated == true) {
-                setInteraction(interaction + 1)
-                document.getElementById('chat').scrollTo(0, 0)
+
+            const body = await data.json() // convertion des données reçues en objet JS (parsage)
+            if (body.updated == true) { // // si réponse positive du back alors ...
+                setInteraction(interaction + 1) // mise à jour de l'état, ce qui déclenche le hook d'effet
+                document.getElementById('chat').scrollTo(0, 0) // déroulement de la fenêtre jusqu'au message le plus récent
             }
         }
     }
 
+    // au clic sur une discussion, récupération de l'identifant de cette discussion
     const changeDiscussion = (discRef) => {
         var selectedDiscussion = discussionsList.filter(
             discussion => {
                 return discussion.discussionRef === discRef
             }
         )
-        setdiscussionMessagesOpened(selectedDiscussion[0].messages)
+        setdiscussionMessagesOpened(selectedDiscussion[0].messages) // récupération des données liées à cette discussion
         setdiscussionOpenedRef(selectedDiscussion[0].discussionRef)
     }
 
+    // mise en page du chat à partir du tableau de discussion 
     var chatMessages = discussionMessagesOpened.map((message, i) => {
         if (message.token === token) {
             return (
@@ -97,13 +98,13 @@ function Messages(props) {
         }
     })
 
-    // mise en forme des titres antd
+    // mise en forme des titres via antd
     const { Title } = Typography;
 
 
+    // message d'attente tant que les données en BDD ne sont pas chargées
     var noMessage
     if (!resultFromBack) {
-        // message d'attente tant que les données en BDD ne sont pas chargées
         noMessage = <h4 className="problemNotif">On rassemble les données pour vous...</h4>
     }
 
@@ -116,8 +117,10 @@ function Messages(props) {
         )
     })
 
+    // configuration du formulaire 
     const [form] = Form.useForm();
 
+    // vidage des champs de saisie après envoi des données au back
     const onSubmit = (values) => {
         form.resetFields()
         setmyNewMsg('')
@@ -147,10 +150,10 @@ function Messages(props) {
                         <div style={{ height: "452px" }} >
                             {/* messages d'erreur */}
                             {tabErrorsMessages}
-                            </div>
+                        </div>
                     }
                     {positiveResult == false &&
-                     <div style={{ height: "452px" }} >
+                        <div style={{ height: "452px" }} >
                             {/* messages d'attente */}
                             {noMessage}
                         </div>
@@ -331,6 +334,7 @@ function mapStateToProps(state) {
     }
 }
 
+// fonction d'envoi de données dans le Redux Store 
 function mapDispatchToProps(dispatch) {
     return {
         newMessage: function (newMessage) {
