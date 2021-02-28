@@ -11,8 +11,8 @@ E̲x̲p̲r̲e̲s̲s̲, ̲
 
 ## Fonctions mises en place
 
-#### Login et authentification,
-#### Chat,
+###### Login et authentification,
+##### Chat,
 #### Notifications par email,
 ### Recherche multicritère,
 ### Gestion de favoris,
