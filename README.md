@@ -12,6 +12,7 @@ E̲x̲p̲r̲e̲s̲s̲, ̲
 ## Fonctions mises en place
 
 ###### Login et authentification,
+formulaire et chiffrement
 ##### Chat,
 #### Notifications par email,
 ### Recherche multicritère,
