@@ -38,7 +38,7 @@ function Topnavbar(props) {
       setnewMessage(body.notification)
     }
     findNewMessage()  // appel de la fonction
-  }, [newMessage, props])
+  }, [newMessage])
 
   // en cas de clic sur un bouton non autorisé quand l'utilisateur n'est pas connecté un popup d'avertissement s'ouvre
   const handleModalNoAccess = () => {

@@ -99,7 +99,7 @@ function Mycollection(props) {
         // réponse positive du back
         if (body.result) {
             setfavorites(body.favorites) // récuppération du tableau de favoris
-            // sinon récupérer le tableau d'erreurs venu du back
+            // sinon récupérer le tableau d'erreurs venu du back dans un état
         } else {
             setErrors(body.error)
         }
@@ -117,7 +117,7 @@ function Mycollection(props) {
         // réponse positive du back
         if (body.result) {
             setfavorites(body.favorites) // récuppération du tableau de favoris
-            // sinon récupérer le tableau d'erreurs venu du back
+            // sinon récupérer le tableau d'erreurs venu du back dans un état
         } else {
             setErrors(body.error)
         }

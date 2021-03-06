@@ -41,8 +41,8 @@ function Login(props) {
       props.addToken(body.token) // envoi du token (identifiant de l'utilisateur) dans le Redux Store
       props.newMessage(body.newMessage) // envoi de l'indication de nouveau message dans le Redux Store
       setUserExists(true) // valeur true sur l'état indiquant qui l'utilisateur existe
-      // sinon récupérer le tableau d'erreurs venu du back
-    } else {  // sinon récupérer le tableau d'erreurs venu du back
+      // sinon récupérer le tableau d'erreurs venu du back dans un état
+    } else {  // sinon récupérer le tableau d'erreurs venu du back dans un état
       setErrorsSignup(body.error)
     }
   }
@@ -63,7 +63,7 @@ function Login(props) {
       props.notifActivation(body.notifications) // envoi du paramètre d'activation de notification par email dans le Redux Store
       setUserExists(true)
     } else {
-      // sinon récupérer le tableau d'erreurs venu du back
+      // sinon récupérer le tableau d'erreurs venu du back dans un état
       setErrorsSignin(body.error)
     }
   }

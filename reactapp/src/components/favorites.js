@@ -96,7 +96,7 @@ function Favorites(props) {
         const body = await data.json() // convertion des données reçues en objet JS (parsage)
         if (body.result) {  // si réponse positive du back
             setfavorites(body.favorites) // récupération du tableau de favoris du back
-        } else { // sinon récupérer le tableau d'erreurs venu du back
+        } else { // sinon récupérer le tableau d'erreurs venu du back dans un état
             setErrors(body.error)
         }
     }

@@ -104,15 +104,14 @@ function Addcapsule(props) {
       })
 
       const body = await data.json() // convertion des données reçues en objet JS (parsage)
-      
       if (body.result) { // si l'échange avec la BDD a fonctionné
         setSaved(true) // alors l'état saved passe à true
-      } else { //  sinon récupérer le tableau d'erreurs venu du back
+      } else { //  sinon récupérer le tableau d'erreurs venu du back dans un état dans un état
         setErrorsSaving(body.error) // erreurs éventuellement rencontrées en Back
       }
       
     } else { // sinon
-      setBrand('non renseigné') // la marque n'est pas renseignée
+      setBrand('non renseigné') // la marque n'est pas renseignée comme initialement
       Modal.warning({ // et un popup d'avertissement s'affiche
         content: 'Remplissez les informations nécessaires'
       });
@@ -121,7 +120,7 @@ function Addcapsule(props) {
   }
 
   useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour de l' état saved
-    if (saved == true) { // si l'écriture en BDD s'est bien passée, saved change de valeur
+    if (saved == true) { // s'il y a eu écriture en BDD 
       Modal.success({ // pop-up indiquant que l'écriture en BDD est effective
         content: 'Capsule correctement enregistrée',
       });

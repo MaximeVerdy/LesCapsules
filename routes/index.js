@@ -304,7 +304,7 @@ router.get('/my-collection', async function (req, res, next) {
   var capsules = []
   var result = false
   var numberOfDocuments = 0
-  // pour assurer que stepOfCapsule soit typé nombre flottant (utile pour l'utilisation dans cette route), implication de parseFloat
+  // pour assurer que stepOfCapsule soit typé nombre (utile pour l'utilisation dans cette route), implication de parseFloat
   var stepOfCapsule = parseFloat(req.query.stepOfCapsule)
 
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
@@ -479,7 +479,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
   var numberOfDocuments = 0
 
   var token = req.query.token
-  // pour assurer que stepOfCapsule soit typé nombre flottant (utile pour l'utilisation dans cette route), implication de parseFloat
+  // pour assurer que stepOfCapsule soit typé nombre (utile pour l'utilisation dans cette route), implication de parseFloat
   var stepOfCapsule = parseFloat(req.query.stepOfCapsule)
 
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front

@@ -1,5 +1,5 @@
 // import de fonctionnalités à partir de libraries/bibliothèques
-import React, { useState, useEffect } from 'react' // bibliothèque de création de composants
+import React, { useState } from 'react' // bibliothèque de création de composants
 import { Redirect } from 'react-router-dom' // bibliothèque de liaison entre les composants
 import { connect } from 'react-redux' // bibliothèque de gestion d'état 
 import { Switch, Button, Modal } from 'antd' // bibliothèque d'interface graphique
@@ -30,6 +30,8 @@ function Parameters(props) {
     
     const body = await data.json() // convertion des données reçues en objet JS (parsage)
     setErrors(body.error)
+
+    props.notifActivation(checked) // envoi de la nouvelle valeur false ou true au Redux store
   }
 
   // configuration du popup ouvert au clic sur "Suppression" pour demander si l'utilisateur est sûr de vouloir supprimer son compte
@@ -132,7 +134,15 @@ function mapStateToProps(state) {
   }
 }
 
+function mapDispatchToProps(dispatch) {
+ return {
+   notifActivation: function (notif) {
+     dispatch({type: 'notifStatus', notif: notif})
+   }
+ }
+}
+
 export default connect(
   mapStateToProps,
-  null
+  mapDispatchToProps,
 )(Parameters)
