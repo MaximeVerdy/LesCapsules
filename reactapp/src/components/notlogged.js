@@ -23,9 +23,9 @@ export default function NotLogged() {
     }, [])
 
     // si l'état TimeOff à la valeur true alors l'utilisateur est redirigé vers la page de connexion
-    // if (timeOff) {
-    //     return <Redirect to='/' />
-    // }
+    if (timeOff) {
+        return <Redirect to='/' />
+    }
 
     return (
 
