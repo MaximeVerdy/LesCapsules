@@ -2,7 +2,7 @@
 import React from 'react'; // bibliothèque de création de SPA et de composants
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom' // bibliothèque de liaison entre les composants
 
-// import du provider
+// import du provider de react-redux. library permettant la connexion entre React et Redux
 import {Provider} from 'react-redux'
 
 // import de fonctionnalités de la bibliothèque de gestion d'état Redux / import du store
@@ -29,7 +29,7 @@ import Deleted from './components/deletedAccount.js';
 //style
 import './css/mainwrapper.css';
 
-// crétion du store Redux et enregistrement des reducers dans le store
+// crétion du store Redux et import des fonctions qui nous permettent de créer notre store
 const store = createStore(combineReducers({token, newMessage, notif}))
 
 // Composant qui est appelé par index.js puis injecté dans index.html

@@ -232,8 +232,7 @@ router.get('/research', async function (req, res, next) {
   var year = req.query.year
   var country = req.query.country
   var token = req.query.token
-  // pour assurer que stepOfCapsule soit typé nombre (utile pour l'utilisation dans cette route), implication de parseFloat
-  var stepOfCapsule = parseFloat(req.query.stepOfCapsule)
+  var stepOfCapsule = +req.query.stepOfCapsule
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var user = await userModel.findOne({ token: token })
 
@@ -304,11 +303,12 @@ router.get('/my-collection', async function (req, res, next) {
   var capsules = []
   var result = false
   var numberOfDocuments = 0
-  // pour assurer que stepOfCapsule soit typé nombre (utile pour l'utilisation dans cette route), implication de parseFloat
-  var stepOfCapsule = parseFloat(req.query.stepOfCapsule)
+  var stepOfCapsule = +req.query.stepOfCapsule
 
+  
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var user = await userModel.findOne({ token: req.query.token })
+  console.log('console ---->', typeof user.newMessage);
   // s'il existe un utilisateur ayant cet identifiant token
   if (user != null) {
     // la propriété favorites de l'objet user est passée une variable dont la valeur sera envoyée au Front
@@ -479,8 +479,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
   var numberOfDocuments = 0
 
   var token = req.query.token
-  // pour assurer que stepOfCapsule soit typé nombre (utile pour l'utilisation dans cette route), implication de parseFloat
-  var stepOfCapsule = parseFloat(req.query.stepOfCapsule)
+  var stepOfCapsule = +req.query.stepOfCapsule
 
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var existingUser = await userModel.findOne({ token: token })
