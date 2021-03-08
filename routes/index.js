@@ -308,7 +308,6 @@ router.get('/my-collection', async function (req, res, next) {
   
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var user = await userModel.findOne({ token: req.query.token })
-  console.log('console ---->', typeof user.newMessage);
   // s'il existe un utilisateur ayant cet identifiant token
   if (user != null) {
     // la propriété favorites de l'objet user est passée une variable dont la valeur sera envoyée au Front
