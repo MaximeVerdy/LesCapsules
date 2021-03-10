@@ -51,11 +51,15 @@
     padding-bottom: 30px;
 }
 
+.spaceLogin {
+    padding: 4px;
+}
+
 .button {
     justify-content:center;
     align-items:center;
-    height: 40px;
-    margin-top: 20px;
+    height: 30px;
+    margin-top: 10px;
 }
 
 .erreurs {
@@ -83,4 +87,9 @@
     .loginColForm {
         height: 380px
     }
+
+    .spaceLogin {
+        padding: 1px;
+    }
+    
 }

@@ -5,8 +5,8 @@ var mongoose = require('mongoose')
 const capsuleSchema = mongoose.Schema({
     brand: String,
     country: String,
-    year: String,
-    photo: String,
+    year: Number,
+    photo: Buffer,
     capsuleRef: String, 
     token: String,
 })

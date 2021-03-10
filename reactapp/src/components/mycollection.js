@@ -46,6 +46,7 @@ function Mycollection(props) {
             setPagesTotal(Math.ceil(body.numberOfDocuments / 10)) // nombre total de résultats de recherche
             if (body.capsules) { setresultFromBack(true) }
         }
+
         findcapsules() // appel de la fonction
     }, [pageActual, deleted]) // le hook d'effet se déclenchera à chaque mise à jour d'un de ces états
 

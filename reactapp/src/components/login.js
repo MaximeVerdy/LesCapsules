@@ -116,7 +116,7 @@ function Login(props) {
         <Col className="loginColImg">
           <img
             src={Logo}
-            alt="Stats et Running fusionnés"
+            alt="Les capsules, site d'échange de capsules"
             width="100%"
           />
         </Col>
@@ -140,11 +140,13 @@ function Login(props) {
             name="basic"
             initialValues={{ remember: true }}
           >
-
+            <div className="spaceLogin"></div>
             <Title level={6} className="title">
               Reconnexion
-                          </Title>
-
+            </Title>
+            <div className="spaceLogin"></div>
+            <div className="spaceLogin"></div>
+            <div className="spaceLogin"></div>
             <Form.Item
               label="Email"
               name="email"
@@ -169,14 +171,14 @@ function Login(props) {
                 onChange={(e) => setSignInPassword(e.target.value)}
               />
             </Form.Item>
-
+            <div className="spaceLogin"></div>
             <Form.Item>
               <Button type="primary" htmlType="submit" block className="button"
                 // au clic sur le bouton, handleSubmitSignin est déclanché et les données sont envoyés en back
                 onClick={() => handleSubmitSignin()}
               >
                 Connexion
-                            </Button>
+              </Button>
 
               {/* s'il y a des messages d'erreurs, il s'afficheront ici */}
               {tabErrorsSignin}
@@ -194,11 +196,13 @@ function Login(props) {
             name="basic"
             initialValues={{ remember: true }}
           >
-
+            <div className="spaceLogin"></div>
             <Title level={6} className="title">
               Inscription
-                          </Title>
-
+            </Title>
+            <div className="spaceLogin"></div>
+            <div className="spaceLogin"></div>
+            <div className="spaceLogin"></div>
             <Form.Item
               label="Email"
               name="email"
@@ -222,7 +226,7 @@ function Login(props) {
                 onChange={(e) => setSignUpPassword(e.target.value)}
               />
             </Form.Item>
-
+            <div className="spaceLogin"></div>
             <Form.Item>
               <Button type="primary" htmlType="submit" block className="button"
                 onClick={() => handleSubmitSignup()}

@@ -116,7 +116,6 @@ function Addcapsule(props) {
         content: 'Remplissez les informations nécessaires'
       });
     }
-
   }
 
   useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour de l' état saved

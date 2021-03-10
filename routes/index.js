@@ -225,6 +225,7 @@ router.get('/research', async function (req, res, next) {
 
   // caractérisation des variables qui seront utilisées dans cette route
   var error = []
+  var capsulesRaw = []
   var capsules = []
   var favorites = []
   var numberOfDocuments = 0
@@ -245,41 +246,55 @@ router.get('/research', async function (req, res, next) {
   // si aucun critère de recherche rempli dans les champs de saisie en Front (lors du chargement du composant Research notamment)
   if (brand == '' && country == 'tous' && year == '') {
     // recherche du nombre de documents en BDD correspondant
-    capsules = await capsuleModel.find().countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find().countDocuments((function (err, count) { numberOfDocuments = count }))
     // capsules est une variable qui stockera le cas échéant les propriétés des documents mongoDB relatif à ces capsules.
     // Les capsules sont cherchées en BDD par bloc de 10
-    capsules = await capsuleModel.find().sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find().sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
 
     // sinon, si des critères de recherche sont remplis dans les champs de saisie en Front :
     // recherche seulement par marque en BDD
   } else if (brand != '' && country == 'tous' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche seulement par année en BDD
   } else if (brand == '' && country == 'tous' && year != '') {
-    capsules = await capsuleModel.find({ year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsules = await capsuleModel.find({ year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find({ year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find({ year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche seulement par pays en BDD
   } else if (brand == '' && country != 'tous' && year == '') {
-    capsules = await capsuleModel.find({ country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsules = await capsuleModel.find({ country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find({ country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find({ country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par pays et par année en BDD
   } else if (brand == '' && country != 'tous' && year != '') {
-    capsules = await capsuleModel.find({ country: country, year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsules = await capsuleModel.find({ country: country, year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find({ country: country, year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find({ country: country, year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par marque et par pays en BDD
   } else if (brand != '' && country != 'tous' && year == '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par marque et par année en BDD
   } else if (brand != '' && country == 'tous' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par marque, par pays et par année en BDD
   } else if (brand != '' && country != 'tous' && year != '') {
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsules = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   }
+
+   // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
+    // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
+    for (i = 0; i < capsulesRaw.length; i++) {
+      var capsule = {
+        brand: capsulesRaw[i].brand,
+        country: capsulesRaw[i].country,
+        year: capsulesRaw[i].year,
+        photo: capsulesRaw[i].photo.toString(),
+        capsuleRef: capsulesRaw[i].capsuleRef,
+        token: capsulesRaw[i].token,
+      }
+      capsules.push(capsule)
+    }
 
   // s'il n'y a aucune capsule trouvée en BDD
   if (capsules.length == 0) {
@@ -300,12 +315,13 @@ router.get('/research', async function (req, res, next) {
 router.get('/my-collection', async function (req, res, next) {
 
   var error = []
+  var capsulesRaw = []
   var capsules = []
   var result = false
   var numberOfDocuments = 0
   var stepOfCapsule = +req.query.stepOfCapsule
 
-  
+
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var user = await userModel.findOne({ token: req.query.token })
   // s'il existe un utilisateur ayant cet identifiant token
@@ -313,10 +329,25 @@ router.get('/my-collection', async function (req, res, next) {
     // la propriété favorites de l'objet user est passée une variable dont la valeur sera envoyée au Front
     var favorites = user.favorites
     // recherche du nombre de documents en BDD correspondant à un utilisateur
-    capsules = await capsuleModel.find({ token: req.query.token }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ token: req.query.token }).countDocuments((function (err, count) { numberOfDocuments = count }))
     // capsules est une variable qui stockera le cas échéant les propriétés des documents mongoDB relatif à ces capsules.
     // Les capsules sont cherchées en BDD par bloc de 10
-    capsules = await capsuleModel.find({ token: req.query.token }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ token: req.query.token }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+
+    // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
+    // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
+    for (i = 0; i < capsulesRaw.length; i++) {
+      var capsule = {
+        brand: capsulesRaw[i].brand,
+        country: capsulesRaw[i].country,
+        year: capsulesRaw[i].year,
+        photo: capsulesRaw[i].photo.toString(),
+        capsuleRef: capsulesRaw[i].capsuleRef,
+        token: capsulesRaw[i].token,
+      }
+      capsules.push(capsule)
+    }
+
     // sinon un message d'erreur ajouté à error
   } else {
     error.push('Une erreur est advenue. Reconnectez-vous')
@@ -328,8 +359,10 @@ router.get('/my-collection', async function (req, res, next) {
   }
 
   // données envoyées en front
-  res.json({ result, capsules, error, favorites, numberOfDocuments })
 
+  var photoTest = capsules[0].photo.toString()
+
+  res.json({ result, capsules, error, favorites, numberOfDocuments, photoTest })
 })
 
 // ------------------------------------- //
@@ -473,6 +506,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
 
   var error = []
   var result = false
+  var capsulesRaw = []
   var capsules = []
   var favorites = []
   var numberOfDocuments = 0
@@ -487,17 +521,34 @@ router.get('/all-my-favorites', async function (req, res, next) {
     // ajout de la propriété favorites de l'objet existingUser à la variable favorites
     var favorites = existingUser.favorites
     // recherche du nombre de documents en BDD correspondant à un utilisateur
-    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    var capsulesRaw = await capsuleModel.find({ capsuleRef: { $in: favorites } }).countDocuments((function (err, count) { numberOfDocuments = count }))
     // capsules est une variable qui stockera le cas échéant les propriétés des documents mongoDB relatif à ces capsules.
     // Les capsules sont cherchées en BDD par bloc de 10
-    var capsules = await capsuleModel.find({ capsuleRef: { $in: favorites } }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    var capsulesRaw = await capsuleModel.find({ capsuleRef: { $in: favorites } }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     result = true
 
     // si le tableau Object.keys(capsules) est rempli alors les capsules seront rangées par ordre chronologique d'ajout en BDD
-    if (Object.keys(capsules).length != 0) {
-      capsules.sort(function (a, b) {
+    if (Object.keys(capsulesRaw).length != 0) {
+      capsulesRaw.sort(function (a, b) {
         return favorites.indexOf(a.capsuleRef) - favorites.indexOf(b.capsuleRef);
       });
+
+
+
+    // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
+    // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
+    for (i = 0; i < capsulesRaw.length; i++) {
+      var capsule = {
+        brand: capsulesRaw[i].brand,
+        country: capsulesRaw[i].country,
+        year: capsulesRaw[i].year,
+        photo: capsulesRaw[i].photo.toString(),
+        capsuleRef: capsulesRaw[i].capsuleRef,
+        token: capsulesRaw[i].token,
+      }
+      capsules.push(capsule)
+    }
+
       // inversion de l'ordre des capsules dans le tableau
       var capsulesSorted = capsules.reverse()
       // sinon un message d'erreur ajouté à error
@@ -640,7 +691,14 @@ router.get('/discussions', async function (req, res, next) {
             lastMessageDate: discussions[i].lastMessageDate,
             users: discussions[i].users,
             messages: discussions[i].messages,
-            capsuleData: capsule
+            capsuleData: {
+              brand: capsule.brand,
+              country: capsule.country,
+              year: capsule.year,
+              photo: capsule.photo.toString(),
+              capsuleRef: capsule.capsuleRef,
+              token: capsule.token,
+            }
           })
           // sinon (si les données de la capsule sont absentes) 
         } else {
