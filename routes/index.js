@@ -87,13 +87,11 @@ router.post('/sign-up', async function (req, res, next) {
       // création d'un identifiant unique et complexe qui servira sur l'application web à identifier l'utilisateur
       token: uid2(32),
       salt: salt,
-      // liste des favoris que l'utilisateur pourra choisir plus tard
-      favorites: 'none yet',
       // la propriété newMessage permettra d'indiquer sur l'application à l'utilsateur s'il a un nouveau message
       newMessage: false,
       // la propriété notifications permet à l'utilsateur de définir s'il souhaite recevoir un email quand il a un nouveau message sur l'application (changeable sur la page paramètres)
       notifications: true,
-
+      // liste des favoris est laissée vide
     })
     // enregistrement de l'objet newUser en BBD 
     saveUser = await newUser.save()
@@ -192,7 +190,6 @@ router.post('/save-capsule', async function (req, res, next) {
       brand: req.body.brandFromFront,
       year: req.body.yearFromFront,
       country: req.body.countryFromFront,
-      capsuleRef: uid2(32),
       // la photo est enregistrée comme une chaine de caractères. Dans la chaine de caractère, les espaces sont remplacés par des + pour assurer l'affichage ultérieur. Le format sera ainsi reconnu
       photo: req.body.photoFromFront.replace(/\s/g, '+'),
     })
@@ -290,7 +287,7 @@ router.get('/research', async function (req, res, next) {
         country: capsulesRaw[i].country,
         year: capsulesRaw[i].year,
         photo: capsulesRaw[i].photo.toString(),
-        capsuleRef: capsulesRaw[i].capsuleRef,
+        capsuleRef: capsulesRaw[i]._id,
         token: capsulesRaw[i].token,
       }
       capsules.push(capsule)
@@ -342,7 +339,7 @@ router.get('/my-collection', async function (req, res, next) {
         country: capsulesRaw[i].country,
         year: capsulesRaw[i].year,
         photo: capsulesRaw[i].photo.toString(),
-        capsuleRef: capsulesRaw[i].capsuleRef,
+        capsuleRef: capsulesRaw[i]._id,
         token: capsulesRaw[i].token,
       }
       capsules.push(capsule)
@@ -359,10 +356,7 @@ router.get('/my-collection', async function (req, res, next) {
   }
 
   // données envoyées en front
-
-  var photoTest = capsules[0].photo.toString()
-
-  res.json({ result, capsules, error, favorites, numberOfDocuments, photoTest })
+  res.json({ result, capsules, error, favorites, numberOfDocuments })
 })
 
 // ------------------------------------- //
@@ -380,7 +374,7 @@ router.delete('/my-collection', async function (req, res, next) {
   // s'il existe un utilisateur ayant cet identifiant token
   if (user != null) {
     // suppression des données en BDD faisant référence à la capsule relatif
-    var deleteInDB = await capsuleModel.deleteOne({ capsuleRef: req.body.capsuleRef })
+    var deleteInDB = await capsuleModel.deleteOne({ _id: req.body.capsuleRef })
 
     // s'il y a eu suppression alors la valeur de result passe de false à true
     if (deleteInDB.deletedCount == 1) {
@@ -409,7 +403,6 @@ router.post('/add-favorite', async function (req, res, next) {
 
   var error = []
   var result = false
-  var capsuleRef = ''
   var favorites = []
   // valeur capsuleRef de la capsule que l'utilisateur souhaite ajouter aux favoris passée à la variable capsuleRef
   var capsuleRef = req.body.capsuleRef
@@ -457,7 +450,6 @@ router.put('/supp-favorite', async function (req, res, next) {
 
   var error = []
   var result = false
-  var capsuleRef = ''
   var capsuleRef = req.body.capsuleRef
   var token = req.body.token
 
@@ -521,19 +513,17 @@ router.get('/all-my-favorites', async function (req, res, next) {
     // ajout de la propriété favorites de l'objet existingUser à la variable favorites
     var favorites = existingUser.favorites
     // recherche du nombre de documents en BDD correspondant à un utilisateur
-    var capsulesRaw = await capsuleModel.find({ capsuleRef: { $in: favorites } }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    var capsulesRaw = await capsuleModel.find({ _id: { $in: favorites } }).countDocuments((function (err, count) { numberOfDocuments = count }))
     // capsules est une variable qui stockera le cas échéant les propriétés des documents mongoDB relatif à ces capsules.
     // Les capsules sont cherchées en BDD par bloc de 10
-    var capsulesRaw = await capsuleModel.find({ capsuleRef: { $in: favorites } }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    var capsulesRaw = await capsuleModel.find({ _id: { $in: favorites } }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     result = true
 
     // si le tableau Object.keys(capsules) est rempli alors les capsules seront rangées par ordre chronologique d'ajout en BDD
     if (Object.keys(capsulesRaw).length != 0) {
       capsulesRaw.sort(function (a, b) {
-        return favorites.indexOf(a.capsuleRef) - favorites.indexOf(b.capsuleRef);
+        return favorites.indexOf(a._id) - favorites.indexOf(b._id);
       });
-
-
 
     // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
     // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
@@ -543,7 +533,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
         country: capsulesRaw[i].country,
         year: capsulesRaw[i].year,
         photo: capsulesRaw[i].photo.toString(),
-        capsuleRef: capsulesRaw[i].capsuleRef,
+        capsuleRef: capsulesRaw[i]._id,
         token: capsulesRaw[i].token,
       }
       capsules.push(capsule)
@@ -588,8 +578,8 @@ router.post('/first-message', async function (req, res, next) {
   var existingUser = await userModel.findOne({ token: token })
   // s'il existe un utilisateur ayant cet identifiant token
   if (existingUser) {
-    // recheche en BDD de la capsule ayant l'identifiant capsuleRef venu du Front
-    var capsule = await capsuleModel.findOne({ capsuleRef: capsuleRef })
+    // recheche en BDD de la capsule ayant _id = capsuleRef venu du Front
+    var capsule = await capsuleModel.findOne({ _id: capsuleRef })
     // caractérisation du token d'utilisateur associé à cette capsule en BDD
     var capsuleOwner = capsule.token
     // si le token de l'utilisateur connecté est égal au token du propriétaire de la capsule alors la valeur de userIsOwner change et rendra impossible l'envoi de message
@@ -600,14 +590,14 @@ router.post('/first-message', async function (req, res, next) {
       var users = [capsuleOwner, token]
       // cherche d'une discussion déjà existante sur cette capsule avec ces 2 interlocuteurs
       var existingDiscussion = await discussionModel.findOne({
-        capsuleRef: capsuleRef,
+        _id: capsuleRef,
         users: users
       })
 
       // si cette discussion existe sur cette capsule avec ces 2 interlocuteurs alors la date de lastMessageDate est mise à jour
       if (existingDiscussion) {
         var discussionUpdated = await discussionModel.findOneAndUpdate(
-          { discussionRef: existingDiscussion.discussionRef },
+          { _id: existingDiscussion._id },
           { 'lastMessageDate': actualDate }
         )
         // si la discussion est mise à jour alors la valeur de updated change et sera utilisée en Front
@@ -621,7 +611,6 @@ router.post('/first-message', async function (req, res, next) {
         // sinon (si la discussion n'existe pas encore en BDD), création d'un objet newDiscussion en s'appuyant sur le schéma mongoose relatif, typé dans ../models/discussion.js
       } else {
         var newDiscussion = await new discussionModel({
-          discussionRef: uid2(32),
           capsuleRef: capsuleRef,
           lastMessageDate: actualDate,
           users: users,
@@ -682,11 +671,11 @@ router.get('/discussions', async function (req, res, next) {
       isDiscussionsExist = true
       // boucle permettant de créer un tableau d'object combinant les propriétés des discussions avec les propriétés des capsules associées
       for (i = 0; i < discussions.length; i++) {
-        var capsule = await capsuleModel.findOne({ capsuleRef: discussions[i].capsuleRef })
+        var capsule = await capsuleModel.findOne({ _id: discussions[i].capsuleRef })
         // si les données de la capsule existe
         if (capsule !== null) {
           discussionsExtended.push({
-            discussionRef: discussions[i].discussionRef,
+            discussionRef: discussions[i]._id,
             capsuleRef: discussions[i].capsuleRef,
             lastMessageDate: discussions[i].lastMessageDate,
             users: discussions[i].users,
@@ -696,14 +685,14 @@ router.get('/discussions', async function (req, res, next) {
               country: capsule.country,
               year: capsule.year,
               photo: capsule.photo.toString(),
-              capsuleRef: capsule.capsuleRef,
+              capsuleRef: capsule._id,
               token: capsule.token,
             }
           })
           // sinon (si les données de la capsule sont absentes) 
         } else {
           discussionsExtended.push({
-            discussionRef: discussions[i].discussionRef,
+            discussionRef: discussions[i]._id,
             capsuleRef: discussions[i].capsuleRef,
             lastMessageDate: discussions[i].lastMessageDate,
             users: discussions[i].users,
@@ -758,7 +747,7 @@ router.post('/new-message', async function (req, res, next) {
   if (existingUser) {
     // ajout du message formaté au tableau de discussion et modification de la date de dernier message
     var discussionUpdated = await discussionModel.findOneAndUpdate(
-      { discussionRef: discussionRef },
+      { _id: discussionRef },
       {
         '$push': { 'messages': formatedMessage },
         'lastMessageDate': actualDate
@@ -879,7 +868,7 @@ router.delete('/erase-account', async function (req, res, next) {
       for (i = 0; i < allDiscussionsGoneUser.length; i++) {
         // recherche en BDD de la discussion par son identifant et envoi du message
         var discussionUpdated = await discussionModel.findOneAndUpdate(
-          { discussionRef: allDiscussionsGoneUser[i].discussionRef },
+          { _id: allDiscussionsGoneUser[i]._id },
           {
             '$push': { 'messages': formatedMessage }
           }

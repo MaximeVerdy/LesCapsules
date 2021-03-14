@@ -3,7 +3,6 @@ var mongoose = require('mongoose')
 
 // création du schéma discussion et typage de ses propriétés
 const discussionSchema = mongoose.Schema({
-    discussionRef: String,
     capsuleRef: String, 
     lastMessageDate: Date,
     users: Array, 

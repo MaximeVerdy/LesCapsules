@@ -7,7 +7,6 @@ const capsuleSchema = mongoose.Schema({
     country: String,
     year: Number,
     photo: Buffer,
-    capsuleRef: String, 
     token: String,
 })
 
