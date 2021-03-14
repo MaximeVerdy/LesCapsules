@@ -33,8 +33,8 @@ router.post('/sign-up', async function (req, res, next) {
   var emptyInput = false
   var existingAccount = false
   var result = false
-  var saveUser = null
-  var token = null
+  var saveUser = ''
+  var token = ''
   var newMessage = false
 
   // recherche d'un utilisateur en BDD (base de données) correspondant à l'email envoyé dans le champ de saisie en Front
@@ -122,9 +122,8 @@ router.post('/sign-in', async function (req, res, next) {
 
   // caractérisation des variables qui seront utilisées dans cette route
   var result = false
-  var user = null
   var error = []
-  var token = null
+  var token = ''
 
   // si un des champs de saisie en Front est vide alors un message d'erreur est ajoutée à error
   if (req.body.emailFromFront == ''
@@ -164,7 +163,7 @@ router.post('/sign-in', async function (req, res, next) {
   }
 
   // données envoyées au Front
-  res.json({ result, user, error, token, newMessage, notifications })
+  res.json({ result, error, token, newMessage, notifications })
 });
 
 
@@ -182,11 +181,12 @@ router.post('/save-capsule', async function (req, res, next) {
 
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var user = await userModel.findOne({ token: token })
+  
   // s'il existe un utilisateur ayant cet identifiant token
   if (user) {
     // caractérisation l'object newCapsule en s'appuyant sur le schéma mongoose relatif, typé dans ../models/capsule.js
     var newCapsule = new capsuleModel({
-      token: req.body.tokenFromFront,
+      ownerId: user._id,
       brand: req.body.brandFromFront,
       year: req.body.yearFromFront,
       country: req.body.countryFromFront,
@@ -288,7 +288,7 @@ router.get('/research', async function (req, res, next) {
         year: capsulesRaw[i].year,
         photo: capsulesRaw[i].photo.toString(),
         capsuleRef: capsulesRaw[i]._id,
-        token: capsulesRaw[i].token,
+        // token: capsulesRaw[i].token,
       }
       capsules.push(capsule)
     }
@@ -326,10 +326,10 @@ router.get('/my-collection', async function (req, res, next) {
     // la propriété favorites de l'objet user est passée une variable dont la valeur sera envoyée au Front
     var favorites = user.favorites
     // recherche du nombre de documents en BDD correspondant à un utilisateur
-    capsulesRaw = await capsuleModel.find({ token: req.query.token }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ ownerId: user._id }).countDocuments((function (err, count) { numberOfDocuments = count }))
     // capsules est une variable qui stockera le cas échéant les propriétés des documents mongoDB relatif à ces capsules.
     // Les capsules sont cherchées en BDD par bloc de 10
-    capsulesRaw = await capsuleModel.find({ token: req.query.token }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ ownerId: user._id }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
 
     // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
     // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
@@ -340,7 +340,7 @@ router.get('/my-collection', async function (req, res, next) {
         year: capsulesRaw[i].year,
         photo: capsulesRaw[i].photo.toString(),
         capsuleRef: capsulesRaw[i]._id,
-        token: capsulesRaw[i].token,
+        // token: capsulesRaw[i].token,
       }
       capsules.push(capsule)
     }
@@ -534,7 +534,7 @@ router.get('/all-my-favorites', async function (req, res, next) {
         year: capsulesRaw[i].year,
         photo: capsulesRaw[i].photo.toString(),
         capsuleRef: capsulesRaw[i]._id,
-        token: capsulesRaw[i].token,
+        // token: capsulesRaw[i].token,
       }
       capsules.push(capsule)
     }
@@ -581,9 +581,9 @@ router.post('/first-message', async function (req, res, next) {
     // recheche en BDD de la capsule ayant _id = capsuleRef venu du Front
     var capsule = await capsuleModel.findOne({ _id: capsuleRef })
     // caractérisation du token d'utilisateur associé à cette capsule en BDD
-    var capsuleOwner = capsule.token
+    var capsuleOwner = capsule.ownerId.toString()
     // si le token de l'utilisateur connecté est égal au token du propriétaire de la capsule alors la valeur de userIsOwner change et rendra impossible l'envoi de message
-    if (capsuleOwner == token) {
+    if (capsuleOwner === existingUser._id.toString()) {
       userIsOwner = true
       // sinon caractérisation de la variable users qui déterminera qui sont les interlocuteurs
     } else {

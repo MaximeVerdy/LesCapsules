@@ -7,7 +7,8 @@ const capsuleSchema = mongoose.Schema({
     country: String,
     year: Number,
     photo: Buffer,
-    token: String,
+    // ownerId: String,
+    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
 })
 
 // lien entre le modèle défini ici et la collection capsules sur mongoDB

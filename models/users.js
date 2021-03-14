@@ -7,7 +7,8 @@ const userSchema = mongoose.Schema({
     password: String,
     token: String,
     salt: String, 
-    favorites: Array,
+    // favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'capsules' }],
+    favorites: [mongoose.Schema.Types.ObjectId],
     newMessage: Boolean,
     notifications:  Boolean,
 })
