@@ -181,7 +181,7 @@ router.post('/save-capsule', async function (req, res, next) {
 
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var user = await userModel.findOne({ token: token })
-  
+
   // s'il existe un utilisateur ayant cet identifiant token
   if (user) {
     // caractérisation l'object newCapsule en s'appuyant sur le schéma mongoose relatif, typé dans ../models/capsule.js
@@ -243,55 +243,55 @@ router.get('/research', async function (req, res, next) {
   // si aucun critère de recherche rempli dans les champs de saisie en Front (lors du chargement du composant Research notamment)
   if (brand == '' && country == 'tous' && year == '') {
     // recherche du nombre de documents en BDD correspondant
-    capsulesRaw  = await capsuleModel.find().countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find().countDocuments((function (err, count) { numberOfDocuments = count }))
     // capsules est une variable qui stockera le cas échéant les propriétés des documents mongoDB relatif à ces capsules.
     // Les capsules sont cherchées en BDD par bloc de 10
-    capsulesRaw  = await capsuleModel.find().sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find().sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
 
     // sinon, si des critères de recherche sont remplis dans les champs de saisie en Front :
     // recherche seulement par marque en BDD
   } else if (brand != '' && country == 'tous' && year == '') {
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i') }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche seulement par année en BDD
   } else if (brand == '' && country == 'tous' && year != '') {
-    capsulesRaw  = await capsuleModel.find({ year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsulesRaw  = await capsuleModel.find({ year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche seulement par pays en BDD
   } else if (brand == '' && country != 'tous' && year == '') {
-    capsulesRaw  = await capsuleModel.find({ country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsulesRaw  = await capsuleModel.find({ country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par pays et par année en BDD
   } else if (brand == '' && country != 'tous' && year != '') {
-    capsulesRaw  = await capsuleModel.find({ country: country, year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsulesRaw  = await capsuleModel.find({ country: country, year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ country: country, year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ country: country, year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par marque et par pays en BDD
   } else if (brand != '' && country != 'tous' && year == '') {
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i'), country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par marque et par année en BDD
   } else if (brand != '' && country == 'tous' && year != '') {
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
     // recherche par marque, par pays et par année en BDD
   } else if (brand != '' && country != 'tous' && year != '') {
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
-    capsulesRaw  = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).countDocuments((function (err, count) { numberOfDocuments = count }))
+    capsulesRaw = await capsuleModel.find({ brand: new RegExp(brand, 'i'), year: year, country: country }).sort({ _id: -1 }).skip(stepOfCapsule).limit(10)
   }
 
-   // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
-    // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
-    for (i = 0; i < capsulesRaw.length; i++) {
-      var capsule = {
-        brand: capsulesRaw[i].brand,
-        country: capsulesRaw[i].country,
-        year: capsulesRaw[i].year,
-        photo: capsulesRaw[i].photo.toString(),
-        capsuleRef: capsulesRaw[i]._id,
-        // token: capsulesRaw[i].token,
-      }
-      capsules.push(capsule)
+  // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
+  // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
+  for (i = 0; i < capsulesRaw.length; i++) {
+    var capsule = {
+      brand: capsulesRaw[i].brand,
+      country: capsulesRaw[i].country,
+      year: capsulesRaw[i].year,
+      photo: capsulesRaw[i].photo.toString(),
+      capsuleRef: capsulesRaw[i]._id,
+      // token: capsulesRaw[i].token,
     }
+    capsules.push(capsule)
+  }
 
   // s'il n'y a aucune capsule trouvée en BDD
   if (capsules.length == 0) {
@@ -407,8 +407,6 @@ router.post('/add-favorite', async function (req, res, next) {
   // valeur capsuleRef de la capsule que l'utilisateur souhaite ajouter aux favoris passée à la variable capsuleRef
   var capsuleRef = req.body.capsuleRef
   var token = req.body.token
-
-  console.log("capsuleRef ----", typeof capsuleRef );
 
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var existingUser = await userModel.findOne({ token: token })
@@ -527,18 +525,18 @@ router.get('/all-my-favorites', async function (req, res, next) {
         return favorites.indexOf(a._id) - favorites.indexOf(b._id);
       });
 
-    // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
-    // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
-    for (i = 0; i < capsulesRaw.length; i++) {
-      var capsule = {
-        brand: capsulesRaw[i].brand,
-        country: capsulesRaw[i].country,
-        year: capsulesRaw[i].year,
-        photo: capsulesRaw[i].photo.toString(),
-        capsuleRef: capsulesRaw[i]._id,
+      // chaque photo est enregistrée en type Buffer dans MongoDB, il faut donc stringifier chacune d'entre elle avant de la passer en Front
+      // On va ici créer un tableau capsules identique à capsulesRaw mais avec les images dans le bon type
+      for (i = 0; i < capsulesRaw.length; i++) {
+        var capsule = {
+          brand: capsulesRaw[i].brand,
+          country: capsulesRaw[i].country,
+          year: capsulesRaw[i].year,
+          photo: capsulesRaw[i].photo.toString(),
+          capsuleRef: capsulesRaw[i]._id,
+        }
+        capsules.push(capsule)
       }
-      capsules.push(capsule)
-    }
 
       // inversion de l'ordre des capsules dans le tableau
       var capsulesSorted = capsules.reverse()
@@ -584,15 +582,15 @@ router.post('/first-message', async function (req, res, next) {
     // recherche de l'utilisateur à qui appartient cette capsule
     var capsuleOwner = await userModel.findOne({ _id: capsule.ownerId })
     // si le token de l'utilisateur connecté est égal au token du propriétaire de la capsule alors la valeur de userIsOwner change et rendra impossible l'envoi de message
-    if (capsuleOwner.token == token) {
+    if (capsuleOwner._id.equals(existingUser._id)) {
       userIsOwner = true
       // sinon caractérisation de la variable users qui déterminera qui sont les interlocuteurs
     } else {
-      var users = [capsuleOwner.token, token]
       // cherche d'une discussion déjà existante sur cette capsule avec ces 2 interlocuteurs
       var existingDiscussion = await discussionModel.findOne({
-        _id: capsuleRef,
-        users: users
+        capsuleRef: capsuleRef,
+        capsuleOwner: capsuleOwner._id,
+        capsuleFan: existingUser._id
       })
 
       // si cette discussion existe sur cette capsule avec ces 2 interlocuteurs alors la date de lastMessageDate est mise à jour
@@ -614,7 +612,8 @@ router.post('/first-message', async function (req, res, next) {
         var newDiscussion = await new discussionModel({
           capsuleRef: capsuleRef,
           lastMessageDate: actualDate,
-          users: users,
+          capsuleOwner: capsuleOwner._id,
+          capsuleFan: existingUser._id,
           messages: [],
         })
         // enregistrement de l'objet newDiscussion en BBD 
@@ -664,8 +663,8 @@ router.get('/discussions', async function (req, res, next) {
   if (userHavingAMessage) {
     // la valeur de result passe de false à true
     result = true
-    // recherche de toutes les discussions de l'utilisateur
-    var discussions = await discussionModel.find({ users: { $in: token } })
+    // recherche de toutes les discussions de l'utilisateur, seoit en tant que propriétaire de capsule ou en tant que fan
+    var discussions = await discussionModel.find({ $or: [{ capsuleOwner: userHavingAMessage._id }, { capsuleFan: userHavingAMessage._id }] })
     // s'il y a une ou des discussions alors...
     if (discussions.length != 0) {
       // la valeur de isDiscussionsExist passe de false à true, ce qui sera utile en Front
@@ -679,7 +678,6 @@ router.get('/discussions', async function (req, res, next) {
             discussionRef: discussions[i]._id,
             capsuleRef: discussions[i].capsuleRef,
             lastMessageDate: discussions[i].lastMessageDate,
-            users: discussions[i].users,
             messages: discussions[i].messages,
             capsuleData: {
               brand: capsule.brand,
@@ -695,7 +693,6 @@ router.get('/discussions', async function (req, res, next) {
             discussionRef: discussions[i]._id,
             capsuleRef: discussions[i].capsuleRef,
             lastMessageDate: discussions[i].lastMessageDate,
-            users: discussions[i].users,
             messages: discussions[i].messages,
             capsuleData: {
               brand: 'Capsule supprimée',
@@ -757,23 +754,24 @@ router.post('/new-message', async function (req, res, next) {
     if (discussionUpdated) {
       //la valeur de updated change et sera utilisée en Front
       updated = true
-      // caractérisation des participants
-      var participants = discussionUpdated.users
-      // suppression de l'utilisateur connecté de la liste des participants 
-      // en cherchant d'abord son index
-      var authorOfMessage = participants.indexOf(token);
-      if (authorOfMessage > -1) {
-        participants.splice(authorOfMessage, 1);
+      // si l'envoyeur de message est le propriétaire de la capsule alors... 
+      if (discussionUpdated.capsuleOwner.equals(existingUser._id)) {
+        // on cherche et on met à jour le document correspondant au fan de capsule pour indiquer qu'il a un nouveau message
+        var userHavingAMessage = await userModel.findOneAndUpdate(
+          { _id: discussionUpdated.capsuleFan },
+          {
+            'newMessage': true
+          }
+        )
+        // sinon on cherche et on met à jour le document correspondant au propriétaire de capsule pour indiquer qu'il a un nouveau message
+      } else { 
+        var userHavingAMessage = await userModel.findOneAndUpdate(
+          { _id: discussionUpdated.capsuleOwner },
+          {
+            'newMessage': true
+          }
+        )
       }
-      // caractérisation de l'autre participant
-      otherParticipant = participants[0]
-      // mise à jour du document user relatif à l'autre participant pour indiquer qu'il a un nouveau message
-      var userHavingAMessage = await userModel.findOneAndUpdate(
-        { token: otherParticipant },
-        {
-          'newMessage': true
-        }
-      )
 
       // si l'autre participant à choisi de recevoir les notifications de nouveau message par email alors ...
       if (userHavingAMessage.notifications == true) {
@@ -855,7 +853,7 @@ router.delete('/erase-account', async function (req, res, next) {
   // s'il existe un utilisateur ayant cet identifiant token alors...
   if (user) {
     // recherche de les discussions de l'utilisateur
-    var allDiscussionsGoneUser = await discussionModel.find({ users: token })
+    var allDiscussionsGoneUser = await discussionModel.find({ $or: [{ capsuleOwner: user._id }, { capsuleFan: user._id }] })
     // si ces discussions existent en BDD alors ...
     if (allDiscussionsGoneUser) {
       // caractérisation d'un message pour prévenir les autres interlocuteurs
@@ -878,7 +876,7 @@ router.delete('/erase-account', async function (req, res, next) {
     // suppression de l'utilisateur de la BDD
     var userDeletedInDB = await userModel.deleteOne({ token: req.body.token })
     // suppression des capsules de l'utilisateur de la BDD
-    var capsuleDeletedInDB = await capsuleModel.deleteMany({ token: req.body.token })
+    var capsuleDeletedInDB = await capsuleModel.deleteMany({ ownerId: user._id })
 
     // si la suppression de l'utilisateur s'est faite alors la valeur de result passe de false à true et sera utilisée en Front
     if (userDeletedInDB.deletedCount == 1) {
