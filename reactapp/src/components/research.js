@@ -89,6 +89,7 @@ function Research(props) {
     var handleSubmitSearch = () => {
         setsearchAction(searchAction + 1)
         setpageActual(0)
+        setstepOfCapsule(0)
     }
 
     // configuration du passage aux pages suivantes de résultats au clic par groupe de 10 résultats

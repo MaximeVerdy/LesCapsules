@@ -209,7 +209,7 @@ router.post('/save-capsule', async function (req, res, next) {
   }
 
   // données envoyées au Front
-  res.json({ result, saveCapsule, error })
+  res.json({ result, error })
 
 })
 
@@ -408,6 +408,8 @@ router.post('/add-favorite', async function (req, res, next) {
   var capsuleRef = req.body.capsuleRef
   var token = req.body.token
 
+  console.log("capsuleRef ----", typeof capsuleRef );
+
   // recherche d'un utilisateur en BDD correspondant au token envoyé depuis le Front
   var existingUser = await userModel.findOne({ token: token })
 
@@ -534,7 +536,6 @@ router.get('/all-my-favorites', async function (req, res, next) {
         year: capsulesRaw[i].year,
         photo: capsulesRaw[i].photo.toString(),
         capsuleRef: capsulesRaw[i]._id,
-        // token: capsulesRaw[i].token,
       }
       capsules.push(capsule)
     }
@@ -580,14 +581,14 @@ router.post('/first-message', async function (req, res, next) {
   if (existingUser) {
     // recheche en BDD de la capsule ayant _id = capsuleRef venu du Front
     var capsule = await capsuleModel.findOne({ _id: capsuleRef })
-    // caractérisation du token d'utilisateur associé à cette capsule en BDD
-    var capsuleOwner = capsule.token
+    // recherche de l'utilisateur à qui appartient cette capsule
+    var capsuleOwner = await userModel.findOne({ _id: capsule.ownerId })
     // si le token de l'utilisateur connecté est égal au token du propriétaire de la capsule alors la valeur de userIsOwner change et rendra impossible l'envoi de message
-    if (capsuleOwner == token) {
+    if (capsuleOwner.token == token) {
       userIsOwner = true
       // sinon caractérisation de la variable users qui déterminera qui sont les interlocuteurs
     } else {
-      var users = [capsuleOwner, token]
+      var users = [capsuleOwner.token, token]
       // cherche d'une discussion déjà existante sur cette capsule avec ces 2 interlocuteurs
       var existingDiscussion = await discussionModel.findOne({
         _id: capsuleRef,
@@ -686,7 +687,6 @@ router.get('/discussions', async function (req, res, next) {
               year: capsule.year,
               photo: capsule.photo.toString(),
               capsuleRef: capsule._id,
-              token: capsule.token,
             }
           })
           // sinon (si les données de la capsule sont absentes) 
@@ -698,7 +698,6 @@ router.get('/discussions', async function (req, res, next) {
             users: discussions[i].users,
             messages: discussions[i].messages,
             capsuleData: {
-              token: '',
               brand: 'Capsule supprimée',
               year: '',
               country: '',

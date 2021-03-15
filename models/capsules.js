@@ -7,7 +7,6 @@ const capsuleSchema = mongoose.Schema({
     country: String,
     year: Number,
     photo: Buffer,
-    // ownerId: String,
     ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'users' },
 })
 

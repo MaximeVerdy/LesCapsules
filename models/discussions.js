@@ -5,7 +5,7 @@ var mongoose = require('mongoose')
 const discussionSchema = mongoose.Schema({
     capsuleRef: { type: mongoose.Schema.Types.ObjectId, ref: 'capsules' }, 
     lastMessageDate: Date,
-    participants: Array, 
+    users: Array, 
     messages: Array,
 })
 
