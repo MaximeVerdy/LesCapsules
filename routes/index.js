@@ -581,9 +581,9 @@ router.post('/first-message', async function (req, res, next) {
     // recheche en BDD de la capsule ayant _id = capsuleRef venu du Front
     var capsule = await capsuleModel.findOne({ _id: capsuleRef })
     // caractérisation du token d'utilisateur associé à cette capsule en BDD
-    var capsuleOwner = capsule.ownerId.toString()
+    var capsuleOwner = capsule.token
     // si le token de l'utilisateur connecté est égal au token du propriétaire de la capsule alors la valeur de userIsOwner change et rendra impossible l'envoi de message
-    if (capsuleOwner === existingUser._id.toString()) {
+    if (capsuleOwner == token) {
       userIsOwner = true
       // sinon caractérisation de la variable users qui déterminera qui sont les interlocuteurs
     } else {
