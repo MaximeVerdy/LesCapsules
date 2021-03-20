@@ -34,7 +34,7 @@ function Mycollection(props) {
     const [deleted, setdeleted] = useState(0)
     const [resultFromBack, setresultFromBack] = useState(false)
 
-    useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour d'un de ces états : pageActual, deleted
+    useEffect(() => { // le hook d'effet se déclenchera au montage et à chaque mise à jour d'un de ces états : pageActual, deleted
         const findcapsules = async () => {
             const data = await fetch(`/my-collection?token=${token}&stepOfCapsule=${stepOfCapsule}`) // pour lire des données en base de données avec méthode GET. la route utilisée et les données envoyées en back après le ? 
             const body = await data.json() // convertion des données reçues en objet JS (parsage)
@@ -48,7 +48,7 @@ function Mycollection(props) {
         }
 
         findcapsules() // appel de la fonction
-    }, [pageActual, deleted]) // le hook d'effet se déclenchera à chaque mise à jour d'un de ces états
+    }, [pageActual, deleted]) // le hook d'effet se déclenchera au montage et à chaque mise à jour d'un de ces états
 
     // configuration du passage aux pages suivantes de résultats au clic par groupe de 10 résultats
     const pageNext = () => {

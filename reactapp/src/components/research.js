@@ -60,7 +60,7 @@ function Research(props) {
         setCountry(value);
     }
 
-    useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour d'un de ces états : pageActual, searchAction
+    useEffect(() => { // le hook d'effet se déclenchera au montage et à chaque mise à jour d'un de ces états : pageActual, searchAction
         const findcapsules = async () => {
             if (year === null) { // si l'année n'a pas de valeur numéraire
                 const data = await fetch(`/research?token=${token}&brand=${brand}&year=${''}&country=${country}&stepOfCapsule=${stepOfCapsule}`) // pour lire des données en base de données avec méthode GET. la route utilisée et les données envoyées en back après le ?
@@ -83,7 +83,7 @@ function Research(props) {
             }
         }
         findcapsules() // appel de la fonction
-    }, [pageActual, searchAction]) // le hook d'effet se déclenchera à chaque mise à jour d'un de ces états
+    }, [pageActual, searchAction]) // le hook d'effet se déclenchera au montage et au montage et à chaque mise à jour d'un de ces états
 
     // au clic sur l'icône loupe, déclenchement du hook d'effet et réinitialisation de la page actuelle
     var handleSubmitSearch = () => {

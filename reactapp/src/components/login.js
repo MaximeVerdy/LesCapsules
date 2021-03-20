@@ -1,5 +1,5 @@
 // import de fonctionnalités à partir de libraries/bibliothèques
-import React, { useState } from 'react' // bibliothèque de création de composants
+import React, { useEffect, useState } from 'react' // bibliothèque de création de composants
 import { Redirect } from 'react-router-dom' // bibliothèque de liaison entre les composants
 import { connect } from 'react-redux' // bibliothèque de gestion d'état 
 import { Layout, Row, Col, Form, Input, Button, Typography } from 'antd'; // bibliothèque d'interface graphique

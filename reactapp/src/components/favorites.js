@@ -40,7 +40,7 @@ function Favorites(props) {
     const [stepOfCapsule, setstepOfCapsule] = useState(0)
     const [resultFromBack, setresultFromBack] = useState(false)
 
-    useEffect(() => { // le hook d'effet se déclenchera à chaque mise à jour d'un de ces états : favorites et pageActual
+    useEffect(() => { // le hook d'effet se déclenchera au montage et à chaque mise à jour d'un de ces états : favorites et pageActual
         // échange de données avec le back pour la récuration des données
         const findcapsules = async () => {
             const data = await fetch(`/all-my-favorites?token=${token}&stepOfCapsule=${stepOfCapsule}`) // pour lire des données en base de données avec méthode GET. la route utilisée et les données envoyées en back après le ?
@@ -54,7 +54,7 @@ function Favorites(props) {
             if (body.capsulesSorted.length == 0) { setPagesTotal(1) } // afin que la page 1 des résultats de recherche ne soit jamais zéro
         }
         findcapsules()  // appel de la fonction
-    }, [favorites, pageActual]) // le hook d'effet se déclenchera à chaque mise à jour d'un de ces états
+    }, [favorites, pageActual]) // le hook d'effet se déclenchera au montage et à chaque mise à jour d'un de ces états
 
 
     // configuration du passage aux pages suivantes de résultats au clic par groupe de 10 résultats
