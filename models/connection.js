@@ -1,7 +1,7 @@
 // appel du module mongoose
 var mongoose = require('mongoose');
 
-
+// import depuis un fichier ignoré par git des identifiants mongoDB
 var mongoId = require ('../notforgit/identifiants.js')
 
 // options de la connexion à MongoDB via mongoose
