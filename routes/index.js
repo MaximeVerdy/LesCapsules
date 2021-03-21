@@ -782,8 +782,8 @@ router.post('/new-message', async function (req, res, next) {
         var transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: 'lescapsules.notifications@gmail.com',
-            pass: 'aA1#Developpeur'
+            user: 'lescapsules####@gmail.com',
+            pass: 'motDePasse#####'
           }
         });
 
