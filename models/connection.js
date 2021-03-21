@@ -1,6 +1,9 @@
 // appel du module mongoose
 var mongoose = require('mongoose');
 
+
+var mongoId = require ('../notforgit/identifiants.js')
+
 // options de la connexion à MongoDB via mongoose
 var options = {
     connectTimeoutMS: 5000,
@@ -9,7 +12,7 @@ var options = {
 }
 
 // connexion avec identifiants
-mongoose.connect('mongodb+srv://admin:mongoPWverdy80@cluster0.oimhm.mongodb.net/capsules?retryWrites=true&w=majority',
+mongoose.connect(mongoId.mongoId,
     options,
     function(err){
         console.log(err);
