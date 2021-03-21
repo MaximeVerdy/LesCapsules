@@ -1,6 +1,6 @@
-## *Les Capsules est une app React-Redux-Express-MongoDB*
+### *Les Capsules est une app React-Redux-Express-MongoDB*
 
-Ce projet a été développé pour augmenter mes compétences en Frontend et en Backend
+Ce projet a été développé pour augmenter mes compétences en Frontend et en Backend  
 retour à la ligne ??
 
 ## Fonctions mises en place
