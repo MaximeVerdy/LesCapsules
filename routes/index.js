@@ -20,6 +20,10 @@ var encBase64 = require('crypto-js/enc-base64')
 // module de génération d'identifiant unique
 var uid2 = require('uid2')
 
+// import des identifiants pour envoyer des emails de notifications
+var emailId = require ('../notforgit/identifiants.js')
+
+console.log('emailId ----', emailId );
 
 // ------------------- //
 // route d'inscription //
@@ -782,8 +786,8 @@ router.post('/new-message', async function (req, res, next) {
         var transporter = nodemailer.createTransport({
           service: 'gmail',
           auth: {
-            user: 'lescapsules####@gmail.com',
-            pass: 'motDePasse#####'
+            user: emailId.emailCapsules,
+            pass: emailId.passwordEmail
           }
         });
 
