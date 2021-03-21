@@ -16,7 +16,7 @@ Pages :
   
 ###### En Front :
 Le Frontend a été bootstrappé avec Create React App  
-Les formulaires, les boutons et le cropage d'image sont basés sur Ant Design  
+Les formulaires, les boutons, partiellement la Navbar et le cropage d'image sont basés sur Ant Design  
 Le state container est basé sur Redux  
 La responsivité est faite en CSS  
 Les multiples animations sont en CSS  
