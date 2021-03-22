@@ -27,6 +27,9 @@ Node.js et Express constituent le serveur
 Chiffrement des données sensibles avec crypto-js  
 Notification de nouveau message par Email avec nodemailer  
 
-###### En DB :
+###### En base de données :
 La base de données est sur MongoDB  
 Les schémas ont été fait avec Mongoose  
+
+###### Test-Driven Development :
+TDD effectué avec Jest et Supertest
