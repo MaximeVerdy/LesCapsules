@@ -5,7 +5,7 @@
 Visitez [les-capsules.com](https://les-capsules.herokuapp.com/)  
   
 Pages :  
-* page de chat *codée par mes soins sans bibliothèque de chat. Mon petit morceau de bravoure ^^*  
+* page de chat *codée sans bibliothèque de chat pour la beauté du geste ;)*  
 * page de recherche multicritères  
 * page de gestion de favoris  
 * page d'ajout de capsules avec photo  
