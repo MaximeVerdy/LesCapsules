@@ -1,8 +1,8 @@
 var app = require("../app") // Lien vers le serveur
-var request = require("supertest"); //  importe du module supertest
-var ObjectId = require('mongodb').ObjectID;
+var request = require("supertest"); //  import du module supertest
+var ObjectId = require('mongodb').ObjectID; // nécessaire pour tester ce type de données spécifique à MongoDB
 
-describe('activités en BDD pour 1 utilisateur inscrit', () => { // groupe de test
+describe('tests sur l ensemble des routes', () => { // groupe de test
 
      test("enregistrement et connexion d'un nouvel utilisateur en BDD : ok", async (done) => { // test 1
           const res = await request(app) // asynchronie de la requête
