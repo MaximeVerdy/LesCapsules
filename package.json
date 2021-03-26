@@ -1,5 +1,6 @@
 {
   "name": "capsules",
+  "description": "a really cool app for capsules lovers",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -23,5 +24,8 @@
   },
   "devDependencies": {
     "dotenv": "^8.2.0"
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
