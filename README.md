@@ -4,7 +4,7 @@
   
 Visitez [les-capsules.com](https://les-capsules.herokuapp.com/)  
 
-![sreenshot](./public/screenshot.jpg)
+![sreenshot](./public/screenshot.gif)
   
 Pages :  
 * page de chat. *Codée sans bibliothèque de chat, pour la beauté du geste ;)*  
