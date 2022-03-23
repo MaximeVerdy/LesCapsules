@@ -3,6 +3,8 @@
 *Pour exposer, trouver et échanger des capsules de bières, il y a des blogs de collectionneurs mais pas de site dédié à la chose, d'où ce projet.*  
   
 Visitez [les-capsules.com](https://les-capsules.herokuapp.com/)  
+
+![sreenshot](./public/screenshot.jpg)
   
 Pages :  
 * page de chat. *Codée sans bibliothèque de chat, pour la beauté du geste ;)*  
