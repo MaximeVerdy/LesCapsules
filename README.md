@@ -31,7 +31,7 @@ Notification de nouveau message par Email avec nodemailer
 
 ###### En base de données :
 La base de données est sur MongoDB  
-Les schémas ont été fait avec Mongoose  
+Les schémas ont été faits avec Mongoose  
 
 ###### Test-Driven Development :
 TDD effectué avec Jest et Supertest
